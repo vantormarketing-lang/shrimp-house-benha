@@ -19,24 +19,11 @@ footer{border-top:1px solid #d5b36a22;padding:32px 0;opacity:.8}.float{position:
 @media(max-width:520px){.menu-grid{grid-template-columns:1fr}.hero h1{font-size:42px}.sectionhead h2{font-size:30px}}
 </style></head>
 <body>
-<header><div class="wrap"><nav><div class="brand"><div class="logo">🦐</div><div>Shrimp House <small style="display:block;color:var(--gold);font-weight:500">BENHA • بيت الجمبري</small></div></div><div class="links"><a href="#menu">المنيو</a><a href="#story">عنّا</a><a href="#reserve">احجز</a></div><a class="btn" href="#reserve">اطلب دلوقتي</a></nav></div></header>
+<header><div class="wrap"><nav><div class="brand"><div class="logo">🦐</div><div>Shrimp House <small style="display:block;color:var(--gold);font-weight:500">BENHA • بيت الجمبري</small></div></div><div class="links"><a href="menu.html">المنيو</a><a href="#story">عنّا</a><a href="#reserve">احجز</a></div><a class="btn" href="#reserve">اطلب دلوقتي</a></nav></div></header>
 <main class="wrap">
-<div class="hero"><div><div class="eyebrow">SEAFOOD • FRESH EVERY DAY</div><h1>حكاية بحر…<br><span>على سفرتك</span></h1><p>طعم البحر الطازة، وصفاتنا الخاصة، وتجربة مختلفة في قلب بنها. اختار وجبتك وخلي الباقي علينا.</p><a class="btn" href="#menu">اكتشف المنيو ←</a></div><div class="heroimg"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=1000&q=85" alt="طبق مأكولات بحرية"></div></div>
+<div class="hero"><div><div class="eyebrow">SEAFOOD • FRESH EVERY DAY</div><h1>حكاية بحر…<br><span>على سفرتك</span></h1><p>طعم البحر الطازة، وصفاتنا الخاصة، وتجربة مختلفة في قلب بنها. اختار وجبتك وخلي الباقي علينا.</p><a class="btn" href="menu.html">اكتشف المنيو ←</a></div><div class="heroimg"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=1000&q=85" alt="طبق مأكولات بحرية"></div></div>
 <section id="story"><div class="sectionhead"><div class="eyebrow">SHRIMP HOUSE EXPERIENCE</div><h2>المذاق اللي يستاهل التجربة</h2><p>مكونات طازة • نكهات متوازنة • اهتمام بكل تفصيلة</p></div><div class="carouselwrap"><div class="carousel"><div class="carcard" style="--angle:0deg"><img src="https://images.unsplash.com/photo-1559737558-2f5a35f4523a?auto=format&fit=crop&w=700&q=80"><label>Seafood Mix</label></div><div class="carcard" style="--angle:90deg"><img src="https://images.unsplash.com/photo-1534080564583-6be757c0a7e8?auto=format&fit=crop&w=700&q=80"><label>Fresh Catch</label></div><div class="carcard" style="--angle:180deg"><img src="https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=700&q=80"><label>Grilled Seafood</label></div><div class="carcard" style="--angle:270deg"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=700&q=80"><label>Shrimp Special</label></div></div></div></section>
-<section id="menu"><div class="sectionhead"><div class="eyebrow">OUR MENU</div><h2>منيو Shrimp House الأصلي</h2><p>اختار القسم، وبعدها لف الأصناف بنفسك يمين وشمال</p></div>
-<style>
-.menu-tabs{display:flex;gap:9px;overflow-x:auto;padding:8px 2px 18px;scrollbar-width:none;justify-content:center}.menu-tabs::-webkit-scrollbar{display:none}
-.menu-tab{white-space:nowrap;border:1px solid #c8a55b66;border-radius:22px;padding:10px 16px;background:#ffffff09;color:#eee4d0}.menu-tab.active{background:linear-gradient(135deg,#c6a45c,#997a39);color:#1b2616}
-.menu-carousel-viewport{position:relative;height:390px;overflow:hidden;touch-action:pan-y;perspective:900px;max-width:600px;margin:auto}
-.menu-wheel{height:100%;width:100%;position:relative;transform-style:preserve-3d;touch-action:pan-y;cursor:grab;user-select:none}
-.menu-wheel.drag{cursor:grabbing}
-.menu-item-card{position:absolute;width:210px;height:290px;left:calc(50% - 105px);top:45px;transform-style:preserve-3d;border:1px solid #c9a65d55;border-radius:22px;background:linear-gradient(145deg,#29371f,#172012);box-shadow:0 12px 30px #0005;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;transition:box-shadow .2s}
-.menu-item-card .food-emoji{font-size:46px;margin-bottom:14px}.menu-item-card h3{font-size:19px;margin:0 0 10px;color:#f5ead6}.menu-item-card p{font-size:13px;opacity:.7;margin:0}.menu-item-card .food-price{margin-top:18px;color:#d9b56b;font-weight:800}
-.menu-wheel-hint{text-align:center;font-size:12px;color:#d2ae62;margin-top:8px}
-@media(max-width:600px){.menu-carousel-viewport{height:345px}.menu-item-card{width:185px;height:255px;left:calc(50% - 92px);top:42px}.menu-tabs{justify-content:flex-start}}
-</style>
-<div class="menu-tabs" id="menuTabs"></div><div class="menu-carousel-viewport"><div class="menu-wheel" id="menuWheel"></div></div><div class="menu-wheel-hint">↔ اسحب بإيدك لتلف الأصناف • اضغط القسم للتغيير</div>
-</section>
+<section id="menu-entry" class="menu-entry"><div class="sectionhead"><div class="eyebrow">OUR MENU</div><h2>منيو شرمب هاوس</h2><p>المنيو الكامل في صفحة مستقلة — لف الأصناف بنفسك في الكاروسيل الدائري.</p><a class="btn" href="menu.html">افتح المنيو بالكامل ←</a></div></section>
 <script>
 (()=>{const categories=[
 {name:'المكرونات',items:[['المبيكة بالجمبري','150 ج.م'],['مكرونة وايت صوص جمبري','200 ج.م'],['مكرونة مشكل','200 ج.م'],['طاجن شرمب هاوس','250 ج.م'],['مكرونة ريد صوص','200 ج.م']]},
