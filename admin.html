@@ -59,6 +59,7 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
  if(!session){window.location.replace('./admin-login.html');return;}
  const {data:profile,error}=await client.from('staff_profiles').select('role,display_name').eq('user_id',session.user.id).maybeSingle();
  if(error||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();window.location.replace('./admin-login.html');return;}
+ const logout=document.createElement('button'); logout.type='button'; logout.textContent='↩　تسجيل الخروج'; logout.style.cssText='font:inherit;color:#c0c9b5;text-align:right;background:transparent;border:1px solid #d8b66b24;border-radius:12px;padding:12px;cursor:pointer'; logout.addEventListener('click',async()=>{await client.auth.signOut();window.location.replace('./admin-login.html');}); document.querySelector('.nav')?.appendChild(logout);
  document.body.style.visibility='visible';
  const badge=document.querySelector('.pill'); if(badge)badge.textContent='● '+(profile.role==='admin'?'Admin':'Staff')+' · '+(profile.display_name||session.user.email);
 })();
