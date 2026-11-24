@@ -1,7 +1,5 @@
-// Replace these two values with your dedicated Shrimp House Supabase project settings.
-// Project Settings → API → Project URL and anon/public key.
-// NEVER place a service_role key in browser code.
+// Public frontend config for Shrimp House. Safe publishable/anon key only.
 window.SHRIMP_SUPABASE_CONFIG = {
-  url: "YOUR_SUPABASE_PROJECT_URL",
-  anonKey: "YOUR_SUPABASE_ANON_PUBLIC_KEY"
+  url: "https://hcxoysslyfsktnrshoaw.supabase.co",
+  anonKey: "sb_publishable_GS7BQDm2thndbsYv-P5Q4w_SgCZVlV4"
 };
