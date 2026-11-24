@@ -23,14 +23,35 @@ footer{border-top:1px solid #d5b36a22;padding:32px 0;opacity:.8}.float{position:
 <main class="wrap">
 <div class="hero"><div><div class="eyebrow">SEAFOOD • FRESH EVERY DAY</div><h1>حكاية بحر…<br><span>على سفرتك</span></h1><p>طعم البحر الطازة، وصفاتنا الخاصة، وتجربة مختلفة في قلب بنها. اختار وجبتك وخلي الباقي علينا.</p><a class="btn" href="#menu">اكتشف المنيو ←</a></div><div class="heroimg"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=1000&q=85" alt="طبق مأكولات بحرية"></div></div>
 <section id="story"><div class="sectionhead"><div class="eyebrow">SHRIMP HOUSE EXPERIENCE</div><h2>المذاق اللي يستاهل التجربة</h2><p>مكونات طازة • نكهات متوازنة • اهتمام بكل تفصيلة</p></div><div class="carouselwrap"><div class="carousel"><div class="carcard" style="--angle:0deg"><img src="https://images.unsplash.com/photo-1559737558-2f5a35f4523a?auto=format&fit=crop&w=700&q=80"><label>Seafood Mix</label></div><div class="carcard" style="--angle:90deg"><img src="https://images.unsplash.com/photo-1534080564583-6be757c0a7e8?auto=format&fit=crop&w=700&q=80"><label>Fresh Catch</label></div><div class="carcard" style="--angle:180deg"><img src="https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=700&q=80"><label>Grilled Seafood</label></div><div class="carcard" style="--angle:270deg"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=700&q=80"><label>Shrimp Special</label></div></div></div></section>
-<section id="menu"><div class="sectionhead"><div class="eyebrow">OUR MENU</div><h2>اختار مزاجك البحري</h2><p>المنيو التجريبي — الأسعار والأصناف هتتراجع وتتأكد قبل الإطلاق النهائي</p></div><div class="menu-grid">
-<article class="dish glass"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=700&q=80"><div class="dishinfo"><h3>طبق جمبري مميز</h3><p>جمبري بطريقتنا الخاصة مع إضافات شهية</p><span class="price">السعر حسب الحجم</span></div></article>
-<article class="dish glass"><img src="https://images.unsplash.com/photo-1559737558-2f5a35f4523a?auto=format&fit=crop&w=700&q=80"><div class="dishinfo"><h3>ميكس سي فود</h3><p>تشكيلة بحرية متنوعة لعشاق كل النكهات</p><span class="price">السعر حسب الحجم</span></div></article>
-<article class="dish glass"><img src="https://images.unsplash.com/photo-1534080564583-6be757c0a7e8?auto=format&fit=crop&w=700&q=80"><div class="dishinfo"><h3>سمك طازة</h3><p>اختار السمك وطريقة التحضير المفضلة</p><span class="price">السعر حسب النوع</span></div></article>
-<article class="dish glass"><img src="https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=700&q=80"><div class="dishinfo"><h3>وجبات مشوية</h3><p>نكهة الفحم ولمسة توابل مميزة</p><span class="price">السعر حسب الطلب</span></div></article>
-<article class="dish glass"><img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=700&q=80"><div class="dishinfo"><h3>سندوتشات بحرية</h3><p>وجبة خفيفة بطعم غني وسريع</p><span class="price">السعر حسب الصنف</span></div></article>
-<article class="dish glass"><img src="https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=700&q=80"><div class="dishinfo"><h3>إضافات وصوصات</h3><p>اختار الإضافات اللي تكمل وجبتك</p><span class="price">متاح إضافات متنوعة</span></div></article>
-</div></section>
+<section id="menu"><div class="sectionhead"><div class="eyebrow">OUR MENU</div><h2>منيو Shrimp House الأصلي</h2><p>اختار القسم، وبعدها لف الأصناف بنفسك يمين وشمال</p></div>
+<style>
+.menu-tabs{display:flex;gap:9px;overflow-x:auto;padding:8px 2px 18px;scrollbar-width:none;justify-content:center}.menu-tabs::-webkit-scrollbar{display:none}
+.menu-tab{white-space:nowrap;border:1px solid #c8a55b66;border-radius:22px;padding:10px 16px;background:#ffffff09;color:#eee4d0}.menu-tab.active{background:linear-gradient(135deg,#c6a45c,#997a39);color:#1b2616}
+.menu-carousel-viewport{position:relative;height:390px;overflow:hidden;touch-action:pan-y;perspective:900px;max-width:600px;margin:auto}
+.menu-wheel{height:100%;width:100%;position:relative;transform-style:preserve-3d;touch-action:pan-y;cursor:grab;user-select:none}
+.menu-wheel.drag{cursor:grabbing}
+.menu-item-card{position:absolute;width:210px;height:290px;left:calc(50% - 105px);top:45px;transform-style:preserve-3d;border:1px solid #c9a65d55;border-radius:22px;background:linear-gradient(145deg,#29371f,#172012);box-shadow:0 12px 30px #0005;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center;transition:box-shadow .2s}
+.menu-item-card .food-emoji{font-size:46px;margin-bottom:14px}.menu-item-card h3{font-size:19px;margin:0 0 10px;color:#f5ead6}.menu-item-card p{font-size:13px;opacity:.7;margin:0}.menu-item-card .food-price{margin-top:18px;color:#d9b56b;font-weight:800}
+.menu-wheel-hint{text-align:center;font-size:12px;color:#d2ae62;margin-top:8px}
+@media(max-width:600px){.menu-carousel-viewport{height:345px}.menu-item-card{width:185px;height:255px;left:calc(50% - 92px);top:42px}.menu-tabs{justify-content:flex-start}}
+</style>
+<div class="menu-tabs" id="menuTabs"></div><div class="menu-carousel-viewport"><div class="menu-wheel" id="menuWheel"></div></div><div class="menu-wheel-hint">↔ اسحب بإيدك لتلف الأصناف • اضغط القسم للتغيير</div>
+</section>
+<script>
+(()=>{const categories=[
+{name:'المكرونات',items:[['مكرونة بالجمبري','150 ج.م'],['مكرونة وايت صوص جمبري','200 ج.م'],['مكرونة مشكل','200 ج.م'],['طاجن شرمب','250 ج.م'],['مكرونة بالسي فود','200 ج.م']]},
+{name:'السندوتشات',items:[['سندوتش جمبري','35 ج.م'],['جمبري وسط','60 ج.م'],['ساندوتش صوابع كابوريا','30 ج.م'],['ساندوتش فليه','35 ج.م'],['كفتة جمبري','40 ج.م'],['ساندوتش سيبيا','45 ج.م'],['ساندوتش مشكل','50 ج.م']]},
+{name:'الوجبات',items:[['وجبة لقطة','85 ج.م'],['وجبة لمة','130 ج.م'],['وجبة سيبريم سنجاري','150 ج.م'],['وجبة شرمب هاوس','200 ج.م'],['وجبة جمبري وزيادة','150 ج.م'],['وجبة فيليه','190 ج.م'],['وجبة جمبري مشوي','150 ج.م']]},
+{name:'الأوزان',items:[['جمبري كبير','500 / 250 ج.م'],['جمبري صغير','400 / 200 ج.م'],['سيبيا','160 / 80 ج.م'],['فيليه','150 / 75 ج.م'],['كابوريا','100 ج.م'],['بلح البحر','150 ج.م'],['كابوريا علبة','250 ج.م']]}
+];const tabs=document.getElementById('menuTabs'),wheel=document.getElementById('menuWheel');let category=0,rot=0,down=false,startX=0,startRot=0,vel=0,lastX=0,lastT=0;
+function draw(){wheel.innerHTML='';let arr=categories[category].items,n=arr.length;arr.forEach((it,i)=>{let card=document.createElement('article');card.className='menu-item-card';let a=i*360/n+rot;card.style.transform='rotateY('+a+'deg) translateZ(225px)';card.innerHTML='<div class="food-emoji">🦐</div><h3>'+it[0]+'</h3><p>من منيو Shrimp House</p><div class="food-price">'+it[1]+'</div>';wheel.appendChild(card)});}
+function setCat(idx){category=idx;rot=0;tabs.innerHTML='';categories.forEach((c,i)=>{let b=document.createElement('button');b.className='menu-tab'+(i===idx?' active':'');b.textContent=c.name;b.onclick=()=>setCat(i);tabs.appendChild(b)});draw()}
+wheel.addEventListener('pointerdown',e=>{down=true;startX=lastX=e.clientX;startRot=rot;lastT=performance.now();vel=0;wheel.classList.add('drag');wheel.setPointerCapture(e.pointerId)});
+wheel.addEventListener('pointermove',e=>{if(!down)return;let t=performance.now(),dx=e.clientX-lastX;rot=startRot+(e.clientX-startX)*.5;vel=dx/Math.max(1,t-lastT);lastX=e.clientX;lastT=t;draw()});
+function end(){if(!down)return;down=false;wheel.classList.remove('drag');rot+=vel*70;draw()}
+wheel.addEventListener('pointerup',end);wheel.addEventListener('pointercancel',end);
+setCat(0)})();
+</script>
 <section id="reserve"><div class="sectionhead"><div class="eyebrow">ORDER • RESERVE</div><h2>طلبك أو حجزك يبدأ من هنا</h2></div><div class="booking glass"><div><h3>اطلب أو احجز واتساب</h3><p style="opacity:.7;line-height:1.8">اكتب تفاصيل طلبك أو الحجز، وسيتم فتح واتساب برسالة جاهزة. رقم المطعم سيتم إضافته عند استلامه.</p><p class="price">📍 بنها — تفاصيل العنوان تُضاف لاحقًا</p></div><form id="orderForm"><input id="customerName" placeholder="الاسم" required><input id="customerPhone" placeholder="رقم الموبايل" required><select id="orderType"><option>طلب دليفري</option><option>حجز طاولة</option><option>استلام من المطعم</option></select><textarea id="orderDetails" placeholder="اكتب الأصناف أو موعد الحجز"></textarea><button class="btn" type="submit">جهّز رسالة واتساب</button></form></div></section>
 </main><footer><div class="wrap">Shrimp House Benha • تجربة بحرية بطابع مختلف <span style="float:left"><a href="admin.html">Admin Preview</a></span></div></footer><a class="float" href="#reserve">🦐 اطلب / احجز</a>
 <script>
