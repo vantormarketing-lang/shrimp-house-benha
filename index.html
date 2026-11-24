@@ -288,9 +288,9 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
   if (item) det.value = 'عايز أطلب: ' + item;
   f.addEventListener('submit', async e => {
     e.preventDefault();
-    const phone = en($('customerPhone').value).replace(/\\s|-/g, '');
+    const phone = en($('customerPhone').value).replace(/\s|-/g, '');
     const name = $('customerName').value.trim(), address=$('customerAddr').value.trim(), details=det.value.trim();
-    if (!/^(+?20|0)?1[0125]\\d{8}$/.test(phone)) { msg.textContent = 'من فضلك اكتب رقم موبايل مصري صحيح.'; $('customerPhone').focus(); return; }
+    if (!/^(\+?20|0)?1[0125]\d{8}$/.test(phone)) { msg.textContent = 'من فضلك اكتب رقم موبايل مصري صحيح.'; $('customerPhone').focus(); return; }
     const isBooking=type.value==='حجز طاولة';
     let payload,table='orders';
     if(isBooking){
@@ -311,7 +311,7 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
     if(isBooking)lines.push('الموعد: '+$('bookingDateTime').value.replace('T',' '),'عدد الأفراد: '+$('bookingGuests').value);
     if(details)lines.push('التفاصيل: '+details);
     if($('whenAt').value.trim())lines.push('ملاحظات: '+$('whenAt').value.trim());
-    const url=waLink(lines.join('\\n'));
+    const url=waLink(lines.join('\n'));
     if(saved)msg.textContent='تم تسجيل '+(isBooking?'طلب الحجز':'طلبك')+' في النظام. جاري فتح واتساب للتأكيد…';
     else msg.textContent='تعذر تسجيل الطلب تلقائيًا، لكن يمكنك إرساله عبر واتساب.';
     if(url)window.open(url,'_blank','noopener');
