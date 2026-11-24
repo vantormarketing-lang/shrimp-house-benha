@@ -17,7 +17,11 @@
 .view{display:none}.view.show{display:block}.placeholder{padding:0;border:0;background:none}.placeholder p{color:var(--muted);line-height:1.85}.placeholder small{color:var(--gold);letter-spacing:.12em}.mobilehint{display:none}.section-visual{height:210px;border-radius:20px;border:1px solid var(--line);background:var(--cover) center/cover;position:relative;overflow:hidden;margin-bottom:14px}.section-visual:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#11180ff0,#11180fa0 60%,#11180f40)}.section-visual .visual-text{position:relative;padding:28px;max-width:600px}.section-visual small{color:var(--gold);letter-spacing:.14em}.section-visual h3{margin:10px 0;font-size:26px}.section-visual p{color:#d1d7c7;line-height:1.8;font-size:13px}.visual-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.visual-tile{min-height:125px;border-radius:16px;overflow:hidden;border:1px solid var(--line);padding:15px;background:linear-gradient(0deg,#11180fe8,#11180f55),var(--cover) center/cover}.visual-tile b{color:var(--gold);display:block;margin-bottom:8px}.visual-tile span{font-size:12px;color:#d0d7c6;line-height:1.7}@media(max-width:620px){.section-visual{height:185px}.section-visual .visual-text{padding:22px}.section-visual h3{font-size:22px}.visual-tiles{grid-template-columns:1fr 1fr}}
 @media(max-width:980px){.stats{grid-template-columns:repeat(2,1fr)}.lower{grid-template-columns:1fr}}
 @media(max-width:620px){.shell{display:block}.side{height:auto;position:relative;padding:14px;gap:13px;border:0;border-bottom:1px solid var(--line)}.foot{display:none}.nav{display:flex;overflow:auto;gap:5px;scrollbar-width:none}.nav button{white-space:nowrap;padding:9px 11px;font-size:12px}.main{padding:14px}.top h2{font-size:18px}.pill{padding:6px 9px}.hero{padding:23px;min-height:215px;border-radius:19px}.hero p{font-size:12px}.stats{gap:9px}.stat{padding:13px}.num{font-size:23px}.quick button{min-height:108px;padding:12px}.manager{min-height:92px;padding:12px}}
-</style></head><body>
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase/config.js"></script>
+<style>body{visibility:hidden}</style>
+</head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
 <nav class="nav"><button class="active" data-go="dashboard">⌂　الرئيسية</button><button data-go="orders">🧾　الطلبات</button><button data-go="menu">🍽️　المنيو</button><button data-go="bookings">📅　الحجوزات</button><button data-go="stock">🧺　المخزون</button><button data-go="settings">⚙️　الإعدادات</button></nav><div class="foot">مساحة إدارة المطعم<br>واجهة تجريبية · الربط بالبيانات لاحقًا</div></aside>
 <main class="main"><header class="top"><div><h2 id="title">نظرة عامة</h2><p id="sub">أهلًا بك في مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
@@ -45,4 +49,17 @@
 const names={dashboard:["نظرة عامة","أهلًا بك في مركز إدارة Shrimp House"],orders:["الطلبات","متابعة الطلبات وحالاتها"],menu:["المنيو","إدارة الأصناف والصور والأسعار"],bookings:["الحجوزات","تنظيم مواعيد الضيوف"],stock:["المخزون","متابعة الخامات والمكونات"],settings:["الإعدادات","بيانات المطعم وإعداداته"]};
 function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));document.getElementById("title").textContent=names[k][0];document.getElementById("sub").textContent=names[k][1]}
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+</script>
+<script>
+(async()=>{
+ const cfg=window.SHRIMP_SUPABASE_CONFIG;
+ if(!cfg?.url||!cfg?.anonKey){window.location.replace('./admin-login.html');return;}
+ const client=window.supabase.createClient(cfg.url,cfg.anonKey);
+ const {data:{session}}=await client.auth.getSession();
+ if(!session){window.location.replace('./admin-login.html');return;}
+ const {data:profile,error}=await client.from('staff_profiles').select('role,display_name').eq('user_id',session.user.id).maybeSingle();
+ if(error||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();window.location.replace('./admin-login.html');return;}
+ document.body.style.visibility='visible';
+ const badge=document.querySelector('.pill'); if(badge)badge.textContent='● '+(profile.role==='admin'?'Admin':'Staff')+' · '+(profile.display_name||session.user.email);
+})();
 </script></body></html>
