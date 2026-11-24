@@ -1,18 +1,22 @@
-# Shrimp House — Supabase setup checklist
+# Shrimp House — Supabase setup and connection status
 
-## 1. Create a dedicated Supabase project
-Do not reuse the DOMA Academy project. Name it Shrimp House (or similar) and keep its credentials separate.
+## Live project
+- Supabase project: Shrimp House
+- Project ref: `hcxoysslyfsktnrshoaw`
+- Project URL: `https://hcxoysslyfsktnrshoaw.supabase.co`
+- Frontend config is already written to `supabase/config.js` using the public publishable key only.
+- Schema has been applied directly to the dedicated Shrimp House project and verified.
 
-## 2. Run the schema
-Open SQL Editor in the Shrimp House Supabase project and run `supabase/schema.sql`.
+## Tables and security
+Tables: `staff_profiles`, `menu_items`, `orders`, `bookings`, `inventory_items`.
+RLS is enabled on all five tables.
+The staff/admin helper functions cannot be executed by anonymous users.
+Public order and booking INSERT policies are intentionally disabled until a validated submission flow (prefer an Edge Function with server-side validation and abuse controls) is implemented.
 
-## 3. Enable Authentication
-- Authentication → Providers → Email: enable email/password.
-- Create your first admin user through Supabase Auth (invite/create the account yourself).
-- Verify the email if email confirmation is enabled.
-
-## 4. Assign the first admin role (trusted SQL Editor only)
-Replace the email literal with the admin account's exact email. Run only after that Auth user exists:
+## Remaining staff-account setup (manual Auth UI step)
+1. Supabase Dashboard → Shrimp House → Authentication → Users.
+2. Add/create the first staff/admin account. Keep the password private; do not paste it into chat or source code.
+3. Once that user exists, run this SQL in the project's trusted SQL editor, replacing the email with the exact account email:
 ```sql
 insert into public.staff_profiles (user_id, display_name, role)
 select id, 'Restaurant Admin', 'admin'
@@ -20,18 +24,10 @@ from auth.users
 where email = 'YOUR_ADMIN_EMAIL'
 on conflict (user_id) do update set role = 'admin';
 ```
-This assigns the initial admin. Do not run from the public website.
+4. The admin login page uses Supabase Auth password sign-in and checks `staff_profiles.role` before redirecting to `admin.html`. The admin page itself also checks the current session and staff role before showing content.
+5. Frontend values in `supabase/config.js` must remain the project URL plus publishable/anon key only. Never place service-role/secret keys in public files.
 
-## 5. Configure frontend values
-Copy the Supabase Project URL and anon/public key from Project Settings → API into `supabase/config.js`.
-The anon/public key is meant for frontend use when Row Level Security is correctly enabled. Never use the service_role key.
-
-## 6. Before publishing the dashboard
-- Implement login via Supabase Auth and verify the logged-in user's staff role.
-- Protect admin UI routes with an auth gate.
-- Keep all admin data operations behind RLS policies.
-- Test anonymous reads, inserts, and admin/staff access with separate test accounts.
-- Review the current SQL policies before accepting real customer orders. Public insert policies are intentionally permissive starter policies and need abuse controls/validation before production.
-
-## Tables created
-`staff_profiles`, `menu_items`, `orders`, `bookings`, `inventory_items`.
+## Production readiness notes
+- The admin dashboard sections are still visual placeholders; CRUD is not wired up yet.
+- Public order/booking submission is currently blocked until a server-validated flow is built.
+- Test with separate anonymous and staff accounts, review RLS policies, and run Supabase security advisors before accepting real orders.
