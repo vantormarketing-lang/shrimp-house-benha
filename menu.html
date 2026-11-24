@@ -31,8 +31,8 @@ nav{display:flex;align-items:center;justify-content:space-between;gap:14px;paddi
 section{padding:56px 0}.sectionhead{text-align:center;margin-bottom:26px}.sectionhead h2{font-size:clamp(28px,4vw,38px);margin:8px 0}.sectionhead p{opacity:.72;margin:0 0 14px}
 .glass{background:rgba(255,255,255,.07);border:1px solid var(--line);backdrop-filter:blur(14px);border-radius:24px}
 /* ring */
-.ring{position:relative;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}.ring.drag{cursor:grabbing}
-.ring-track{position:absolute;inset:0}.ring-track>*{position:absolute;left:50%;top:50%;width:var(--rw,230px);will-change:transform,opacity}
+.ring{position:relative;display:block;width:100%;max-width:900px;margin:0 auto;overflow:hidden;direction:ltr;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}.ring.drag{cursor:grabbing}
+.ring-track{position:absolute;inset:0;direction:ltr}.ring-track>*{position:absolute;left:50%;top:50%;width:var(--rw,230px);will-change:transform,opacity}
 .ring-ui{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:8px}
 .rbtn{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--cream);display:grid;place-items:center;padding:0}.rbtn:hover{background:rgba(255,255,255,.15)}
 .dots{display:flex;gap:8px;align-items:center}.dot{position:relative;width:8px;height:8px;border-radius:9px;border:0;padding:0;background:#ffffff4d;transition:width .25s,background .25s}.dot:after{content:"";position:absolute;inset:-9px -4px}.dot[aria-current=true]{width:22px;background:var(--gold)}
@@ -112,7 +112,7 @@ window.MENU = [
     const o = Object.assign({ w: 230, autoplay: 0 }, opt || {});
     const track = stage.querySelector('.ring-track');
     const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-    const ds = getComputedStyle(stage).direction === 'rtl' ? -1 : 1;
+    const ds = 1; // carousel geometry is independent of page RTL
     let cards = [], n = 0, pos = 0, target = 0, cw = o.w, raf = 0, last = 0, drag = null, sup = false, wt = 0, timer = 0, dots = [];
     const cur = () => mod(Math.round(target), n);
  
@@ -124,7 +124,7 @@ window.MENU = [
     ui.append(bl, dw, br); stage.after(ui);
  
     function size() {
-      cw = Math.min(o.w, Math.max(190, stage.clientWidth * 0.7));
+      cw = Math.min(o.w, Math.max(190, stage.clientWidth * 0.62));
       stage.style.setProperty('--rw', cw + 'px');
       stage.style.perspective = cw * 3.5 + 'px';
       let h = 0; cards.forEach(c => h = Math.max(h, c.offsetHeight));
@@ -132,7 +132,7 @@ window.MENU = [
     }
     function render() {
       if (!n) return;
-      const step = 2 * Math.PI / n, Rx = cw * 0.95, Rz = cw * 0.9;
+      const step = 2 * Math.PI / n, Rx = Math.min(cw * 0.88, stage.clientWidth * 0.28), Rz = cw * 0.62;
       cards.forEach((c, i) => {
         const d = mod(i - pos + n / 2, n) - n / 2, f = d * step, s = Math.sin(f), co = Math.cos(f), e = (1 + co) / 2;
         c.style.transform = 'translate(-50%,-50%) translate3d(' + (ds * Rx * s).toFixed(1) + 'px,0,' + (Rz * (co - 1)).toFixed(1) + 'px) rotateY(' + (-ds * s * 24).toFixed(1) + 'deg)';
