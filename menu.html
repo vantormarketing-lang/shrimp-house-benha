@@ -43,6 +43,7 @@ section{padding:56px 0}.sectionhead{text-align:center;margin-bottom:26px}.sectio
 .rcard .btn{margin:0 0 20px}
 .photo img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;pointer-events:none;background:linear-gradient(145deg,#475633,var(--bg))}
 .photo figcaption{position:absolute;inset:auto 0 0;padding:36px 16px 16px;background:linear-gradient(0deg,#111d11ee,transparent);font-weight:800}
+.menu-card .menu-photo{display:block;width:100%;height:clamp(160px,28vw,230px);object-fit:cover;border-bottom:1px solid var(--line);background:#273522}.menu-card .ico{font-size:26px;padding:12px 0 4px}.menu-card h3{min-height:3em;display:grid;place-items:center}.menu-card{min-height:100%;}
 /* menu page */
 .head{text-align:center;padding:30px 0 6px}.head h1{margin:8px 0;font-size:clamp(28px,5vw,42px)}.head p{opacity:.75;margin:0}
 .tabs{display:flex;gap:9px;overflow-x:auto;padding:12px 0;scrollbar-width:none;position:sticky;top:67px;z-index:5;background:linear-gradient(var(--bg) 70%,transparent)}.tabs::-webkit-scrollbar{display:none}
@@ -285,14 +286,20 @@ const parse=s=>s.split('|').map(x=>{const m=x.trim().match(/^(\d+)\s*(.*)$/);ret
 const chips=s=>parse(s).map(v=>'<span class="chip"><b>'+v.p+'</b> ج.م'+(v.l?' <i>'+v.l+'</i>':'')+'</span>').join('');
 const ring=Ring($('ring'),{w:240});
 let cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash)),asList=false;
-function card(c,it){const a=document.createElement('article');a.className='rcard';
-  a.innerHTML='<div class="ico" aria-hidden="true">'+c.icon+'</div><h3></h3><div class="chips">'+chips(it[1])+'</div>';
-  a.querySelector('h3').textContent=it[0];const b=document.createElement('a');b.className='btn sm';b.textContent='اطلب';setOrder(b,it[0]);a.append(b);return a}
+const menuPhotoSets={"pasta":["photo-1655279561980-c72226ffe505","photo-1648427137895-cddb46fd3147","photo-1701856625684-04ba3eeed0d6"],"sandwich":["photo-1723476619535-18b87ac8a9aa","photo-1706468238744-6af411063336","photo-1737141499796-79082c7388b1"],"meals":["photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6","photo-1636044990623-074abdf6e994"],"weights":["photo-1559737558-2f5a35f4523a","photo-1723476619535-18b87ac8a9aa","photo-1636044989715-2d7409d1dfa9"],"soup":["photo-1701856625684-04ba3eeed0d6","photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6"],"rice":["photo-1761314025611-957a20e3e8a3","photo-1741612552052-2c5806e8a9ea","photo-1636044990623-074abdf6e994"],"extras":["photo-1636044990623-074abdf6e994","photo-1768966741466-95aec5f70d0a","photo-1761314025611-957a20e3e8a3"],"trays":["photo-1768966741466-95aec5f70d0a","photo-1737141499796-79082c7388b1","photo-1636044989715-2d7409d1dfa9"]};
+const photoBase='https://images.unsplash.com/';
+function card(c,it,index){const a=document.createElement('article');a.className='rcard menu-card';
+  const urls=menuPhotoSets[c.id]||menuPhotoSets.meals;const photo=urls[index%urls.length];
+  const im=document.createElement('img');im.className='menu-photo';im.loading='lazy';im.alt='صورة '+it[0];im.src=photoBase+photo+'?auto=format&fit=crop&w=900&q=82';
+  im.onerror=()=>{im.onerror=null;im.src=photoBase+'photo-1559737558-2f5a35f4523a?auto=format&fit=crop&w=900&q=80';};
+  const ico=document.createElement('div');ico.className='ico';ico.setAttribute('aria-hidden','true');ico.textContent=c.icon;
+  const title=document.createElement('h3');title.textContent=it[0];const chipbox=document.createElement('div');chipbox.className='chips';chipbox.innerHTML=chips(it[1]);
+  a.append(im,ico,title,chipbox);const b=document.createElement('a');b.className='btn sm';b.textContent='اطلب';setOrder(b,it[0]);a.append(b);return a}
 function row(it){const r=document.createElement('div');r.className='row';const n=document.createElement('b');n.className='n';n.textContent=it[0];
   const c=document.createElement('div');c.className='chips';c.innerHTML=chips(it[1]);const b=document.createElement('a');b.className='btn sm';b.textContent='اطلب';setOrder(b,it[0]);r.append(n,c,b);return r}
 function show(){const c=M[cat];
   [...$('tabs').children].forEach((t,i)=>t.setAttribute('aria-pressed',i===cat));
-  ring.setItems(c.items.map(it=>card(c,it)));$('list').replaceChildren(...c.items.map(row));
+  ring.setItems(c.items.map((it,index)=>card(c,it,index)));$('list').replaceChildren(...c.items.map(row));
   history.replaceState(null,'','#'+c.id)}
 M.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='tab';b.textContent=c.icon+' '+c.name;
   b.onclick=()=>{cat=i;show();b.scrollIntoView({block:'nearest',inline:'center'})};$('tabs').appendChild(b)});
