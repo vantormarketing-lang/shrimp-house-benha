@@ -34,7 +34,7 @@ button:hover{filter:brightness(1.06)}
 <main class="panel">
 <div class="kicker">PRIVATE STAFF AREA</div>
 <h1>دخول الإدارة</h1>
-<p class="intro">صفحة دخول فريق Shrimp House. تسجيل الدخول الحقيقي سيتم تفعيله بعد ربط نظام المصادقة الآمن.</p>
+<p class="intro">تسجيل دخول آمن لفريق المطعم باستخدام Supabase Auth. لن يسمح بالدخول إلا لحساب موظف مسجل.</p>
 <form id="loginForm">
 <label for="email">البريد الإلكتروني الإداري</label>
 <input id="email" type="email" autocomplete="username" placeholder="admin@example.com" required>
@@ -43,7 +43,7 @@ button:hover{filter:brightness(1.06)}
 <button type="submit">تسجيل الدخول</button>
 </form>
 <div class="status" id="status" role="status"></div>
-<div class="notice"><b>تنبيه أمان:</b> هذه واجهة تجريبية فقط. لم يتم توصيل المصادقة بعد، ولن يتم التحقق من كلمة المرور أو منح صلاحية دخول من هذه الصفحة.</div>
+<div class="notice">يتم التحقق من الحساب وصلاحيات الموظف من قاعدة البيانات قبل فتح لوحة الإدارة.</div>
 </main>
 <a class="back" href="./index.html">العودة للموقع الرئيسي</a>
 </div>
@@ -54,6 +54,23 @@ const status=document.getElementById('status');
 status.textContent='واجهة تسجيل الدخول جاهزة، لكن المصادقة الآمنة غير مفعّلة بعد. لم يتم تسجيل الدخول.';
 status.style.display='block';
 });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase/config.js"></script>
+<script>
+(async()=>{
+ const cfg=window.SHRIMP_SUPABASE_CONFIG;
+ if(!cfg?.url||!cfg?.anonKey){document.getElementById('status').textContent='إعدادات اتصال قاعدة البيانات غير مكتملة.';document.getElementById('status').style.display='block';return;}
+ const client=window.supabase.createClient(cfg.url,cfg.anonKey);
+ document.getElementById('loginForm').addEventListener('submit',async e=>{
+  e.preventDefault(); const status=document.getElementById('status'); status.style.display='block'; status.textContent='جارٍ التحقق من بيانات الدخول…';
+  const {data,error}=await client.auth.signInWithPassword({email:document.getElementById('email').value.trim(),password:document.getElementById('password').value});
+  if(error){status.textContent='تعذر تسجيل الدخول. راجع البريد وكلمة المرور وحاول مرة أخرى.';return;}
+  const {data:profile,error:profileError}=await client.from('staff_profiles').select('role,display_name').eq('user_id',data.user.id).maybeSingle();
+  if(profileError||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();status.textContent='الحساب صحيح، لكنه غير مسجل ضمن فريق Shrimp House. تم رفض الدخول.';return;}
+  window.location.replace('./admin.html');
+ });
+})();
 </script>
 </body>
 </html>
