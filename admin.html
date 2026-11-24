@@ -60,6 +60,23 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
  const {data:profile,error}=await client.from('staff_profiles').select('role,display_name').eq('user_id',session.user.id).maybeSingle();
  if(error||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();window.location.replace('./admin-login.html');return;}
  const logout=document.createElement('button'); logout.type='button'; logout.textContent='↩　تسجيل الخروج'; logout.style.cssText='font:inherit;color:#c0c9b5;text-align:right;background:transparent;border:1px solid #d8b66b24;border-radius:12px;padding:12px;cursor:pointer'; logout.addEventListener('click',async()=>{await client.auth.signOut();window.location.replace('./admin-login.html');}); document.querySelector('.nav')?.appendChild(logout);
+ // Dashboard live counts
+ const metricBoxes=[...document.querySelectorAll('#dashboard .stats .stat .num')];
+ const todayCairo=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Cairo'});
+ async function refreshDashboard(){
+  const day=todayCairo();
+  const [orders,bookings,menu]=await Promise.all([
+   client.from('orders').select('id,total,created_at',{count:'exact'}).gte('created_at',day+'T00:00:00+02:00').lt('created_at',day+'T23:59:59+02:00'),
+   client.from('bookings').select('id',{count:'exact'}).gte('booking_date',day),
+   client.from('menu_items').select('id',{count:'exact'})
+  ]);
+  if(metricBoxes.length>=4){
+   metricBoxes[0].innerHTML=(orders.count??'—')+' <small>طلبات اليوم</small>';
+   metricBoxes[1].innerHTML=(orders.data||[]).reduce((s,o)=>s+Number(o.total||0),0).toLocaleString('ar-EG')+' <small>جنيه اليوم</small>';
+   metricBoxes[2].innerHTML=(bookings.count??'—')+' <small>حجز قادم</small>';
+   metricBoxes[3].innerHTML=(menu.count??'—')+' <small>صنف مسجل</small>';
+  }
+ }
 // Live order manager (staff-only, RLS enforced)
  const orderLabels={new:'جديد',confirmed:'تم التأكيد',preparing:'قيد التجهيز',out_for_delivery:'خرج للتوصيل',completed:'مكتمل',cancelled:'ملغي'};
  const orderList=document.getElementById('ordersList'), orderMsg=document.getElementById('ordersMsg'), orderFilter=document.getElementById('orderFilter');
@@ -151,6 +168,10 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
   });
  }
  document.getElementById('refreshBookings').onclick=loadBookings;bookingFilter.onchange=loadBookings;loadBookings();
+ // Supabase Realtime auto-refresh for orders, bookings and menu changes
+ refreshDashboard();
+ client.channel('admin-live-data').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders();refreshDashboard();}).on('postgres_changes',{event:'*',schema:'public',table:'bookings'},()=>{loadBookings();refreshDashboard();}).on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},()=>{loadMenu();refreshDashboard();}).subscribe();
+
  // Live stock CRUD
  const stockList=document.getElementById('stockItems'),stockMsg=document.getElementById('stockMsg'),stockFilter=document.getElementById('stockFilter'),stockForm=document.getElementById('stockForm');
  const sf={id:document.getElementById('stockId'),name:document.getElementById('stockName'),unit:document.getElementById('stockUnit'),qty:document.getElementById('stockQty'),threshold:document.getElementById('stockThreshold')};
