@@ -112,7 +112,7 @@ window.MENU = [
     const o = Object.assign({ w: 230, autoplay: 0 }, opt || {});
     const track = stage.querySelector('.ring-track');
     const reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
-    const ds = 1; // carousel geometry is independent of page RTL
+    const ds = getComputedStyle(stage).direction === 'rtl' ? -1 : 1;
     let cards = [], n = 0, pos = 0, target = 0, cw = o.w, raf = 0, last = 0, drag = null, sup = false, wt = 0, timer = 0, dots = [];
     const cur = () => mod(Math.round(target), n);
  
@@ -124,7 +124,7 @@ window.MENU = [
     ui.append(bl, dw, br); stage.after(ui);
  
     function size() {
-      cw = Math.min(o.w, Math.max(190, stage.clientWidth * 0.62));
+      cw = Math.min(o.w, Math.max(190, stage.clientWidth * 0.7));
       stage.style.setProperty('--rw', cw + 'px');
       stage.style.perspective = cw * 3.5 + 'px';
       let h = 0; cards.forEach(c => h = Math.max(h, c.offsetHeight));
@@ -132,7 +132,7 @@ window.MENU = [
     }
     function render() {
       if (!n) return;
-      const step = 2 * Math.PI / n, Rx = Math.min(cw * 0.88, stage.clientWidth * 0.28), Rz = cw * 0.62;
+      const step = 2 * Math.PI / n, Rx = cw * 0.95, Rz = cw * 0.9;
       cards.forEach((c, i) => {
         const d = mod(i - pos + n / 2, n) - n / 2, f = d * step, s = Math.sin(f), co = Math.cos(f), e = (1 + co) / 2;
         c.style.transform = 'translate(-50%,-50%) translate3d(' + (ds * Rx * s).toFixed(1) + 'px,0,' + (Rz * (co - 1)).toFixed(1) + 'px) rotateY(' + (-ds * s * 24).toFixed(1) + 'deg)';
