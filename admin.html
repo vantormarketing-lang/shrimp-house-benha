@@ -148,6 +148,11 @@
 }
 .admin-top{justify-content:flex-start;margin-bottom:16px}.admin-top-label{display:flex;flex-direction:row;align-items:center;gap:8px}.admin-pill{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;font-size:12px}.admin-dot{width:8px;height:8px;border-radius:50%;background:#42df7b;box-shadow:0 0 7px #42df7b,0 0 15px #42df7b88;display:inline-block}.admin-refresh{font-size:11px!important;padding:5px 8px!important;border-radius:7px!important;width:max-content!important;min-width:0!important;background:rgba(244,237,219,.055)!important;border:1px solid rgba(216,182,107,.25)!important;color:#f4eddb!important;backdrop-filter:blur(16px)!important;box-shadow:0 5px 16px #0002!important}.mobile-menu-trigger-label{display:none}
 @media(max-width:620px){.mobile-menu-trigger{left:14px!important;right:auto!important;display:grid!important}.mobile-menu-trigger-label{display:block;position:fixed;top:25px;left:66px;z-index:1100;color:#f4eddb;font-size:13px;letter-spacing:.04em}.top.admin-top{padding:0!important;margin:0 0 16px!important;justify-content:flex-start!important}.admin-top-label{flex-direction:row!important;align-items:center!important;gap:8px!important;margin-left:0!important}.admin-pill,.admin-refresh{background:rgba(244,237,219,.055)!important;border:1px solid rgba(216,182,107,.25)!important;backdrop-filter:blur(16px)!important}.admin-refresh{padding:5px 8px!important;font-size:11px!important}}
+/* Centered cream-glass section title */
+.section-title-glass{width:min(100%,460px);margin:0 auto 18px;padding:13px 20px;text-align:center;border-radius:18px;background:linear-gradient(145deg,rgba(244,237,219,.18),rgba(244,237,219,.075));border:1px solid rgba(244,237,219,.35);box-shadow:0 12px 32px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.35);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);color:#f4eddb}
+.section-title-glass h2{margin:0;font-size:19px;font-weight:700;color:#f4eddb;letter-spacing:.02em}
+.section-title-glass p{margin:4px 0 0;font-size:11px;color:#e6dbc5;opacity:.9}
+@media(max-width:620px){.section-title-glass{width:min(100%,400px);margin:0 auto 14px;padding:11px 16px;border-radius:15px}.section-title-glass h2{font-size:16px}.section-title-glass p{font-size:10px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
@@ -189,6 +194,7 @@
  </div>
 </div>
 <main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">↻ Refresh</button></div></header>
+<div class="section-title-glass" id="sectionTitleGlass"><h2 id="sectionTitle">Dashboard</h2><p id="sectionSubtitle">نظرة عامة على Shrimp House</p></div>
 <div id="dashboard" class="view show"><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
 <div class="stat"><label>Today’s Sales <small>مبيعات اليوم</small></label><div class="num" id="metricTodaySales">—</div></div>
@@ -215,7 +221,7 @@ menuTrigger?.addEventListener('click',openMobileMenu);menuClose?.addEventListene
 mobileOverlay?.addEventListener('click',e=>{if(e.target===mobileOverlay)closeMobileMenu();});
 const mobileNames=['dashboard','orders','menu','bookings','stock','settings'];
 function updateMobileBack(){const active=mobileNames.find(k=>document.getElementById(k)?.classList.contains('show'));backButton.style.display=window.innerWidth<=620&&active&&active!=='dashboard'?'inline-flex':'none';}
-function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));document.getElementById("title").textContent=names[k][0];document.getElementById("sub").textContent=names[k][1];closeMobileMenu();updateMobileBack();}
+function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));const title=document.getElementById("sectionTitle"),subtitle=document.getElementById("sectionSubtitle");if(title)title.textContent=names[k][0];if(subtitle)subtitle.textContent=names[k][1];closeMobileMenu();updateMobileBack();}
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
 backButton?.addEventListener('click',openMobileMenu);
 window.addEventListener('resize',updateMobileBack);updateMobileBack();
