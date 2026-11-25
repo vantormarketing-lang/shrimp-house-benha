@@ -887,6 +887,22 @@ body.dish-modal-open{overflow:hidden!important;height:100dvh!important;overscrol
  .dish-modal .form-actions button{flex:1!important;padding:8px!important;font-size:12px!important}
 }
 </style>
+
+<style>
+/* Admin: hide visible scrollbar chrome globally without disabling page scroll */
+html,body,*{scrollbar-width:none!important;-ms-overflow-style:none!important}
+html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:0!important;height:0!important;display:none!important}
+/* Edit/add modal redesign: no outer frame, individual glass tiles */
+.dish-modal .dish-form{border:0!important;box-shadow:none!important;background:transparent!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;padding:0!important;border-radius:0!important}
+.dish-modal .dish-fields label{position:relative;padding:9px!important;border:1px solid rgba(150,178,194,.25)!important;border-radius:13px!important;background:linear-gradient(145deg,rgba(114,137,151,.20),rgba(255,255,255,.045))!important;box-shadow:0 9px 22px rgba(0,0,0,.19),inset 0 1px rgba(255,255,255,.07)!important;backdrop-filter:blur(15px)!important;-webkit-backdrop-filter:blur(15px)!important;transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease}
+.dish-modal .dish-fields label:hover{transform:translateY(-1px);border-color:rgba(105,210,240,.48)!important;background:linear-gradient(145deg,rgba(95,171,201,.24),rgba(255,255,255,.055))!important;box-shadow:0 10px 24px rgba(0,0,0,.2),0 0 14px rgba(89,198,229,.08)!important}
+.dish-modal .dish-fields input:not([type=checkbox]),.dish-modal .dish-fields textarea{border-color:rgba(140,182,201,.24)!important;background:linear-gradient(145deg,rgba(93,113,126,.25),rgba(20,27,31,.52))!important;box-shadow:inset 0 1px rgba(255,255,255,.05)!important;transition:border-color .18s ease,box-shadow .18s ease,background .18s ease}
+.dish-modal .dish-fields input:not([type=checkbox]):hover,.dish-modal .dish-fields textarea:hover{border-color:rgba(111,207,234,.45)!important;background:linear-gradient(145deg,rgba(93,137,157,.27),rgba(20,27,31,.52))!important}
+.dish-modal .dish-fields input:not([type=checkbox]):focus,.dish-modal .dish-fields textarea:focus{outline:none!important;border-color:rgba(110,211,240,.75)!important;box-shadow:0 0 0 2px rgba(102,199,230,.12),0 0 15px rgba(102,199,230,.11)!important}
+.dish-modal .form-actions button{border-color:rgba(135,185,204,.3)!important;background:linear-gradient(145deg,rgba(105,158,180,.22),rgba(255,255,255,.04))!important;color:#c2e8f5!important;transition:transform .16s ease,background .16s ease,border-color .16s ease,box-shadow .16s ease!important}
+.dish-modal .form-actions button:hover{transform:translateY(-2px)!important;border-color:rgba(112,208,238,.58)!important;background:linear-gradient(145deg,rgba(105,190,220,.30),rgba(255,255,255,.06))!important;box-shadow:0 7px 18px rgba(0,0,0,.2),0 0 12px rgba(103,198,231,.12)!important}
+.dish-modal .form-actions button:active{transform:scale(.98)!important}
+</style>
 </body></html>
 <style>
 /* Slightly darken the backdrop behind the opened mobile admin menu only */
