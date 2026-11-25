@@ -1,0 +1,14 @@
+{
+ "id":"/admin",
+ "name":"Shrimp House Admin",
+ "short_name":"SH Admin",
+ "description":"لوحة إدارة Shrimp House واستقبال إشعارات الطلبات والحجوزات",
+ "start_url":"/admin",
+ "scope":"/",
+ "display":"standalone",
+ "display_override":["standalone","minimal-ui"],
+ "background_color":"#11170f",
+ "theme_color":"#11170f",
+ "orientation":"any",
+ "icons":[{"src":"/admin-push-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}
