@@ -228,6 +228,38 @@ body.has-cart{padding-bottom:170px!important}
  .menu-option-choices{gap:5px}
 }
 
+
+/* Unified English price pills across every menu item */
+.chips .chip,.chips .option-chip{
+ display:inline-flex!important;align-items:baseline!important;justify-content:center!important;gap:6px!important;
+ min-height:34px;padding:6px 12px!important;border-radius:14px!important;color:#F2F8FC!important;
+ background:linear-gradient(115deg,#10243B 0%,#1B5B87 52%,#67B9E8 100%)!important;
+ border:1px solid rgba(189,231,252,.72)!important;
+ box-shadow:0 5px 15px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.16)!important;
+ font-family:inherit!important;font-size:12px!important;font-weight:700!important;
+ font-variant-numeric:tabular-nums;letter-spacing:.15px;text-shadow:0 1px 2px rgba(0,0,0,.24);
+}
+.chips .chip b,.chips .option-chip b{
+ padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;
+ color:#FFFFFF!important;font-size:17px!important;font-weight:900!important;line-height:1.1;
+}
+.chips .chip i,.chips .option-chip i{
+ padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;
+ color:#EAF7FF!important;font-style:normal!important;font-size:10px!important;font-weight:800!important;letter-spacing:.5px;
+}
+.chips .chip em,.chips .option-chip em{
+ padding:0!important;border:0!important;background:transparent!important;border-radius:0!important;
+ color:#EAF7FF!important;font-style:normal!important;font-size:11px!important;font-weight:700!important;
+}
+.chips .option-chip[aria-pressed="true"]{
+ background:linear-gradient(115deg,#10243B 0%,#1B5B87 52%,#67B9E8 100%)!important;
+ border-color:#D7F2FF!important;
+ box-shadow:0 0 0 2px rgba(103,185,232,.2),0 6px 18px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.2)!important;
+}
+.chips .option-chip:hover{transform:translateY(-1px);border-color:#D7F2FF!important;filter:brightness(1.08)}
+.menu-card-overlay .chips .chip{background:linear-gradient(115deg,#10243B 0%,#1B5B87 52%,#67B9E8 100%)!important;color:#F2F8FC!important}
+@media(max-width:600px){.chips .chip,.chips .option-chip{min-height:32px;padding:5px 9px!important;gap:5px!important}.chips .chip b,.chips .option-chip b{font-size:15px!important}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
 <body>
@@ -443,7 +475,10 @@ window.MENU = [
 const $=id=>document.getElementById(id);
 let M=MENU.map(c=>({...c,items:c.items.filter(i=>i[2]!=='hide').map(i=>({id:null,name:i[0],priceText:i[1],basePrice:Number(String(i[1]).split('|')[0].match(/\d+/)?.[0]||0),options:String(i[1]).split('|').map(x=>{const m=x.trim().match(/^(\d+)\s*(.*)$/);return m&&m[2]?{label:m[2].trim(),price:Number(m[1])}:null;}).filter(Boolean)}) )}));
 const parse=s=>s.split('|').map(x=>{const m=x.trim().match(/^(\d+)\s*(.*)$/);return{p:m?m[1]:x,l:m?m[2]:''}});
-const chips=s=>parse(s).map(v=>'<span class="chip"><b>'+v.p+'</b> ج.م'+(v.l?' <i>'+v.l+'</i>':'')+'</span>').join('');
+const formatPrice=value=>{const n=Number(value);return Number.isFinite(n)?new Intl.NumberFormat('en-US',{maximumFractionDigits:2}).format(n):String(value??'')};
+const englishPriceLabel=label=>{const x=String(label||'').trim().toLowerCase();if(/نصف|نص|half/.test(x))return'0.5 KG';if(/كيلو|كجم|kg/.test(x))return'1 KG';if(/صغير|small/.test(x))return'Small';if(/وسط|متوسط|medium/.test(x))return'Medium';if(/كبير|large/.test(x))return'Large';return x?'Option':''};
+const escapePriceText=value=>String(value??'').replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));
+const chips=s=>parse(s).map(v=>'<span class="chip price-chip"><b>'+formatPrice(v.p)+'</b><i>EGP</i>'+(v.l?'<em>'+escapePriceText(englishPriceLabel(v.l))+'</em>':'')+'</span>').join('');
 const ring=Ring($('ring'),{w:240});
 let cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));
 let categoryRingSync=true;
@@ -464,7 +499,7 @@ function renderCart(){
  count.textContent=entries.reduce((s,v)=>s+v.qty,0)+' صنف';list.replaceChildren();
  entries.forEach(v=>{
   const row=document.createElement('div');row.className='cart-row';
-  const label=document.createElement('span');label.className='cart-row-name';label.textContent=v.name+(v.option_label?' · '+v.option_label:'')+' — '+v.price+' ج.م';
+  const label=document.createElement('span');label.className='cart-row-name';label.textContent=v.name+(v.option_label?' · '+englishPriceLabel(v.option_label):'')+' — '+formatPrice(v.price)+' EGP';
   const controls=document.createElement('div');controls.className='cart-controls';
   const minus=document.createElement('button');minus.type='button';minus.textContent='−';minus.setAttribute('aria-label','تقليل '+v.name);
   minus.onclick=()=>{v.qty--;if(v.qty<=0)cart.delete(String(v.menu_item_id||v.name)+'|'+v.option_label);renderCart();};
@@ -491,7 +526,11 @@ function renderPriceOptions(it,container){
  it.options.forEach((option,index)=>{
   const button=document.createElement('button');
   button.type='button';button.className='chip option-chip';
-  button.textContent=Number(option.price).toLocaleString('ar-EG')+' ج.م '+option.label;
+  const amount=document.createElement('b');amount.textContent=formatPrice(option.price);
+  const currency=document.createElement('i');currency.textContent='EGP';
+  const size=document.createElement('em');size.textContent=englishPriceLabel(option.label);
+  button.append(amount,currency,size);
+  button.setAttribute('aria-label',formatPrice(option.price)+' EGP '+size.textContent);
   button.setAttribute('aria-pressed',index===0?'true':'false');
   button.addEventListener('click',()=>{
    selected=option.label;
