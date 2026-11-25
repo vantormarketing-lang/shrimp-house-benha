@@ -746,6 +746,6 @@ loadDatabaseMenu().then(()=>{
 /* The fallback remains usable when the database is temporarily unavailable. */
 // no second load call here(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
 </script>
-<script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const path=location.pathname;const p=(path==='/menu'||path==='/menu.html')?'/menu':((path==='/'||path.endsWith('/index.html'))?'/':'');const cfg=window.SHRIMP_SUPABASE_CONFIG;if(p&&window.supabase&&cfg?.url&&cfg?.anonKey){const db=window.supabase.createClient(cfg.url,cfg.anonKey);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script><script src="./supabase/pwa-install.js"></script>
+<script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const path=location.pathname;const p=(path==='/menu'||path==='/menu.html')?'/menu':((path==='/'||path.endsWith('/index.html'))?'/':'');const cfg=window.SHRIMP_SUPABASE_CONFIG;if(p&&window.supabase&&cfg?.url&&cfg?.anonKey){const db=window.supabase.createClient(cfg.url,cfg.anonKey);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script><script src="./supabase/pwa-install.js?v=navfix-20261125"></script>
 </body></html>
  
