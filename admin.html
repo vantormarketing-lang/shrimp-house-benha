@@ -2,6 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#11170f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="SH Admin">
+<link rel="manifest" href="/admin.webmanifest"><link rel="apple-touch-icon" href="/admin-push-icon.svg">
 <title>Shrimp House · Admin Studio</title>
 <style>
 :root{--bg:#11170f;--panel:#1b2417;--gold:#d8b66b;--cream:#f4eddb;--muted:#a9b39d;--line:#d8b66b24;--green:#82975e}
@@ -180,6 +182,7 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
+<script src="./supabase/admin-push.js"></script>
 <style>body{visibility:hidden}
 /* Mobile admin navigation palette and cleaner dashboard */
 @media(max-width:620px){
@@ -405,7 +408,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  if(!session){window.location.replace('./admin-login.html');return;}
  const {data:profile,error}=await client.from('staff_profiles').select('user_id,role,display_name').eq('user_id',session.user.id).maybeSingle();
  if(error||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();window.location.replace('./admin-login.html');return;}
- const logout=document.createElement('button'); logout.type='button'; logout.textContent='↩　تسجيل الخروج'; logout.style.cssText='font:inherit;color:#c0c9b5;text-align:right;background:transparent;border:1px solid #d8b66b24;border-radius:12px;padding:12px;cursor:pointer'; logout.addEventListener('click',async()=>{await client.auth.signOut();window.location.replace('./admin-login.html');}); document.querySelector('.nav')?.appendChild(logout);
+ const logout=document.createElement('button'); logout.type='button'; logout.textContent='↩　تسجيل الخروج'; logout.style.cssText='font:inherit;color:#c0c9b5;text-align:right;background:transparent;border:1px solid #d8b66b24;border-radius:12px;padding:12px;cursor:pointer'; logout.addEventListener('click',async()=>{await window.SHRIMP_ADMIN_PUSH?.unsubscribe(client);await client.auth.signOut();window.location.replace('./admin-login.html');}); document.querySelector('.nav')?.appendChild(logout);
  // Dashboard metrics
  const metric=(id,val,caption='')=>{const el=document.getElementById(id);if(el){const display=val===null||val===undefined?'—':(typeof val==='string'?val:Number(val).toLocaleString('en-US'));el.innerHTML=display+(caption?' <small>'+caption+'</small>':'');}};
  const todayCairo=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Cairo'});
@@ -616,11 +619,11 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
  let toastTimer=0;
  function notify(message){
   toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),6500);
-  if('Notification' in window&&Notification.permission==='granted'){try{new Notification('Shrimp House',{body:message,icon:'./favicon.ico'});}catch(_){}}
+  // Native OS alerts are sent by the service worker through Web Push.
  }
  const enable=document.createElement('button');enable.type='button';enable.id='enableBrowserNotifications';enable.className='refresh admin-notify';enable.textContent='🔔 إشعارات';enable.title='تفعيل إشعارات المتصفح';enable.setAttribute('aria-label','تفعيل إشعارات المتصفح');
- enable.onclick=async()=>{if(!('Notification' in window)){notify('هذا المتصفح لا يدعم إشعارات النظام.');return;}const p=await Notification.requestPermission();notify(p==='granted'?'تم تفعيل إشعارات الطلبات.':'لم يتم منح إذن الإشعارات.');};
  document.querySelector('.admin-top-label')?.appendChild(enable);
+ if(window.SHRIMP_ADMIN_PUSH?.bindButton)window.SHRIMP_ADMIN_PUSH.bindButton(client,profile,enable,notify);
  if(!isAdmin){['staff','activity'].forEach(id=>document.querySelectorAll('[data-go="'+id+'"]').forEach(x=>x.remove()));}
  async function loadKitchen(){
   const box=$('kitchenList'),msg=$('kitchenMsg');if(!box||!msg)return;
