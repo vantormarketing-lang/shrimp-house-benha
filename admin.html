@@ -228,6 +228,9 @@
 /* Hover/focus glass highlight for mobile menu items only */
 .mobile-menu-items button{transition:background .22s ease,border-color .22s ease,box-shadow .22s ease,transform .22s ease!important;}
 .mobile-menu-items button:hover,.mobile-menu-items button:focus-visible,.mobile-menu-items button:active{background:linear-gradient(145deg,#481326cc,#2b0b18cc)!important;border:1px solid #b88b5a88!important;border-radius:13px!important;box-shadow:0 5px 16px #0003,inset 0 1px #f4eddb16!important;transform:translateY(-1px)!important;outline:none!important;}
+
+/* Lift dashboard title and metric cards together without changing their spacing */
+@media(max-width:620px){.section-title-glass.dashboard-title{margin-top:4px!important}.stats{margin-top:-2px!important;}}
 </style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
