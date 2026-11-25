@@ -178,6 +178,11 @@ body.has-cart{padding-bottom:170px!important}
   .cart-row{width:100%!important;min-width:0!important}
 }
 
+
+.offer-strip{margin:4px 0 14px;padding:13px 15px;border:1px solid rgba(103,185,232,.3);border-radius:18px;background:rgba(42,45,51,.76);display:grid;gap:8px}
+.offer-strip:empty{display:none}.offer-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.offer-entry b{color:#67B9E8}.offer-entry small{color:#D7DCE4;opacity:.8}.offer-code{border:1px dashed #67B9E8;border-radius:12px;padding:4px 9px;font-weight:800;color:#D7DCE4}
+.menu-option-picker{padding:7px 10px!important;border-radius:12px!important;background:#20242b!important;color:#e4e9f0!important;border:1px solid #67b9e866!important;font:inherit!important;max-width:100%}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
 <body>
@@ -454,6 +459,16 @@ function row(it){
  const picker=makeOptionPicker(it);const b=document.createElement('button');b.type='button';b.className='btn sm';b.textContent='أضف للسلة';b.onclick=()=>cartAdd(it,picker?.value);
  r.append(n,c);if(picker)r.append(picker);r.append(b);return r;
 }
+async function loadActiveOffers(){
+ const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg?.url||!cfg?.anonKey||!window.supabase)return;
+ const db=window.supabase.createClient(cfg.url,cfg.anonKey);
+ const now=new Date().toISOString();
+ const {data,error}=await db.from('offers').select('title,description,promo_code,discount_type,discount_value,ends_at').eq('is_active',true).lte('starts_at',now).gt('ends_at',now).order('ends_at').limit(5);
+ if(error||!data?.length)return;
+ let strip=document.getElementById('activeOffers');
+ if(!strip){strip=document.createElement('section');strip.id='activeOffers';strip.className='offer-strip';strip.setAttribute('aria-label','العروض الحالية');$('tabs').before(strip);}
+ strip.innerHTML=data.map(o=>'<div class="offer-entry"><div><b>'+String(o.title||'عرض خاص').replace(/[&<>]/g,'')+'</b><br><small>'+String(o.description||'').replace(/[&<>]/g,'')+'</small></div><span class="offer-code">'+(o.promo_code?String(o.promo_code).replace(/[&<>]/g,'')+' · ':'')+(Number(o.discount_value).toLocaleString('ar-EG'))+(o.discount_type==='percent'?'% خصم':' ج.م خصم')+'</span></div>').join('');
+}
 function renderTabs(){
  $('tabs').replaceChildren();
  M.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='tab';b.textContent=c.icon+' '+c.name;
@@ -479,9 +494,9 @@ async function loadDatabaseMenu(){
  });
  const next=[...groups.values()];
  if(!next.length)return;
- M=next;cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));renderTabs();show();
+ M=next;cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));renderTabs();show();loadActiveOffers();
 }
-renderTabs();show();
+renderTabs();show();loadActiveOffers();
 loadDatabaseMenu().catch(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
 </script>
 <script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const p=location.pathname==='/menu.html'?'/menu.html':((location.pathname==='/'||location.pathname.endsWith('/index.html'))?'/':'');if(p&&window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){const db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script></body></html>
