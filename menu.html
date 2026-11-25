@@ -92,9 +92,9 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
 <body>
 <a class="skip" href="#main">تخطي إلى المحتوى</a>
 <header><div class="wrap"><nav>
-  <a class="brand" href="index.html"><span class="logo" aria-hidden="true">🦐</span><span>Shrimp House<small>BENHA • بيت الجمبري</small></span></a>
-  <div class="links"><a href="index.html">الرئيسية</a></div>
-  <a class="btn nav-cta" href="index.html#reserve">اطلب دلوقتي</a>
+  <a class="brand" href="/"><span class="logo" aria-hidden="true">🦐</span><span>Shrimp House<small>BENHA • بيت الجمبري</small></span></a>
+  <div class="links"><a href="/" target="_self">الرئيسية</a></div>
+  <a class="btn nav-cta" href="/#reserve" target="_self">اطلب دلوقتي</a>
 </nav></div></header>
 <main id="main" class="wrap">
   <div class="head"><div class="eyebrow">OUR MENU • FRESH SEAFOOD</div><h1>منيو Shrimp House</h1><p>اختار القسم، واسحب الكروت يمين أو شمال، أو افتح عرض القائمة</p></div>
@@ -260,7 +260,7 @@ window.MENU = [
   window.waLink = t => S.whatsapp ? 'https://wa.me/' + String(S.whatsapp).replace(/\D/g, '') + '?text=' + encodeURIComponent(t) : '';
   window.setOrder = (a, name) => {
     const w = waLink('أهلاً، عايز أطلب: ' + name);
-    a.href = w || 'index.html?item=' + encodeURIComponent(name) + '#reserve';
+    a.href = w || '/?item=' + encodeURIComponent(name) + '#reserve';
     if (w) { a.target = '_blank'; a.rel = 'noopener'; }
   };
   const fl = document.querySelector('.float');
@@ -313,7 +313,7 @@ const cart=new Map();
 function cartAdd(name,price){const v=cart.get(name)||{name,price,qty:0};v.qty++;cart.set(name,v);renderCart();}
 function renderCart(){const panel=$('multiCart'),list=$('cartItems'),count=$('cartCount');if(!panel||!list)return;const entries=[...cart.values()];panel.hidden=!entries.length;count.textContent=entries.reduce((s,v)=>s+v.qty,0)+' صنف';list.replaceChildren();entries.forEach(v=>{const row=document.createElement('div');row.className='cart-row';const label=document.createElement('span');label.className='cart-row-name';label.textContent=v.name;const controls=document.createElement('div');controls.className='cart-controls';const minus=document.createElement('button');minus.type='button';minus.textContent='−';minus.setAttribute('aria-label','تقليل '+v.name);minus.onclick=()=>{v.qty--;if(v.qty<=0)cart.delete(v.name);renderCart();};const qty=document.createElement('b');qty.textContent=v.qty;const plus=document.createElement('button');plus.type='button';plus.textContent='+';plus.setAttribute('aria-label','زيادة '+v.name);plus.onclick=()=>cartAdd(v.name,v.price);controls.append(minus,qty,plus);row.append(label,controls);list.append(row);});}
 $('clearCart').onclick=()=>{cart.clear();renderCart();};
-$('sendCart').onclick=()=>{const entries=[...cart.values()];if(!entries.length)return;const detail=entries.map(v=>v.name+' × '+v.qty).join('\\n');const text='أهلاً، عايز أطلب:\\n'+detail;const wa=window.SITE?.whatsapp;if(wa){window.open('https://wa.me/'+String(wa).replace(/\\D/g,'')+'?text='+encodeURIComponent(text),'_blank','noopener');}else{location.href='index.html?cart='+encodeURIComponent(detail)+'#reserve';}};
+$('sendCart').onclick=()=>{const entries=[...cart.values()];if(!entries.length)return;const detail=entries.map(v=>v.name+' × '+v.qty).join('\\n');const text='أهلاً، عايز أطلب:\\n'+detail;const wa=window.SITE?.whatsapp;if(wa){window.open('https://wa.me/'+String(wa).replace(/\\D/g,'')+'?text='+encodeURIComponent(text),'_blank','noopener');}else{location.href='/?cart='+encodeURIComponent(detail)+'#reserve';}};
 function card(c,it,index){const a=document.createElement('article');a.className='rcard menu-card';
   const urls=menuPhotoSets[c.id]||menuPhotoSets.meals;const photo=urls[index%urls.length];
   const im=document.createElement('img');im.className='menu-photo';im.loading='lazy';im.alt='صورة طعام '+it[0];im.src=photoBase+photo+'?auto=format&fit=crop&w=900&q=85';
