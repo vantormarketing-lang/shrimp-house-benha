@@ -148,6 +148,36 @@ body.has-cart{padding-bottom:170px!important}
   body.has-cart{padding-bottom:195px!important}
 }
 
+
+/* Cart items stacked vertically */
+#cartItems{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  justify-content:flex-start!important;
+  width:100%!important;
+  max-height:118px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+.cart-row{
+  flex:0 0 auto!important;
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+.cart-row-name{min-width:0!important}
+@media(max-width:620px){
+  #cartItems{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    max-height:82px!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+  }
+  .cart-row{width:100%!important;min-width:0!important}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
 <body>
