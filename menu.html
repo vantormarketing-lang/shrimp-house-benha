@@ -183,6 +183,24 @@ body.has-cart{padding-bottom:170px!important}
 .offer-strip:empty{display:none}.offer-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .offer-entry b{color:#67B9E8}.offer-entry small{color:#D7DCE4;opacity:.8}.offer-code{border:1px dashed #67B9E8;border-radius:12px;padding:4px 9px;font-weight:800;color:#D7DCE4}
 .menu-option-picker{padding:7px 10px!important;border-radius:12px!important;background:#20242b!important;color:#e4e9f0!important;border:1px solid #67b9e866!important;font:inherit!important;max-width:100%}
+
+/* Circular rotating category selector. */
+#tabs.category-ring{display:block!important;position:relative!important;top:auto!important;z-index:4!important;width:100%!important;max-width:900px!important;margin:18px auto 8px!important;padding:0!important;overflow:hidden!important;background:transparent!important;border:0!important;backdrop-filter:none!important}
+.category-orbit-card{height:142px!important;min-height:142px!important;box-sizing:border-box!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:9px!important;padding:16px 12px!important;text-align:center!important;border-radius:24px!important;overflow:hidden!important;background:linear-gradient(145deg,rgba(225,235,245,.13),rgba(76,103,126,.12) 54%,rgba(32,37,45,.94))!important;border:1px solid rgba(180,205,225,.34)!important;box-shadow:0 16px 38px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.13)!important;color:#D7DCE4!important;cursor:pointer}
+.category-orbit-card:before{content:"";position:absolute;inset:7px;border:1px solid rgba(103,185,232,.13);border-radius:18px;pointer-events:none}
+.category-orbit-card.front{border-color:rgba(103,185,232,.95)!important;background:linear-gradient(145deg,rgba(230,242,252,.23),rgba(103,185,232,.17) 52%,rgba(32,37,45,.96))!important;box-shadow:0 20px 48px rgba(0,0,0,.42),0 0 0 1px rgba(103,185,232,.34),0 0 24px rgba(103,185,232,.13),inset 0 1px 0 rgba(255,255,255,.22)!important}
+.category-orbit-eyebrow{font-size:9px!important;letter-spacing:2px!important;color:rgba(215,220,228,.65)!important;font-weight:700}
+.category-orbit-card h3{margin:0!important;color:#F0F5FA!important;font-size:clamp(18px,2.2vw,23px)!important;font-weight:850!important;line-height:1.25!important;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.category-orbit-dots{display:flex;align-items:center;justify-content:center;gap:7px;height:8px}
+.category-orbit-dots span{display:block;width:6px;height:6px;border-radius:50%;background:#67B9E8;box-shadow:0 0 10px rgba(103,185,232,.62)}
+.category-orbit-dots span+span{width:5px;height:5px;background:#D7DCE4;box-shadow:0 0 9px rgba(215,220,228,.5)}
+.category-orbit-index{font-size:8px!important;letter-spacing:2px!important;color:rgba(215,220,228,.48)!important;font-weight:700}
+.category-ring+.ring-ui{margin-top:0!important;margin-bottom:8px!important}
+.category-ring+.ring-ui .dots{gap:9px}
+.category-ring+.ring-ui .dot{background:rgba(215,220,228,.35)!important}
+.category-ring+.ring-ui .dot[aria-current=true]{background:#67B9E8!important;box-shadow:0 0 12px rgba(103,185,232,.45)}
+@media(max-width:600px){#tabs.category-ring{margin:12px auto 5px!important}.category-orbit-card{height:128px!important;min-height:128px!important;border-radius:21px!important}.category-orbit-card:before{inset:6px;border-radius:16px}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
 <body>
@@ -194,7 +212,7 @@ body.has-cart{padding-bottom:170px!important}
 </nav></div></header>
 <main id="main" class="wrap">
   <div class="head"><div class="eyebrow">OUR MENU • FRESH SEAFOOD</div><h1>منيو Shrimp House</h1><p>اختار القسم واسحب الكروت يمين أو شمال</p></div>
-  <div class="tabs" id="tabs" role="group" aria-label="أقسام المنيو"></div>
+  <div class="ring category-ring" id="tabs" role="group" aria-label="أقسام المنيو"><div class="ring-track" id="categoryTrack"></div></div>
   <div class="ring" id="ring" aria-label="أصناف القسم"><div class="ring-track" id="track"></div></div>
   <aside class="multi-cart glass" id="multiCart" hidden aria-live="polite"><div class="cart-head"><b>🛒 سلة طلباتك</b><span id="cartCount">0 صنف</span></div><div id="cartItems"></div><div class="cart-actions"><button class="btn sm ghost" id="clearCart" type="button">مسح السلة</button><button class="btn sm" id="sendCart" type="button">إرسال الطلب</button></div><div class="cart-msg" id="cartMsg"></div></aside>
 </main>
@@ -401,6 +419,7 @@ const parse=s=>s.split('|').map(x=>{const m=x.trim().match(/^(\d+)\s*(.*)$/);ret
 const chips=s=>parse(s).map(v=>'<span class="chip"><b>'+v.p+'</b> ج.م'+(v.l?' <i>'+v.l+'</i>':'')+'</span>').join('');
 const ring=Ring($('ring'),{w:240});
 let cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));
+const categoryRing=Ring($('tabs'),{w:190,onChange:i=>{if(i!==cat){cat=i;show();}}});
 const menuPhotoSets={"pasta":["photo-1655279561980-c72226ffe505","photo-1648427137895-cddb46fd3147","photo-1701856625684-04ba3eeed0d6"],"sandwich":["photo-1723476619535-18b87ac8a9aa","photo-1706468238744-6af411063336","photo-1737141499796-79082c7388b1"],"meals":["photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6","photo-1636044990623-074abdf6e994"],"weights":["photo-1559737558-2f5a35f4523b","photo-1794240280373-37ee5dd35822","photo-1654248568719-474fb9bd8a73","photo-1654426949677-45ecf830a543","photo-1704126035011-61edf6849d74","photo-1729268277387-fe88b9164792","photo-1772654271379-484eeabecc37"],"soup":["photo-1701856625684-04ba3eeed0d6","photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6"],"rice":["photo-1761314025611-957a20e3e8a3","photo-1741612552052-2c5806e8a9ea","photo-1636044990623-074abdf6e994"],"extras":["photo-1636044990623-074abdf6e994","photo-1768966741466-95aec5f70d0a","photo-1761314025611-957a20e3e8a3"],"trays":["photo-1768966741466-95aec5f70d0a","photo-1737141499796-79082c7388b1","photo-1636044989715-2d7409d1dfa9"]};
 const photoBase='https://images.unsplash.com/';
 const cart=new Map();
@@ -470,11 +489,16 @@ async function loadActiveOffers(){
  if(!strip){strip=document.createElement('section');strip.id='activeOffers';strip.className='offer-strip';strip.setAttribute('aria-label','العروض الحالية');$('tabs').before(strip);}
  strip.innerHTML=data.map(o=>'<div class="offer-entry"><div><b>'+String(o.title||'عرض خاص').replace(/[&<>]/g,'')+'</b><br><small>'+String(o.description||'').replace(/[&<>]/g,'')+'</small></div><span class="offer-code">'+(o.promo_code?String(o.promo_code).replace(/[&<>]/g,'')+' · ':'')+(Number(o.discount_value).toLocaleString('ar-EG'))+(o.discount_type==='percent'?'% خصم':' ج.م خصم')+'</span></div>').join('');
 }
-function renderTabs(){
- $('tabs').replaceChildren();
- M.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.className='tab';b.textContent=c.icon+' '+c.name;
-  b.setAttribute('aria-pressed',i===cat?'true':'false');b.onclick=()=>{cat=i;show();b.scrollIntoView({block:'nearest',inline:'center'});};$('tabs').appendChild(b);});
+function categoryCard(c,i){
+ const a=document.createElement('article');a.className='category-orbit-card';
+ const eyebrow=document.createElement('small');eyebrow.className='category-orbit-eyebrow';eyebrow.textContent='SHRIMP HOUSE MENU';
+ const title=document.createElement('h3');title.textContent=c.name;
+ const accents=document.createElement('div');accents.className='category-orbit-dots';accents.setAttribute('aria-hidden','true');
+ const first=document.createElement('span'),second=document.createElement('span');accents.append(first,second);
+ const footer=document.createElement('small');footer.className='category-orbit-index';footer.textContent='SECTION  '+String(i+1).padStart(2,'0');
+ a.append(eyebrow,title,accents,footer);return a;
 }
+function renderTabs(){categoryRing.setItems(M.map((c,i)=>categoryCard(c,i)));}
 function show(){
  const c=M[cat];if(!c)return;
  [...$('tabs').children].forEach((t,i)=>t.setAttribute('aria-pressed',i===cat?'true':'false'));
@@ -485,13 +509,13 @@ let menuDb=null,menuRealtime=null;
 async function loadDatabaseMenu(){
  const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg?.url||!cfg?.anonKey||!window.supabase)return;
  const db=menuDb||(menuDb=window.supabase.createClient(cfg.url,cfg.anonKey));
- const {data,error}=await db.from('menu_items').select('id,name,description,category,category_key,category_icon,price,options,image_url,sort_order,is_available').eq('is_available',true).order('sort_order').order('name');
+ const {data,error}=await db.from('menu_items').select('id,name,description,category,category_key,price,options,image_url,sort_order,is_available').eq('is_available',true).order('sort_order').order('name');
  if(error)throw error;
  if(!data?.length)throw new Error('لا توجد أصناف متاحة في قاعدة البيانات حتى الآن.');
  const groups=new Map();
  data.forEach(d=>{
   const key=d.category_key||d.category;
-  if(!groups.has(key))groups.set(key,{id:key,name:d.category,icon:d.category_icon||'🍽️',items:[]});
+  if(!groups.has(key))groups.set(key,{id:key,name:d.category,items:[]});
   groups.get(key).items.push({id:d.id,name:d.name,description:d.description||'',image_url:d.image_url||'',basePrice:Number(d.price||0),options:Array.isArray(d.options)?d.options:[]});
  });
  const next=[...groups.values()];
