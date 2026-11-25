@@ -293,36 +293,6 @@ body{background:radial-gradient(ellipse at 82% 0,#8e969e22,transparent 38%),radi
 .mobile-back{background:linear-gradient(145deg,#c5cbd1,#a7afb7)!important;border:1px solid #e0e4e8!important;color:#25292e!important;box-shadow:0 5px 14px #0003,inset 0 1px #fff8!important;}
 .mobile-back:hover,.mobile-back:active{background:linear-gradient(145deg,#d5d9de,#b8c0c7)!important;border-color:#eef1f4!important;color:#202328!important;}
 
-/* Three subtle colored indicator lights above dashboard Refresh */
-.dashboard-refresh-row .refresh{position:relative!important;margin-top:15px!important}
-.dashboard-refresh-row .refresh:before{content:"";position:absolute;top:-10px;left:50%;width:6px;height:6px;border-radius:50%;background:#dfe5eb;box-shadow:-11px 0 0 #a8c2d1,11px 0 0 #c9bca7,0 0 7px #dfe5eb55,-11px 0 7px #a8c2d155,11px 0 7px #c9bca755;transform:translateX(-50%);animation:dashboardDotsGlow 3s ease-in-out infinite}
-@keyframes dashboardDotsGlow{0%,100%{opacity:.78}50%{opacity:1;filter:brightness(1.18)}}
-
-/* Back arrow button cream fill, matching menu item cream selection */
-.mobile-back{background:linear-gradient(145deg,#f0e5cc,#d9c7a5)!important;border-color:#f4eddb!important;color:#451424!important;box-shadow:0 5px 14px #0003,inset 0 1px #fff9!important;}
-.mobile-back:hover,.mobile-back:active{background:linear-gradient(145deg,#f4eddb,#e2d2b3)!important;border-color:#fff5e2!important;color:#451424!important;}
-
-/* Precise compact mobile back-arrow square */
-@media(max-width:620px){
- .mobile-back{width:32px!important;height:32px!important;min-width:32px!important;padding:0!important;top:14px!important;transform:none!important;border-radius:10px!important;display:grid!important;place-items:center!important}
-}
-/* Clearly visible neon triple lights above the real dashboard refresh control */
-.admin-refresh{position:relative!important;margin-top:18px!important;overflow:visible!important}
-.admin-refresh:before{content:"";position:absolute!important;top:-14px!important;left:50%!important;width:7px!important;height:7px!important;border-radius:50%!important;transform:translateX(-50%)!important;background:#f3f7ff!important;box-shadow:-13px 0 0 #9bd7ff,13px 0 0 #d8c7ff,0 0 10px 3px #f3f7ffbb,-13px 0 10px 3px #9bd7ffbb,13px 0 10px 3px #d8c7ffbb!important;animation:refreshNeonDots 1.8s ease-in-out infinite!important;z-index:5!important}
-@keyframes refreshNeonDots{0%,100%{opacity:.88;filter:brightness(1);box-shadow:-13px 0 0 #9bd7ff,13px 0 0 #d8c7ff,0 0 10px 3px #f3f7ffbb,-13px 0 10px 3px #9bd7ffbb,13px 0 10px 3px #d8c7ffbb}50%{opacity:1;filter:brightness(1.4);box-shadow:-13px 0 0 #9bd7ff,13px 0 0 #d8c7ff,0 0 14px 5px #f3f7ff,-13px 0 14px 5px #9bd7ff,13px 0 14px 5px #d8c7ff}}
-
-/* Mobile admin controls reset: stable, unclipped positioning */
-@media(max-width:620px){
- .mobile-menu-trigger{left:14px!important;right:auto!important;top:14px!important;width:46px!important;height:46px!important}
- .mobile-back{position:fixed!important;top:14px!important;right:14px!important;left:auto!important;width:46px!important;height:46px!important;min-width:46px!important;padding:0!important;transform:none!important;display:grid!important;place-items:center!important;border-radius:14px!important;z-index:1101!important}
- .top.admin-top{height:0!important;min-height:0!important;padding:0!important;margin:0!important;display:block!important}
- .admin-top-label{position:fixed!important;top:68px!important;right:14px!important;left:auto!important;width:auto!important;display:flex!important;flex-direction:column!important;align-items:flex-end!important;gap:8px!important;z-index:1090!important}
- .admin-refresh{position:relative!important;display:inline-flex!important;width:max-content!important;max-width:none!important;min-width:82px!important;box-sizing:border-box!important;white-space:nowrap!important;margin:0!important;padding:7px 11px!important;overflow:visible!important}
-}
-/* Neon dots limited to Dashboard refresh */
-.admin-refresh:before{content:none!important}
-.main:has(#dashboard.view.show) .admin-refresh:before{content:""!important;position:absolute!important;top:-14px!important;left:50%!important;width:7px!important;height:7px!important;border-radius:50%!important;transform:translateX(-50%)!important;background:#f3f7ff!important;box-shadow:-13px 0 0 #9bd7ff,13px 0 0 #d8c7ff,0 0 10px 3px #f3f7ffbb,-13px 0 10px 3px #9bd7ffbb,13px 0 10px 3px #d8c7ffbb!important;animation:refreshNeonDots 1.8s ease-in-out infinite!important;z-index:5!important}
-@keyframes refreshNeonDots{0%,100%{opacity:.88;filter:brightness(1)}50%{opacity:1;filter:brightness(1.4)}}
 </style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
