@@ -112,6 +112,8 @@
 .dashboard-refresh-row .refresh:hover{background:rgba(208,180,110,.2);border-color:rgba(218,190,125,.55)}
 .dashboard-refresh-row .refresh:disabled{opacity:.65;cursor:wait}
 @media(max-width:600px){.dashboard-refresh-row{align-items:stretch}.dashboard-refresh-row .refresh{width:100%}}
+
+.dashboard-status-stack{display:grid;gap:4px}.dashboard-live-status{font-size:11px;color:var(--muted)}.dashboard-live-status.connected{color:#c7d6a9}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
@@ -121,7 +123,7 @@
 <nav class="nav"><button class="active" data-go="dashboard">⌂　الرئيسية</button><button data-go="orders">🧾　الطلبات</button><button data-go="menu">🍽️　المنيو</button><button data-go="bookings">📅　الحجوزات</button><button data-go="stock">🧺　المخزون</button><button data-go="settings">⚙️　الإعدادات</button></nav><div class="foot">مساحة إدارة Shrimp House<br>إدارة الموظفين · وصول آمن</div></aside>
 <main class="main"><header class="top"><div><h2 id="title">نظرة عامة</h2><p id="sub">أهلًا بك في مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
 <div id="dashboard" class="view show"><section class="hero"><small>SHRIMP HOUSE · CONTROL CENTER</small><h3>إدارة مطعمك، من مكان واحد.</h3><p>تابع الطلبات، المنيو، الحجوزات والمخزون<br>بتجربة إدارة مصممة خصيصًا لهوية Shrimp House.</p><span class="tagline">Premium Restaurant Management</span></section>
-<div class="dashboard-refresh-row"><span id="dashboardStatus" role="status">جارٍ تحديث بيانات لوحة التحكم…</span><button type="button" class="refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div><div class="stats"><div class="stat"><label>طلبات اليوم</label><div class="num">— <small>جارٍ التحميل</small></div></div><div class="stat"><label>مبيعات اليوم</label><div class="num">— <small>جنيه اليوم</small></div></div><div class="stat"><label>الحجوزات القادمة</label><div class="num">— <small>قيد التأكيد</small></div></div><div class="stat"><label>أصناف المنيو</label><div class="num">— <small>صنف مسجل</small></div></div></div>
+<div class="dashboard-refresh-row"><div class="dashboard-status-stack"><span id="dashboardStatus" role="status">جارٍ تحديث بيانات لوحة التحكم…</span><span id="dashboardRealtimeStatus" class="dashboard-live-status">جارٍ الاتصال بالتحديثات المباشرة…</span></div><button type="button" class="refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div><div class="stats"><div class="stat"><label>طلبات اليوم</label><div class="num">— <small>جارٍ التحميل</small></div></div><div class="stat"><label>مبيعات اليوم</label><div class="num">— <small>جنيه اليوم</small></div></div><div class="stat"><label>الحجوزات القادمة</label><div class="num">— <small>قيد التأكيد</small></div></div><div class="stat"><label>أصناف المنيو</label><div class="num">— <small>صنف مسجل</small></div></div></div>
 <div class="lower"><section class="section"><div class="secthead"><b>مراكز الإدارة</b><small>نظرة سريعة</small></div><div class="manager-list">
 <div class="manager" style="--photo:url('https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=80')"><div><strong>🧾　مركز الطلبات</strong><small>متابعة الطلبات وتحديث حالاتها</small></div><span class="state">قسم الإدارة</span></div>
 <div class="manager" style="--photo:url('https://images.unsplash.com/photo-1559737558-2f5a3c9b8b8c?auto=format&fit=crop&w=900&q=80')"><div><strong>🍤　إدارة قائمة الطعام</strong><small>الأصناف والصور والأسعار والتوفر</small></div><span class="state">قسم الإدارة</span></div>
@@ -272,6 +274,12 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
  document.getElementById('refreshBookings').onclick=loadBookings;bookingFilter.onchange=loadBookings;loadBookings();
  // Supabase Realtime auto-refresh for orders, bookings and menu changes
  document.getElementById("refreshDashboard")?.addEventListener("click",refreshDashboard);refreshDashboard();
+ const liveStatus=document.getElementById('dashboardRealtimeStatus');
+ const dashboardLiveChannel=client.channel('admin-dashboard-live-metrics')
+  .on('postgres_changes',{event:'*',schema:'public',table:'orders'},refreshDashboard)
+  .on('postgres_changes',{event:'*',schema:'public',table:'bookings'},refreshDashboard)
+  .on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},refreshDashboard)
+  .subscribe(status=>{if(liveStatus){liveStatus.textContent=status==='SUBSCRIBED'?'● تحديث مباشر متصل':status==='CHANNEL_ERROR'||status==='TIMED_OUT'?'التحديث المباشر غير متاح · استخدم زر التحديث':'جارٍ الاتصال…';liveStatus.classList.toggle('connected',status==='SUBSCRIBED');}});
  client.channel('admin-live-data').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders();refreshDashboard();}).on('postgres_changes',{event:'*',schema:'public',table:'bookings'},()=>{loadBookings();refreshDashboard();}).on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},()=>{loadMenu();refreshDashboard();}).subscribe();
 
  // Live stock CRUD
