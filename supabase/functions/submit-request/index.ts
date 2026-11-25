@@ -113,7 +113,7 @@ export default {
       const minimum = Number(settings?.minimum_order || 0);
       if (subtotal < minimum) return reply(req, { error: "الحد الأدنى للطلب " + minimum + " جنيه." }, 400);
       const deliveryFee = fulfillment === "delivery" ? Number(settings?.delivery_fee || 0) : 0;
-      const allowedPayments = String(settings?.payment_methods || "كاش عند الاستلام").split(/[,،\\n]/).map(x => x.trim()).filter(Boolean);
+      const allowedPayments = String(settings?.payment_methods || "كاش عند الاستلام").split(/[,،\n]/).map(x => x.trim()).filter(Boolean);
       const paymentMethod = clean(body.payment_method, 80) || allowedPayments[0] || "كاش عند الاستلام";
       if (!allowedPayments.includes(paymentMethod)) return reply(req, { error: "طريقة الدفع المختارة غير متاحة حاليًا." }, 400);
       let discount = 0;
