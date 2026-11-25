@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>متابعة الطلب | Shrimp House</title>
+<meta name="description" content="تابع حالة طلبك أو حجزك لدى Shrimp House Benha باستخدام رقم المتابعة ورقم الموبايل.">
+<meta name="theme-color" content="#17191D">
+<style>
+:root{color-scheme:dark;--bg:#17191D;--panel:#252930;--text:#D7DCE4;--muted:#9AA7B7;--blue:#67B9E8;--line:#67B9E844}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0,#293440,var(--bg) 65%);color:var(--text);font-family:Tahoma,Arial,sans-serif;line-height:1.8;padding:24px}
+main{width:min(100%,620px);margin:40px auto}.brand{text-align:center;color:var(--blue);font-weight:800;letter-spacing:2px;font-size:13px}.panel{margin-top:18px;padding:clamp(20px,5vw,34px);border:1px solid var(--line);border-radius:24px;background:rgba(37,41,48,.88);box-shadow:0 25px 70px #0007;backdrop-filter:blur(18px)}
+h1{font-size:clamp(25px,6vw,36px);margin:5px 0 8px;text-align:center}.intro{text-align:center;color:var(--muted);font-size:14px;margin:0 0 25px}
+label{display:block;margin:13px 0 6px;font-size:13px;color:#c8d5e1}input{width:100%;padding:14px;border-radius:12px;border:1px solid #aab8c633;background:#171b21;color:var(--text);font:inherit}input:focus{outline:2px solid var(--blue);outline-offset:2px}
+button,.button{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;padding:12px 20px;border:1px solid var(--blue);border-radius:30px;background:linear-gradient(135deg,#d7dce4,#9aa7b7);color:#17191d;font-weight:800;font:inherit;cursor:pointer;text-decoration:none}
+button{width:100%}button:disabled{opacity:.6;cursor:wait}.status{margin-top:18px;color:var(--muted);font-size:14px}.result{margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#171b20}.result h2{font-size:20px;margin:0 0 8px;color:var(--blue)}.state{display:inline-block;padding:5px 12px;border:1px solid var(--blue);border-radius:20px;color:var(--blue);font-weight:700}.detail{font-size:13px;color:#c4ccd6;white-space:pre-line;margin-top:10px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 0}.step{height:6px;border-radius:8px;background:#ffffff20}.step.active{background:var(--blue)}.back{display:block;text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body><main>
+<div class="brand">SHRIMP HOUSE · BENHA</div>
+<section class="panel">
+<h1>تابع طلبك أو حجزك</h1>
+<p class="intro">اكتب رقم المتابعة ورقم الموبايل المسجل في الطلب لمعرفة آخر تحديث.</p>
+<form id="trackForm">
+<label for="trackingCode">رقم المتابعة</label><input id="trackingCode" required maxlength="20" placeholder="مثال: 12AB34CD56EF" autocomplete="off">
+<label for="phone">رقم الموبايل</label><input id="phone" required inputmode="tel" autocomplete="tel" placeholder="01xxxxxxxxx">
+<button id="trackButton" type="submit">عرض الحالة</button>
+</form>
+<div class="status" id="status" role="status" aria-live="polite"></div>
+<div id="result"></div>
+<a class="back" href="./index.html">العودة للموقع الرئيسي</a>
+</section></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script>
+<script>
+(function(){
+ const $=id=>document.getElementById(id),cfg=window.SHRIMP_SUPABASE_CONFIG;
+ const client=cfg&&window.supabase?window.supabase.createClient(cfg.url,cfg.anonKey):null;
+ const params=new URLSearchParams(location.search);if(params.get('code'))$('trackingCode').value=params.get('code').toUpperCase();
+ const labels={new:'تم استلام الطلب',confirmed:'تم تأكيد الطلب',preparing:'قيد التجهيز',out_for_delivery:'خرج للتوصيل',completed:'تم التسليم',cancelled:'ملغي',pending:'بانتظار تأكيد الحجز'};
+ const phoneAscii=v=>String(v).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s|-/g,'');
+ function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+ $('trackForm').addEventListener('submit',async e=>{
+  e.preventDefault();const code=$('trackingCode').value.trim().toUpperCase(),phone=phoneAscii($('phone').value);
+  if(!client){$('status').textContent='تعذر الاتصال بخدمة المتابعة الآن.';return;}
+  const btn=$('trackButton');btn.disabled=true;btn.textContent='جارٍ البحث…';$('result').replaceChildren();$('status').textContent='جارٍ التحقق من رقم المتابعة والموبايل…';
+  try{
+   const {data,error}=await client.functions.invoke('submit-request',{body:{action:'track_order',tracking_code:code,phone}});
+   if(error||!data?.ok){let reason=data?.error||'لم نعثر على طلب أو حجز مطابق.';if(error?.context?.json){try{reason=(await error.context.json())?.error||reason;}catch(_){}}throw new Error(reason);}
+   if(data.kind==='order'){
+    const o=data.order,steps=['new','confirmed','preparing','out_for_delivery','completed'],index=steps.indexOf(o.status);
+    const items=Array.isArray(o.items)?o.items.map(x=>(x.name||'صنف')+(x.option_label?' · '+x.option_label:'')+' × '+(x.quantity||1)+' — '+Number(x.line_total||0).toLocaleString('ar-EG')+' ج.م').join('\n'):'';
+    $('result').innerHTML='<section class="result"><h2>طلب رقم '+esc(o.tracking_code)+'</h2><span class="state">'+esc(labels[o.status]||o.status)+'</span><div class="steps">'+steps.map((s,i)=>'<span class="step '+(index>=i&&index>=0?'active':'')+'"></span>').join('')+'</div><div class="detail">'+esc(items)+'\nرسوم التوصيل: '+Number(o.delivery_fee||0).toLocaleString('ar-EG')+' ج.م\nالخصم: '+Number(o.discount_amount||0).toLocaleString('ar-EG')+' ج.م\nالإجمالي: '+Number(o.total||0).toLocaleString('ar-EG')+' ج.م</div></section>';
+   }else{
+    const b=data.booking;$('result').innerHTML='<section class="result"><h2>حجز رقم '+esc(b.booking_code)+'</h2><span class="state">'+esc(labels[b.status]||b.status)+'</span><div class="detail">التاريخ: '+esc(b.booking_date)+'\nالوقت: '+esc(b.booking_time)+'\nعدد الأفراد: '+esc(b.guests)+'</div></section>';
+   }
+   $('status').textContent='تم العثور على بياناتك بنجاح.';
+  }catch(err){$('status').textContent=err?.message||'حدث خطأ أثناء المتابعة.';}
+  finally{btn.disabled=false;btn.textContent='عرض الحالة';}
+ });
+})();
+</script></body></html>
