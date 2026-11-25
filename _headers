@@ -1,0 +1,9 @@
+/admin-push-sw.js
+  Service-Worker-Allowed: /admin
+  Cache-Control: no-cache
+
+/sw.js
+  Cache-Control: no-cache
+
+/app.webmanifest
+  Cache-Control: no-cache
