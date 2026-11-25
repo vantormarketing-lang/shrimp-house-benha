@@ -162,6 +162,9 @@
  .mobile-menu-items small{color:#79564b!important}.mobile-menu-close{background:#501528!important;border-color:#6d2a3c!important;color:#f4eddb!important;}
  .mobile-menu-panel,.mobile-menu-overlay{scrollbar-width:none!important;-ms-overflow-style:none!important}.mobile-menu-panel::-webkit-scrollbar,.mobile-menu-overlay::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
  .mobile-menu-trigger{background:linear-gradient(145deg,#f4eddb,#e9dfc8 60%,#ded0b4)!important;border:1px solid #c8b68b!important;color:#451424!important;box-shadow:0 8px 28px #0003!important;}
+.mobile-menu-panel{position:relative!important;}
+ .mobile-menu-close{position:absolute!important;top:10px!important;left:10px!important;right:auto!important;width:40px!important;height:40px!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;background:transparent!important;border:0!important;border-radius:0!important;box-shadow:none!important;color:#f4eddb!important;font-size:26px!important;line-height:1!important;}
+ .mobile-menu-heading{padding-top:20px!important;}
  /* Dashboard metrics: let cards blend into page instead of framed boxes */
 }
 </style>
@@ -180,7 +183,7 @@
    <button type="button" data-go="stock"><span class="menu-icon">🧺</span><span class="menu-copy"><b>Inventory</b><small>المخزون</small></span></button>
    <button type="button" data-go="settings"><span class="menu-icon">⚙</span><span class="menu-copy"><b>Settings</b><small>الإعدادات</small></span></button>
   </nav>
-  <button type="button" class="mobile-menu-close" id="mobileMenuClose">إغلاق القائمة ×</button>
+  <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="رجوع" title="رجوع">←</button>
  </div>
 </div>
 <main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top"><div><h2 id="title">Dashboard</h2><p id="sub">نظرة عامة · مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
