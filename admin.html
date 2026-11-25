@@ -341,9 +341,9 @@ body{background:radial-gradient(ellipse at 82% 0,#8e969e22,transparent 38%),radi
 <div class="stat"><label>Total Sales <small>إجمالي المبيعات</small></label><div class="num" id="metricTotalSales">—</div></div>
 <div class="stat"><label>Completed Orders <small>الطلبات المكتملة</small></label><div class="num" id="metricCompleted">—</div></div>
 <div class="stat"><label>Low Stock Items <small>مخزون منخفض</small></label><div class="num" id="metricLowStock">—</div></div>
- </div></div><div class="view" id="orders"><section class="section live-section"><div class="secthead"><b>طلبات المطعم المباشرة</b><small id="ordersCount">جارٍ التحميل…</small></div><div class="toolbar"><button type="button" class="refresh" id="refreshOrders">↻ تحديث الطلبات</button><select id="orderFilter"><option value="">كل الحالات</option><option value="new">جديد</option><option value="confirmed">تم التأكيد</option><option value="preparing">قيد التجهيز</option><option value="out_for_delivery">خرج للتوصيل</option><option value="completed">مكتمل</option><option value="cancelled">ملغي</option></select></div><div id="ordersMsg" class="live-msg"></div><div id="ordersList" class="orders-list"></div></section></div>
+ </div></div><div class="view" id="orders"><section class="section live-section"><div class="secthead"><b>طلبات المطعم المباشرة</b><small id="ordersCount">جارٍ التحميل…</small></div><div class="toolbar"><button type="button" class="refresh" id="refreshOrders">↻ تحديث الطلبات</button><button type="button" class="refresh" id="exportOrders">⬇ تصدير الطلبات CSV</button><select id="orderFilter"><option value="">كل الحالات</option><option value="new">جديد</option><option value="confirmed">تم التأكيد</option><option value="preparing">قيد التجهيز</option><option value="out_for_delivery">خرج للتوصيل</option><option value="completed">مكتمل</option><option value="cancelled">ملغي</option></select></div><div id="ordersMsg" class="live-msg"></div><div id="ordersList" class="orders-list"></div></section></div>
 <div class="view" id="menu"><section class="section live-section"><div class="secthead"><b>إدارة أصناف المنيو</b><small id="menuCount">جارٍ التحميل</small></div><div class="toolbar"><button type="button" class="refresh" id="addDishBtn">＋ إضافة صنف</button><button type="button" class="refresh" id="refreshMenu">↻ تحديث</button><select id="menuCategoryFilter"><option value="">كل الأقسام</option></select></div><div id="menuMsg" class="live-msg"></div><form id="dishForm" class="dish-form" hidden><input type="hidden" id="dishId"><div class="dish-fields"><label>اسم الصنف<input id="dishName" required maxlength="120"></label><label>القسم<input id="dishCategory" required maxlength="80" placeholder="مثال: جمبري"></label><label>السعر (جنيه)<input id="dishPrice" type="number" min="0" step="0.01" required></label><label>ترتيب العرض<input id="dishOrder" type="number" value="0"></label><label class="wide">الوصف<textarea id="dishDescription" rows="2" maxlength="500"></textarea></label><label class="wide">الأحجام والأسعار الإضافية (JSON)<textarea id="dishOptions" rows="2" placeholder='[{"label":"نصف كيلو","price":250},{"label":"كيلو","price":500}]'></textarea></label><label class="wide">رابط الصورة<input id="dishImage" type="url" placeholder="رابط الصورة https://..."></label><label class="avail"><input id="dishAvailable" type="checkbox" checked> متاح للطلب</label></div><div class="form-actions"><button type="submit" class="refresh" id="saveDish">حفظ الصنف</button><button type="button" class="refresh" id="cancelDish">إلغاء</button></div></form><div id="menuItems" class="menu-items"></div></section></div>
-<div class="view" id="bookings"><section class="section live-section"><div class="secthead"><b>إدارة الحجوزات</b><small id="bookingCount">جارٍ التحميل</small></div><div class="toolbar"><select id="bookingFilter"><option value="">كل الحجوزات</option><option value="pending">بانتظار التأكيد</option><option value="confirmed">مؤكد</option><option value="cancelled">ملغي</option><option value="completed">مكتمل</option></select><button type="button" class="refresh" id="refreshBookings">↻ تحديث الحجوزات</button></div><div id="bookingMsg" class="live-msg"></div><div id="bookingList" class="booking-list"></div></section></div>
+<div class="view" id="bookings"><section class="section live-section"><div class="secthead"><b>إدارة الحجوزات</b><small id="bookingCount">جارٍ التحميل</small></div><div class="toolbar"><select id="bookingFilter"><option value="">كل الحجوزات</option><option value="pending">بانتظار التأكيد</option><option value="confirmed">مؤكد</option><option value="cancelled">ملغي</option><option value="completed">مكتمل</option></select><button type="button" class="refresh" id="refreshBookings">↻ تحديث الحجوزات</button><button type="button" class="refresh" id="exportBookings">⬇ تصدير الحجوزات CSV</button></div><div id="bookingMsg" class="live-msg"></div><div id="bookingList" class="booking-list"></div></section></div>
 <div class="view" id="stock"><section class="section live-section"><div class="secthead"><b>إدارة المخزون</b><small id="stockCount">جارٍ التحميل</small></div><div class="toolbar"><button type="button" class="refresh" id="addStockBtn">＋ إضافة خامة</button><button type="button" class="refresh" id="refreshStock">↻ تحديث</button><select id="stockFilter"><option value="">كل المواد</option><option value="low">المخزون المنخفض</option></select></div><div id="stockMsg" class="live-msg"></div><form id="stockForm" class="dish-form" hidden><input type="hidden" id="stockId"><div class="dish-fields"><label>اسم المادة<input id="stockName" required maxlength="120"></label><label>وحدة القياس<input id="stockUnit" placeholder="كيلو / قطعة / لتر" maxlength="30"></label><label>الكمية الحالية<input id="stockQty" type="number" min="0" step="0.01" required></label><label>حد التنبيه عند النقص<input id="stockThreshold" type="number" step="0.01" min="0" required></label></div><div class="form-actions"><button class="refresh" id="saveStock" type="submit">حفظ المادة</button><button class="refresh" id="cancelStock" type="button">إلغاء</button></div></form><div id="stockItems" class="stock-list"></div><section class="section live-section" style="margin-top:14px"><div class="secthead"><b>سجل حركة المخزون</b><small>إضافة وصرف وتسويات الخامات</small></div><form id="stockMovementForm" class="dish-form"><div class="dish-fields"><label>الخامة<select id="movementItem" required></select></label><label>الكمية المضافة أو المسحوبة<input id="movementDelta" type="number" step="0.001" required placeholder="استخدم رقمًا سالبًا للصرف"></label><label class="wide">ملاحظة<input id="movementNote" maxlength="300" placeholder="سبب الإضافة أو الصرف"></label></div><div class="form-actions"><button type="submit" id="saveMovement" class="refresh">تسجيل الحركة</button></div></form><div id="movementMsg" class="live-msg"></div><div id="movementList" class="op-list"></div></section></section></div>
 <div class="view" id="settings"><section class="section live-section"><div class="secthead"><b>بيانات Shrimp House</b><small>تتحفظ مباشرة في قاعدة البيانات</small></div><div id="settingsMsg" class="live-msg">جارٍ تحميل إعدادات المطعم…</div><form id="settingsForm" class="dish-form"><div class="dish-fields"><label>اسم المطعم<input id="setName" required maxlength="100"></label><label>رقم الهاتف<input id="setPhone" maxlength="40" inputmode="tel"></label><label>رقم واتساب<input id="setWhatsapp" maxlength="40" inputmode="tel"></label><label class="wide">العنوان<input id="setAddress" maxlength="300"></label><label class="wide">ساعات العمل<textarea id="setHours" rows="4" maxlength="800" placeholder="مثال: يوميًا من 12 ظهرًا إلى 1 صباحًا"></textarea></label><label>رابط خرائط Google<input id="setMaps" maxlength="500" placeholder="https://maps.google.com/..."></label><label>رابط فيسبوك<input id="setFacebook" maxlength="500"></label><label>رابط إنستجرام<input id="setInstagram" maxlength="500"></label><label>رسوم التوصيل (جنيه)<input id="setDeliveryFee" type="number" min="0" step="0.01"></label><label>الحد الأدنى للطلب (جنيه)<input id="setMinimumOrder" type="number" min="0" step="0.01"></label><label class="wide">مناطق التوصيل<textarea id="setDeliveryAreas" rows="2" maxlength="1000" placeholder="الأحياء أو المناطق التي يغطيها التوصيل"></textarea></label><label class="wide">طرق الدفع<textarea id="setPaymentMethods" rows="2" maxlength="500" placeholder="كاش عند الاستلام، ..."></textarea></label></div><div class="form-actions"><button type="submit" class="refresh" id="saveSettings">حفظ إعدادات المطعم</button><button type="button" class="refresh" id="reloadSettings">إعادة تحميل</button></div></form></section></div>
 <div class="view" id="kitchen"><section class="section live-section"><div class="secthead"><b>Kitchen Queue · شاشة المطبخ</b><small>الطلبات النشطة مرتبة بالأقدم</small></div><div id="kitchenMsg" class="live-msg">جارٍ تحميل الطلبات النشطة…</div><div id="kitchenList" class="op-list"></div></section></div>
@@ -617,10 +617,50 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
   });
   box.querySelectorAll('.kitchen-refresh').forEach(btn=>btn.onclick=loadKitchen);
  }
+ function csvCell(value){
+  let text=String(value??'');
+  if(['=','+','-','@','\t','\r'].includes(text.charAt(0)))text="'"+text;
+  return '"'+text.replace(/"/g,'""')+'"';
+ }
+ function downloadCSV(filename,headers,rows){
+  const content='\uFEFF'+[headers,...rows.map(row=>row.map(csvCell))].map(row=>row.join(',')).join('\r\n');
+  const blob=new Blob([content],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+ }
+ const fileDate=()=>new Date().toISOString().slice(0,10);
  async function getOrderRows(){
-  const {data,error}=await client.from('orders').select('id,customer_name,phone,items,total,status,created_at,fulfillment_type').order('created_at',{ascending:false}).limit(5000);
+  const {data,error}=await client.from('orders').select('id,tracking_code,customer_name,phone,address,items,total,status,notes,created_at,fulfillment_type,delivery_fee,discount_amount,payment_method').order('created_at',{ascending:false}).limit(5000);
   if(error)throw error;return data||[];
  }
+ async function exportOrders(){
+  const btn=$('exportOrders');if(!btn)return;btn.disabled=true;
+  try{
+   const rows=await getOrderRows(),labels={new:'جديد',confirmed:'مؤكد',preparing:'قيد التجهيز',out_for_delivery:'خرج للتوصيل',completed:'مكتمل',cancelled:'ملغي'};
+   downloadCSV('shrimp-house-orders-'+fileDate()+'.csv',
+    ['رقم الطلب','رقم المتابعة','التاريخ','العميل','الموبايل','نوع الاستلام','العنوان','الأصناف','الإجمالي','التوصيل','الخصم','طريقة الدفع','الحالة','ملاحظات'],
+    rows.map(o=>[o.id,o.tracking_code,dateText(o.created_at),o.customer_name,o.phone,o.fulfillment_type==='pickup'?'استلام':'توصيل',o.address,
+     Array.isArray(o.items)?o.items.map(i=>(i.name||'صنف')+(i.option_label?' '+i.option_label:'')+' × '+(i.quantity||1)).join(' | '):'',
+     o.total,o.delivery_fee,o.discount_amount,o.payment_method,labels[o.status]||o.status,o.notes]));
+   notify('تم تجهيز ملف الطلبات للتنزيل.');
+  }catch(e){notify('تعذر تصدير الطلبات: '+e.message);}
+  finally{btn.disabled=false;}
+ }
+ $('exportOrders')?.addEventListener('click',exportOrders);
+ $('exportBookings')?.addEventListener('click',async()=>{
+  const btn=$('exportBookings');if(!btn)return;btn.disabled=true;
+  try{
+   const {data,error}=await client.from('bookings').select('id,booking_code,customer_name,phone,guests,booking_date,booking_time,notes,status,created_at').order('booking_date',{ascending:true}).limit(5000);
+   if(error)throw error;
+   const labels={pending:'بانتظار التأكيد',confirmed:'مؤكد',cancelled:'ملغي',completed:'مكتمل'};
+   downloadCSV('shrimp-house-bookings-'+fileDate()+'.csv',
+    ['رقم الحجز','رقم المتابعة','التاريخ','الوقت','العميل','الموبايل','عدد الأفراد','الحالة','ملاحظات','تاريخ التسجيل'],
+    (data||[]).map(b=>[b.id,b.booking_code,b.booking_date,b.booking_time,b.customer_name,b.phone,b.guests,labels[b.status]||b.status,b.notes,dateText(b.created_at)]));
+   notify('تم تجهيز ملف الحجوزات للتنزيل.');
+  }catch(e){notify('تعذر تصدير الحجوزات: '+e.message);}
+  finally{btn.disabled=false;}
+ });
  async function loadReports(){
   const msg=$('reportMsg');if(!msg)return;msg.textContent='جارٍ تجميع البيانات…';
   try{
@@ -648,7 +688,7 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
    const rows=await getOrderRows(),groups=new Map();
    rows.forEach(o=>{const key=o.phone||'بدون رقم';if(!groups.has(key))groups.set(key,{phone:key,name:o.customer_name,orders:0,total:0,last:o.created_at});const g=groups.get(key);g.orders++;if(o.status!=='cancelled')g.total+=Number(o.total||0);if(new Date(o.created_at)>new Date(g.last)){g.last=o.created_at;g.name=o.customer_name;}});
    const data=[...groups.values()].sort((a,b)=>b.orders-a.orders);
-   const draw=()=>{const term=($('customerSearch').value||'').trim().toLowerCase();const visible=data.filter(x=>(x.name+' '+x.phone).toLowerCase().includes(term));box.innerHTML=visible.length?visible.map(x=>'<article class="op-card"><div class="op-card-head"><b>'+esc(x.name)+'</b><span class="op-pill">'+x.orders+' طلب</span></div><div>'+esc(x.phone)+'</div><small>إجمالي المشتريات: '+money(x.total)+' · آخر طلب: '+dateText(x.last)+'</small><div class="op-actions"><a class="op-pill" href="https://wa.me/'+esc(x.phone.replace(/\D/g,''))+'" target="_blank" rel="noopener">واتساب</a></div></article>').join(''):'<div class="op-muted">لا توجد نتائج مطابقة.</div>';};
+   const draw=()=>{const term=($('customerSearch').value||'').trim().toLowerCase();const visible=data.filter(x=>(x.name+' '+x.phone).toLowerCase().includes(term));box.innerHTML=visible.length?visible.map(x=>'<article class="op-card"><div class="op-card-head"><b>'+esc(x.name)+'</b><span class="op-pill">'+x.orders+' طلب</span></div><div>'+esc(x.phone)+'</div><small>إجمالي المشتريات: '+money(x.total)+' · آخر طلب: '+dateText(x.last)+'</small><div class="op-actions"><a class="op-pill" href="https://wa.me/'+esc(x.phone.replace(/\D/g,'').replace(/^0/,'20'))+'" target="_blank" rel="noopener">واتساب</a></div></article>').join(''):'<div class="op-muted">لا توجد نتائج مطابقة.</div>';};
    draw();$('customerSearch').oninput=draw;msg.textContent=data.length+' عميل مسجل من الطلبات.';
   }catch(e){msg.textContent='تعذر تحميل العملاء: '+e.message;}
  }
