@@ -315,15 +315,15 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
   <section id="reserve">
     <div class="sectionhead"><div class="eyebrow">ORDER • RESERVE</div><h2>طلبك أو حجزك يبدأ من هنا</h2></div>
     <div class="booking glass">
-      <div><h3>اطلب أو احجز عبر واتساب</h3><p style="opacity:.75">اكتب تفاصيل طلبك أو حجزك، وهنفتح لك واتساب برسالة جاهزة تبعتها لنا.</p></div>
+      <div><h3>اطلب أو احجز مع Shrimp House</h3><p style="opacity:.75">اختار أصنافك من المنيو، وسجّل الطلب أو الحجز مباشرة، ثم تابع حالته برقم المتابعة.</p><a href="./track-order.html" class="btn ghost sm">متابعة طلب أو حجز</a></div>
       <form id="orderForm" novalidate>
         <label class="sr" for="customerName">الاسم</label><input id="customerName" placeholder="الاسم" autocomplete="name" required>
         <label class="sr" for="customerPhone">رقم الموبايل</label><input id="customerPhone" type="tel" inputmode="tel" placeholder="رقم الموبايل (01xxxxxxxxx)" autocomplete="tel" required>
         <label class="sr" for="orderType">نوع الطلب</label><select id="orderType"><option>طلب دليفري</option><option>حجز طاولة</option><option>استلام من المطعم</option></select>
         <div id="addrRow"><label class="sr" for="customerAddr">العنوان</label><input id="customerAddr" placeholder="عنوان التوصيل بالتفصيل" autocomplete="street-address"></div>
         <div id="whenRow" hidden><label for="bookingDateTime">موعد الحجز</label><input id="bookingDateTime" type="datetime-local" required><label for="bookingGuests">عدد الأفراد</label><select id="bookingGuests"><option value="2">2 أفراد</option><option value="1">1 فرد</option><option value="3">3 أفراد</option><option value="4">4 أفراد</option><option value="5">5 أفراد</option><option value="6">6 أفراد</option><option value="7">7 أفراد</option><option value="8">8 أفراد</option><option value="9">9 أفراد</option><option value="10">10 أفراد</option></select><label class="sr" for="whenAt">ملاحظات الموعد</label><input id="whenAt" placeholder="أي ملاحظات عن الحجز (اختياري)"></div>
-        <label class="sr" for="orderDetails">التفاصيل</label><textarea id="orderDetails" placeholder="اكتب الأصناف المطلوبة أو ملاحظاتك"></textarea>
-        <button class="btn" type="submit">جهّز رسالة واتساب</button>
+        <label class="sr" for="orderDetails">التفاصيل</label><textarea id="orderDetails" placeholder="ملاحظاتك على الطلب (اختياري)"></textarea><label for="promoCode">كود الخصم (اختياري)</label><input id="promoCode" maxlength="40" placeholder="أدخل كود الخصم">
+        <button class="btn" type="submit">تأكيد الطلب والحجز</button>
         <div class="msg" id="formMsg" role="status" aria-live="polite"></div>
       </form>
     </div>
@@ -506,38 +506,80 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
   const sync = () => { addr.hidden = type.value !== 'طلب دليفري'; when.hidden = type.value !== 'حجز طاولة'; };
   type.addEventListener('change', sync); sync();
   const params = new URLSearchParams(location.search), item = params.get('item'), cart = params.get('cart');
-  if (cart) det.value = 'عايز أطلب:\n' + cart;
-  else if (item) det.value = 'عايز أطلب: ' + item;
+  let selectedCart=[];
+  if(cart){
+    try{const parsed=JSON.parse(cart);if(Array.isArray(parsed))selectedCart=parsed;}
+    catch(_){det.value='تفاصيل الطلب: '+cart;}
+  }
+  if(item)det.value='الصنف المطلوب: '+item;
+  if(selectedCart.length)det.value='تم اختيار '+selectedCart.length+' صنف من المنيو. اكتب أي ملاحظات إضافية هنا.';
+  const dbCfg=window.SHRIMP_SUPABASE_CONFIG;
+  const dbClient=dbCfg?.url&&dbCfg?.anonKey&&window.supabase?window.supabase.createClient(dbCfg.url,dbCfg.anonKey):null;
+  const submitBtn=f.querySelector('button[type="submit"]');
+  const showMessage=(text,code,kind)=>{
+    msg.replaceChildren();msg.textContent=text;
+    if(code){
+      const p=document.createElement('p');p.style.cssText='margin:8px 0 4px;font-weight:800;letter-spacing:.08em';
+      p.textContent='رقم المتابعة: '+code;msg.appendChild(p);
+      const link=document.createElement('a');link.href='./track-order.html?code='+encodeURIComponent(code);
+      link.textContent='تابع حالة '+(kind==='booking'?'الحجز':'الطلب');link.style.cssText='display:inline-block;margin:4px 8px;padding:7px 12px;border-radius:18px;border:1px solid currentColor';
+      msg.appendChild(link);
+    }
+  };
+  const showWhatsapp=(lines)=>{
+    const url=waLink(lines.join('\n'));if(!url)return;
+    const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';
+    a.textContent='إرسال تفاصيل الطلب عبر واتساب';a.style.cssText='display:inline-block;margin:8px;padding:7px 12px;border-radius:18px;border:1px solid currentColor';
+    msg.appendChild(a);
+  };
   f.addEventListener('submit', async e => {
     e.preventDefault();
-    const phone = en($('customerPhone').value).replace(/\s|-/g, '');
-    const name = $('customerName').value.trim(), address=$('customerAddr').value.trim(), details=det.value.trim();
-    if (!/^(\+?20|0)?1[0125]\d{8}$/.test(phone)) { msg.textContent = 'من فضلك اكتب رقم موبايل مصري صحيح.'; $('customerPhone').focus(); return; }
+    const phone=en($('customerPhone').value).replace(/\s|-/g,'');
+    const name=$('customerName').value.trim(),address=$('customerAddr').value.trim(),details=det.value.trim();
+    if(name.length<2){msg.textContent='اكتب الاسم بشكل صحيح.';$('customerName').focus();return;}
+    if(!/^(\+?20|0)?1[0125]\d{8}$/.test(phone)){msg.textContent='من فضلك اكتب رقم موبايل مصري صحيح.';$('customerPhone').focus();return;}
+    if(!dbClient){msg.textContent='خدمة الطلبات غير متاحة حاليًا. حاول مرة أخرى لاحقًا.';return;}
     const isBooking=type.value==='حجز طاولة';
-    let payload,table='orders';
+    let action,body;
     if(isBooking){
       const dt=$('bookingDateTime').value;
-      if(!dt){msg.textContent='اختار تاريخ ووقت الحجز الأول.'; $('bookingDateTime').focus(); return;}
-      const dateObj=new Date(dt);
-      if(Number.isNaN(dateObj.getTime())||dateObj.getTime()<Date.now()){msg.textContent='اختار موعد حجز في المستقبل.';return;}
-      table='bookings';
-      payload={customer_name:name,phone,guests:Number($('bookingGuests').value||2),booking_date:dt.slice(0,10),booking_time:dt.slice(11,16),notes:details+( $('whenAt').value.trim()?' • '+$('whenAt').value.trim():''),status:'pending'};
+      if(!dt){msg.textContent='اختار تاريخ ووقت الحجز الأول.';$('bookingDateTime').focus();return;}
+      const dateObj=new Date(dt);if(Number.isNaN(dateObj.getTime())||dateObj.getTime()<Date.now()){msg.textContent='اختار موعد حجز في المستقبل.';return;}
+      action='create_booking';
+      body={action,customer_name:name,phone,booking_date:dt.slice(0,10),booking_time:dt.slice(11,16),guests:Number($('bookingGuests').value||2),notes:details+( $('whenAt').value.trim()?' • '+$('whenAt').value.trim():'')};
     }else{
-      payload={customer_name:name,phone,address: type.value==='طلب دليفري'?address:'استلام من المطعم',items:details?[{name:details,quantity:1}]:[],total:0,notes:type.value,status:'new'};
+      let items=selectedCart;
+      if(!items.length&&item){
+        const {data:found,error:findError}=await dbClient.from('menu_items').select('id,name,options').eq('name',item).eq('is_available',true).maybeSingle();
+        if(findError||!found){msg.textContent='الصنف غير متاح حاليًا. افتح المنيو واختره من جديد.';return;}
+        if(Array.isArray(found.options)&&found.options.length){msg.textContent='الصنف له أحجام مختلفة. اختاره من المنيو وحدد الحجم.';return;}
+        items=[{menu_item_id:found.id,quantity:1,option_label:''}];
+      }
+      if(!items.length){msg.textContent='اختار أصنافك من المنيو أولًا، ثم اضغط إرسال الطلب من السلة.';return;}
+      if(type.value==='طلب دليفري'&&address.length<6){msg.textContent='اكتب عنوان التوصيل بالتفصيل.';$('customerAddr').focus();return;}
+      action='create_order';
+      body={action,customer_name:name,phone,fulfillment_type:type.value==='طلب دليفري'?'delivery':'pickup',address,items:items.map(x=>({menu_item_id:x.menu_item_id,option_label:x.option_label||'',quantity:Number(x.quantity||1)})),notes:details,promo_code:document.getElementById('promoCode')?.value.trim()||''};
     }
-    msg.textContent='جاري تسجيل طلبك…';
-    let saved=false, dbError='';
-    try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(cfg?.url&&cfg?.anonKey&&window.supabase){const sb=window.supabase.createClient(cfg.url,cfg.anonKey);const {error}=await sb.from(table).insert(payload);if(error)throw error;saved=true;}else{throw new Error('database client unavailable');}}catch(err){dbError=err?.message||'unknown';console.warn('Request save failed:',dbError);}
-    const lines=['طلب/حجز جديد','الاسم: '+name,'الموبايل: '+phone,'النوع: '+type.value];
-    if(!isBooking&&address&&type.value==='طلب دليفري')lines.push('العنوان: '+address);
-    if(isBooking)lines.push('الموعد: '+$('bookingDateTime').value.replace('T',' '),'عدد الأفراد: '+$('bookingGuests').value);
-    if(details)lines.push('التفاصيل: '+details);
-    if($('whenAt').value.trim())lines.push('ملاحظات: '+$('whenAt').value.trim());
-    const url=waLink(lines.join('\n'));
-    if(saved)msg.textContent='تم تسجيل '+(isBooking?'طلب الحجز':'طلبك')+' في النظام. جاري فتح واتساب للتأكيد…';
-    else msg.textContent='تعذر تسجيل الطلب تلقائيًا، لكن يمكنك إرساله عبر واتساب.';
-    if(url)window.open(url,'_blank','noopener');
-    if(!url&&saved)msg.textContent+=' وتم حفظه بنجاح. فريق المطعم سيُراجعه.';
+    submitBtn.disabled=true;submitBtn.textContent='جارٍ تسجيل '+(isBooking?'الحجز':'الطلب')+'…';msg.textContent='جارٍ التحقق من البيانات والأسعار وتسجيل الطلب…';
+    try{
+      const {data,error}=await dbClient.functions.invoke('submit-request',{body});
+      if(error||!data?.ok){
+        let detail=data?.error||'تعذر تسجيل الطلب. راجع البيانات وحاول مرة أخرى.';
+        if(error?.context?.json){try{const more=await error.context.json();detail=more?.error||detail;}catch(_){}}
+        throw new Error(detail);
+      }
+      const record=isBooking?data.booking:data.order;
+      const code=record?.booking_code||record?.tracking_code;
+      showMessage(isBooking?'تم تسجيل الحجز بنجاح، وهو بانتظار تأكيد المطعم.':'تم استلام طلبك بنجاح وإرساله للمطعم.',code,isBooking?'booking':'order');
+      const lines=[isBooking?'حجز جديد':'طلب جديد','رقم المتابعة: '+code,'الاسم: '+name,'الموبايل: '+phone,'النوع: '+type.value];
+      if(isBooking)lines.push('الموعد: '+$('bookingDateTime').value.replace('T',' '),'عدد الأفراد: '+$('bookingGuests').value);
+      else lines.push('الإجمالي المسجل: '+Number(record.total||0).toLocaleString('ar-EG')+' ج.م');
+      if(address&&type.value==='طلب دليفري')lines.push('العنوان: '+address);
+      if(details)lines.push('ملاحظات: '+details);
+      showWhatsapp(lines);
+      if(selectedCart.length){selectedCart=[];history.replaceState(null,'',location.pathname+'#reserve');}
+    }catch(err){console.warn('Request submission failed:',err);msg.textContent=err?.message||'تعذر تسجيل الطلب. حاول مرة أخرى.';}
+    finally{submitBtn.disabled=false;submitBtn.textContent='تأكيد الطلب والحجز';}
   });
 })();
 </script>
