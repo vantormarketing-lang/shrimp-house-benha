@@ -77,6 +77,21 @@
 .dish-buttons .delete{border-color:rgba(208,125,110,.2);background:rgba(208,125,110,.05)}
 .menu-empty{background:rgba(255,255,255,.025);border-color:rgba(211,183,111,.28);backdrop-filter:blur(16px)}
 @media(max-width:620px){.dish-card img,.dish-card .dish-photo{height:200px}.dish-body{padding:14px}.dish-buttons button{flex:1}}
+
+/* Inventory workspace glass refinement */
+.stock-card{position:relative;overflow:hidden;border-color:rgba(211,183,111,.3);background:linear-gradient(145deg,rgba(202,191,151,.10),rgba(255,255,255,.025));box-shadow:0 15px 34px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(22px);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.stock-card:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 100% 0,rgba(208,180,110,.12),transparent 58%)}
+.stock-card:hover{transform:translateY(-2px);border-color:rgba(218,190,125,.5);box-shadow:0 18px 38px rgba(0,0,0,.28)}
+.stock-card h4,.stock-meta,.stock-qty,.stock-actions{position:relative;z-index:1}
+.stock-card h4{font-size:15px;padding-bottom:7px;border-bottom:1px solid rgba(211,183,111,.14)}
+.stock-meta{color:#c5cdbd;line-height:1.7}
+.stock-qty{display:inline-flex;width:max-content;align-items:center;border:1px solid rgba(211,183,111,.28);border-radius:12px;padding:8px 11px;background:rgba(208,180,110,.08);text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.stock-low{border-color:rgba(215,123,98,.48);background:linear-gradient(145deg,rgba(215,123,98,.11),rgba(255,255,255,.02))}
+.stock-low .stock-qty{color:#e5a18d;border-color:rgba(215,123,98,.4);background:rgba(215,123,98,.09)}
+.stock-actions button{background:linear-gradient(145deg,rgba(208,180,110,.12),rgba(255,255,255,.025));border-color:rgba(211,183,111,.3);transition:background .2s ease,border-color .2s ease}
+.stock-actions button:hover{background:rgba(208,180,110,.18);border-color:rgba(218,190,125,.55)}
+.stock-actions .delete{border-color:rgba(208,125,110,.2);background:rgba(208,125,110,.05)}
+@media(max-width:620px){.stock-card{padding:13px}.stock-actions button{flex:1}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
