@@ -19,17 +19,21 @@ Public users may read available menu items and currently active offers, but no l
 - The current staff profile has role `admin`.
 - Existing views: Dashboard, Orders, Menu, Bookings, Inventory, Settings.
 - Added views: Kitchen queue, sales reports, customer summaries, active offers/coupons, recipe-to-inventory mappings, staff invitation/role management, audit/activity log.
-- Realtime alerts are shown while an authenticated admin page is open; the browser notification permission is opt-in.
+- Admin Web Push sends native operating-system notifications for new orders and bookings even when the admin page is closed. The admin device subscribes through `admin-push`, and the public `submit-request` function sends the event in an Edge Function background task.
+- The first authenticated admin visit initializes one VAPID key pair in `admin_push_config`; subscriptions are stored per device in `admin_push_subscriptions`. Both tables have RLS enabled, no browser grants, explicit deny policies for `anon` and `authenticated`, and service-role-only access.
+- The admin page registers `/admin-push-sw.js` and uses `/admin.webmanifest` for its installable standalone app. The notification button connects the current browser/device, asks for permission, and sends a test notification. Each device/browser must be enabled separately.
+- On iPhone/iPad, Web Push requires iOS/iPadOS 16.4 or later and the admin web app added to the Home Screen; open it from its Home Screen icon before enabling notifications. On desktop and Android, use a current HTTPS browser that supports Web Push.
+- Signing out of the admin account removes that device's push subscription.
 - Staff invitations run through `admin-staff-invite`, require an authenticated admin, send an Auth invitation email and create the staff profile. Supabase Auth email delivery/SMTP and the redirect URL must be configured.
 - Inventory movements are recorded with an authenticated RPC. Order recipes are deducted when an order is moved into `preparing`; deductions happen only for recipes actually configured.
 
 ## New database objects and functions
-- `menu_items.options`, `category_key`, `category_icon`
+- `admin_push_config`, `admin_push_subscriptions` (server-only VAPID key and device subscription storage)\n- `menu_items.options`, `category_key`, `category_icon`
 - `orders.tracking_code`, `fulfillment_type`, `delivery_fee`, `discount_amount`, `payment_method`, `stock_deducted_at`
 - `bookings.booking_code`
 - `restaurant_settings.maps_url`, social URLs, delivery fee, minimum, delivery areas and payment methods
 - `menu_item_recipes`, `inventory_movements`, `order_status_history`, `staff_activity_logs`, `offers`, `request_rate_limits`
-- Edge Functions: `submit-request` (public, server-validated) and `admin-staff-invite` (admin-only)
+- Edge Functions: `submit-request` v6 (public, server-validated, dispatches order/booking Web Push), `admin-push` v1 (authenticated staff subscription setup/test), and `admin-staff-invite` (admin-only)
 - Migrations: `20261125150819_restaurant_operations_foundation`, `20261125151636_secure_public_requests_and_inventory_movements`.
 
 ## Owner configuration still required
@@ -37,12 +41,12 @@ Public users may read available menu items and currently active offers, but no l
 2. Enter actual delivery fees, minimum order, delivery areas and accepted payment method labels (comma-separated). The checkout uses those settings; the server validates the selected payment-method label.
 3. Add the real ingredients/stock amounts in Inventory, then create recipe quantities for each menu item in Recipes. Do not invent ingredient quantities; automatic stock deduction will apply only after real recipes are entered.
 4. Confirm Auth email/SMTP delivery and the allowed redirect URL for staff invitations.
-5. Browser push notifications are optional; allow notifications in the browser while the admin page is open.
+5. Open Admin on each intended device, click **🔔 تفعيل**, allow notifications, and wait for the test notification. Repeat on every separate browser/device. On iPhone/iPad, install the admin web app to the Home Screen first.
 
 ## Security notes
 - RLS remains enabled. The public role can read available menu items and active offers; it cannot insert orders or bookings directly.
 - Request rate-limit records are not readable/writable by browser roles.
-- No service-role or secret key is stored in this repository.
+- No service-role or secret key is stored in this repository. VAPID private key material is stored only in the service-role-only `admin_push_config` table and is never returned to browser clients.
 - Review Supabase Auth's leaked-password protection and remaining security advisor findings before advertising the system as fully production-hardened.
 
 ## Final operations pass — 2026-11-25
@@ -57,7 +61,7 @@ Public users may read available menu items and currently active offers, but no l
 - Staff authorization helpers are stored in the non-exposed `private` schema. Public helper functions were removed from the Data API. The inventory movement RPC runs as SECURITY INVOKER and is guarded by the private staff check plus table RLS.
 - Explicit Data API grants were added for operational tables, while RLS still controls row access. Browser roles cannot access `request_rate_limits` or insert orders/bookings directly.
 - Query indexes were added for order/booking timelines, inventory movements, recipes, activity logs and visits. Performance advisors may report them as unused until real operational records accumulate.
-- Canonical migration filenames now match the applied database versions: `20261125153225_enable_realtime_for_operations`, `20261125154116_complete_recipe_coverage_before_stock_deduction`, `20261125154543_booking_status_history_timeline`, and `20261125160720_operations_access_performance_hardening`.
+- Canonical migration filenames now match the applied database versions: `20261125153225_enable_realtime_for_operations`, `20261125154116_complete_recipe_coverage_before_stock_deduction`, `20261125154543_booking_status_history_timeline`, `20261125160720_operations_access_performance_hardening`, `20261125164901_admin_push_notifications`, and `20261125165405_admin_push_browser_access_deny`.
 
 ## Verification status
 
