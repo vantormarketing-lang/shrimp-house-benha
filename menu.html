@@ -5,7 +5,7 @@
 <title>منيو Shrimp House Benha | بيت الجمبري</title>
 <meta name="description" content="منيو Shrimp House بنها بالأسعار: مكرونات، سندوتشات، وجبات، جمبري بالوزن، شوربة، أرز وصواني.">
 <meta name="theme-color" content="#17191D">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%90%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="/app-icon.svg"><link rel="apple-touch-icon" href="/app-icon-180.png"><link rel="manifest" href="/app.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -338,7 +338,12 @@ body.has-cart{padding-bottom:170px!important}
 }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script><style>
+.sh-pwa-install{flex:0 0 auto;border:1px solid rgba(215,220,228,.38);border-radius:16px;padding:8px 13px;background:linear-gradient(145deg,rgba(215,220,228,.94),rgba(103,185,232,.84));color:#17191D;font:800 12px/1.2 Tajawal,system-ui,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.8);backdrop-filter:blur(14px);cursor:pointer;white-space:nowrap}
+.sh-pwa-install[hidden]{display:none!important}.sh-pwa-install:focus-visible{outline:2px solid #67B9E8;outline-offset:3px}
+@media(max-width:620px){.sh-pwa-install{padding:7px 9px;font-size:11px;border-radius:13px}}
+</style>
+</head>
 <body>
 <a class="skip" href="#main">تخطي إلى المحتوى</a>
 <header><div class="wrap"><nav>
@@ -695,5 +700,6 @@ loadDatabaseMenu().then(()=>{
 /* The fallback remains usable when the database is temporarily unavailable. */
 // no second load call here(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
 </script>
-<script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const path=location.pathname;const p=(path==='/menu'||path==='/menu.html')?'/menu':((path==='/'||path.endsWith('/index.html'))?'/':'');const cfg=window.SHRIMP_SUPABASE_CONFIG;if(p&&window.supabase&&cfg?.url&&cfg?.anonKey){const db=window.supabase.createClient(cfg.url,cfg.anonKey);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script></body></html>
+<script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const path=location.pathname;const p=(path==='/menu'||path==='/menu.html')?'/menu':((path==='/'||path.endsWith('/index.html'))?'/':'');const cfg=window.SHRIMP_SUPABASE_CONFIG;if(p&&window.supabase&&cfg?.url&&cfg?.anonKey){const db=window.supabase.createClient(cfg.url,cfg.anonKey);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script><script src="./supabase/pwa-install.js"></script>
+</body></html>
  
