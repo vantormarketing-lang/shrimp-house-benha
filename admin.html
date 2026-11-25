@@ -525,10 +525,27 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
   stockList.querySelectorAll('.stock-edit').forEach(btn=>btn.onclick=()=>{const x=data.find(a=>a.id===btn.closest('.stock-card').dataset.stock);if(!x)return;sf.id.value=x.id;sf.name.value=x.name;sf.unit.value=x.unit||'';sf.qty.value=x.quantity;sf.threshold.value=x.reorder_threshold;stockForm.hidden=false;stockForm.scrollIntoView({behavior:'smooth',block:'start'});});
   stockList.querySelectorAll('.delete').forEach(btn=>btn.onclick=async()=>{const id=btn.closest('.stock-card').dataset.stock;if(!confirm('حذف المادة من سجل المخزون؟'))return;btn.disabled=true;const {error:delError}=await client.from('inventory_items').delete().eq('id',id);if(delError){stockMsg.textContent='فشل الحذف: '+delError.message;btn.disabled=false;return;}stockMsg.textContent='تم حذف المادة.';await loadStock();});
  }
- stockForm.addEventListener('submit',async ev=>{ev.preventDefault();const btn=document.getElementById('saveStock');btn.disabled=true;btn.textContent='جارٍ الحفظ…';
-  const payload={name:sf.name.value.trim(),unit:sf.unit.value.trim(),quantity:Number(sf.qty.value),reorder_threshold:Number(sf.threshold.value),updated_at:new Date().toISOString()};
-  const req=sf.id.value?client.from('inventory_items').update(payload).eq('id',sf.id.value):client.from('inventory_items').insert(payload);
-  const {error}=await req;btn.disabled=false;btn.textContent='حفظ المادة';if(error){stockMsg.textContent='لم يتم حفظ المادة: '+error.message;return;}stockMsg.textContent='تم حفظ المادة في قاعدة البيانات.';resetStock();await loadStock();
+ stockForm.addEventListener('submit',async ev=>{
+  ev.preventDefault();const btn=document.getElementById('saveStock');btn.disabled=true;btn.textContent='جارٍ الحفظ…';
+  const name=sf.name.value.trim(),unit=sf.unit.value.trim(),quantity=Number(sf.qty.value),threshold=Number(sf.threshold.value);
+  let error=null;
+  if(sf.id.value){
+   const id=sf.id.value;
+   const old=await client.from('inventory_items').select('quantity').eq('id',id).single();
+   if(old.error)error=old.error;
+   else{
+    const delta=quantity-Number(old.data.quantity||0);
+    if(delta!==0){const movement=await client.rpc('record_sh_inventory_movement',{p_inventory_item_id:id,p_delta:delta,p_note:'تسوية رصيد من نموذج إدارة المخزون'});if(movement.error)error=movement.error;}
+    if(!error){const update=await client.from('inventory_items').update({name,unit,reorder_threshold:threshold,updated_at:new Date().toISOString()}).eq('id',id);error=update.error;}
+   }
+  }else{
+   const created=await client.from('inventory_items').insert({name,unit,quantity:0,reorder_threshold:threshold}).select('id').single();
+   if(created.error)error=created.error;
+   else if(quantity>0){const movement=await client.rpc('record_sh_inventory_movement',{p_inventory_item_id:created.data.id,p_delta:quantity,p_note:'رصيد افتتاحي للخامة'});error=movement.error;}
+  }
+  btn.disabled=false;btn.textContent='حفظ المادة';
+  if(error){stockMsg.textContent='لم يتم حفظ المادة أو تحديث رصيدها: '+error.message;return;}
+  stockMsg.textContent='تم حفظ المادة وتسجيل أي تغيير في الرصيد بسجل الحركات.';resetStock();await loadStock();
  });
  document.getElementById('refreshStock').onclick=loadStock;stockFilter.onchange=loadStock;loadStock();
  // Single Supabase Realtime channel: refresh affected list and dashboard on each table change
