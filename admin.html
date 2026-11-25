@@ -292,6 +292,11 @@ body{background:radial-gradient(ellipse at 82% 0,#8e969e22,transparent 38%),radi
 /* Silver back-arrow control, matched to the charcoal workspace (navigation menu untouched) */
 .mobile-back{background:linear-gradient(145deg,#c5cbd1,#a7afb7)!important;border:1px solid #e0e4e8!important;color:#25292e!important;box-shadow:0 5px 14px #0003,inset 0 1px #fff8!important;}
 .mobile-back:hover,.mobile-back:active{background:linear-gradient(145deg,#d5d9de,#b8c0c7)!important;border-color:#eef1f4!important;color:#202328!important;}
+
+/* Three subtle colored indicator lights above dashboard Refresh */
+.dashboard-refresh-row .refresh{position:relative!important;margin-top:15px!important}
+.dashboard-refresh-row .refresh:before{content:"";position:absolute;top:-10px;left:50%;width:6px;height:6px;border-radius:50%;background:#dfe5eb;box-shadow:-11px 0 0 #a8c2d1,11px 0 0 #c9bca7,0 0 7px #dfe5eb55,-11px 0 7px #a8c2d155,11px 0 7px #c9bca755;transform:translateX(-50%);animation:dashboardDotsGlow 3s ease-in-out infinite}
+@keyframes dashboardDotsGlow{0%,100%{opacity:.78}50%{opacity:1;filter:brightness(1.18)}}
 </style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
