@@ -9,7 +9,7 @@ create table if not exists public.booking_status_history (
 alter table public.booking_status_history enable row level security;
 drop policy if exists "Staff view booking status history" on public.booking_status_history;
 create policy "Staff view booking status history" on public.booking_status_history
- for select to authenticated using (private.is_shrimp_house_staff());
+ for select to authenticated using (public.is_shrimp_house_staff());
 
 create or replace function public.log_booking_status_change()
 returns trigger language plpgsql security definer set search_path=pg_catalog,public
