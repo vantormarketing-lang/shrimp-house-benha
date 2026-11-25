@@ -499,5 +499,5 @@ async function loadDatabaseMenu(){
 renderTabs();show();loadActiveOffers();
 loadDatabaseMenu().catch(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
 </script>
-<script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const p=location.pathname==='/menu.html'?'/menu.html':((location.pathname==='/'||location.pathname.endsWith('/index.html'))?'/':'');if(p&&window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){const db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script></body></html>
+<script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const path=location.pathname;const p=(path==='/menu'||path==='/menu.html')?'/menu':((path==='/'||path.endsWith('/index.html'))?'/':'');const cfg=window.SHRIMP_SUPABASE_CONFIG;if(p&&window.supabase&&cfg?.url&&cfg?.anonKey){const db=window.supabase.createClient(cfg.url,cfg.anonKey);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script></body></html>
  
