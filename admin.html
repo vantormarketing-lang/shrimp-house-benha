@@ -146,7 +146,9 @@
  .num{font-size:20px;line-height:1.2}
  .num small{display:block;margin-top:4px;font-size:9px}
 }
-.admin-top{justify-content:flex-start;margin-bottom:16px}.admin-top-label{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.admin-pill{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;font-size:12px}.admin-dot{width:8px;height:8px;border-radius:50%;background:#42df7b;box-shadow:0 0 7px #42df7b,0 0 15px #42df7b88;display:inline-block}.admin-refresh{font-size:11px!important;padding:5px 8px!important;border-radius:7px!important;width:max-content!important;min-width:0!important}</style>
+.admin-top{justify-content:flex-start;margin-bottom:16px}.admin-top-label{display:flex;flex-direction:row;align-items:center;gap:8px}.admin-pill{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;font-size:12px}.admin-dot{width:8px;height:8px;border-radius:50%;background:#42df7b;box-shadow:0 0 7px #42df7b,0 0 15px #42df7b88;display:inline-block}.admin-refresh{font-size:11px!important;padding:5px 8px!important;border-radius:7px!important;width:max-content!important;min-width:0!important;background:rgba(244,237,219,.055)!important;border:1px solid rgba(216,182,107,.25)!important;color:#f4eddb!important;backdrop-filter:blur(16px)!important;box-shadow:0 5px 16px #0002!important}.mobile-menu-trigger-label{display:none}
+@media(max-width:620px){.mobile-menu-trigger{left:14px!important;right:auto!important;display:grid!important}.mobile-menu-trigger-label{display:block;position:fixed;top:25px;left:66px;z-index:1100;color:#f4eddb;font-size:13px;letter-spacing:.04em}.top.admin-top{padding:0!important;margin:0 0 16px!important;justify-content:flex-start!important}.admin-top-label{flex-direction:row!important;align-items:center!important;gap:8px!important;margin-left:0!important}.admin-pill,.admin-refresh{background:rgba(244,237,219,.055)!important;border:1px solid rgba(216,182,107,.25)!important;backdrop-filter:blur(16px)!important}.admin-refresh{padding:5px 8px!important;font-size:11px!important}}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
 <style>body{visibility:hidden}
@@ -171,7 +173,7 @@
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
 <nav class="nav"><button type="button" class="active" data-go="dashboard">⌂　Dashboard <small>الرئيسية</small></button><button type="button" data-go="orders">🧾　Orders <small>الطلبات</small></button><button type="button" data-go="menu">🍽️　Menu <small>المنيو</small></button><button type="button" data-go="bookings">📅　Bookings <small>الحجوزات</small></button><button type="button" data-go="stock">🧺　Inventory <small>المخزون</small></button><button type="button" data-go="settings">⚙️　Settings <small>الإعدادات</small></button></nav></aside>
-<button class="mobile-menu-trigger" type="button" id="mobileMenuTrigger" aria-label="Open menu">☰</button>
+<button class="mobile-menu-trigger" type="button" id="mobileMenuTrigger" aria-label="Open menu">☰</button><span class="mobile-menu-trigger-label">Menu</span>
 <div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">
  <div class="mobile-menu-panel" role="dialog" aria-modal="true" aria-label="Admin navigation">
   <div class="mobile-menu-heading"><span>SHRIMP HOUSE<br><small style="font-size:10px;color:#b98f9c">Admin Navigation · قائمة الإدارة</small></span></div>
@@ -186,7 +188,7 @@
   <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="رجوع" title="رجوع">←</button>
  </div>
 </div>
-<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div></header>
+<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">↻ Refresh</button></div></header>
 <div id="dashboard" class="view show"><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
 <div class="stat"><label>Today’s Sales <small>مبيعات اليوم</small></label><div class="num" id="metricTodaySales">—</div></div>
