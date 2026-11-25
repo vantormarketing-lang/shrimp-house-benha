@@ -1043,3 +1043,27 @@ body.dish-modal-open{overflow:hidden!important;height:100dvh!important}
  body:has(#dashboard.view.show) .admin-install-app svg{width:16px!important;height:16px!important}
 }
 </style>
+<style id="admin-unified-dropdown-glass">
+/* Unified glass-grey dropdowns across every admin view */
+.main select,.view select,.toolbar select,.dish-fields select,.booking-actions select,.order-actions select,.stock-actions select,.form-actions select{
+ color:#e4ebf2!important;
+ background:linear-gradient(145deg,rgba(155,168,180,.15),rgba(70,78,87,.12))!important;
+ border:1px solid rgba(160,174,188,.28)!important;
+ border-radius:12px!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.06),0 6px 18px rgba(0,0,0,.16)!important;
+ backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+}
+.main select:hover,.view select:hover,.toolbar select:hover,.dish-fields select:hover,.booking-actions select:hover,.order-actions select:hover,.stock-actions select:hover,.form-actions select:hover{
+ border-color:rgba(170,190,205,.48)!important;
+ background:linear-gradient(145deg,rgba(175,185,195,.20),rgba(85,94,103,.16))!important;
+}
+.main select:focus,.view select:focus,.toolbar select:focus,.dish-fields select:focus,.booking-actions select:focus,.order-actions select:focus,.stock-actions select:focus,.form-actions select:focus{
+ outline:none!important;border-color:rgba(180,198,211,.55)!important;box-shadow:0 0 0 2px rgba(160,174,188,.10),inset 0 1px rgba(255,255,255,.07)!important;
+}
+.main select option,.view select option,.toolbar select option,.dish-fields select option,.booking-actions select option,.order-actions select option,.stock-actions select option,.form-actions select option{
+ background:#343a40!important;color:#e4ebf2!important;
+}
+.main select option:checked,.view select option:checked,.toolbar select option:checked,.dish-fields select option:checked,.booking-actions select option:checked,.order-actions select option:checked,.stock-actions select option:checked,.form-actions select option:checked{
+ background:#59636c!important;color:#f1f4f7!important;
+}
+</style>
