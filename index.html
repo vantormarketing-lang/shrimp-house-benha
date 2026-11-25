@@ -342,6 +342,15 @@ header nav .brand-glow-dots i{display:block;width:5px;height:5px;border-radius:5
 header nav .brand-glow-dots i:nth-child(2){width:4px;height:4px;background:#fff;box-shadow:0 0 4px 2px rgba(215,220,228,.68),0 0 10px 3px rgba(103,185,232,.38)}
 @media(max-width:800px){header nav .brand-glow-dots{margin-inline:6px;gap:5px}}
 </style>
+
+<style id="brand-glow-dot-position-fix">
+/* Position glow dots as a standalone header element in the gap between the restaurant name and order CTA */
+header nav{position:relative!important;}
+header nav .brand-glow-dots{position:relative!important;display:flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;order:2!important;margin:0 10px!important;transform:none!important;inset:auto!important;}
+header nav .brand{order:1!important;}
+header nav .nav-cta{order:3!important;margin-inline:0!important;}
+@media(max-width:800px){header nav .brand-glow-dots{order:2!important;margin:0 4px!important;}header nav .brand{order:1!important;}header nav .nav-cta{order:3!important;}}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">تخطي إلى المحتوى</a>
