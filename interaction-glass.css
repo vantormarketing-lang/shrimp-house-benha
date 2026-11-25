@@ -26,7 +26,7 @@
   background:var(--sh-hover-glass)!important;color:#EDF7FF!important;border-color:var(--sh-hover-border)!important;
 }
 .links a:is(:hover,:focus-visible),.brand:is(:hover,:focus-visible),.cgrid a.glass:is(:hover,:focus-visible){
-  border-radius:14px;padding-inline:12px;background:var(--sh-hover-glass)!important;box-shadow:var(--sh-hover-shadow)!important;
+  border-radius:14px;background:var(--sh-hover-glass)!important;box-shadow:var(--sh-hover-shadow)!important;
 }
 .rbtn:is(:hover,:focus-visible),.cart-controls button:is(:hover,:focus-visible),.cart-actions button:is(:hover,:focus-visible){
   background:var(--sh-hover-glass)!important;color:#EDF7FF!important;
