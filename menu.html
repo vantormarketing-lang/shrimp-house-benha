@@ -190,7 +190,7 @@ body.has-cart{padding-bottom:170px!important}
 .category-orbit-card:before{content:"";position:absolute;inset:7px;border:1px solid rgba(103,185,232,.13);border-radius:18px;pointer-events:none}
 .category-orbit-card.front{border-color:rgba(103,185,232,.95)!important;background:linear-gradient(145deg,rgba(230,242,252,.23),rgba(103,185,232,.17) 52%,rgba(32,37,45,.96))!important;box-shadow:0 20px 48px rgba(0,0,0,.42),0 0 0 1px rgba(103,185,232,.34),0 0 24px rgba(103,185,232,.13),inset 0 1px 0 rgba(255,255,255,.22)!important}
 .category-orbit-eyebrow{font-size:9px!important;letter-spacing:2px!important;color:rgba(215,220,228,.65)!important;font-weight:700}
-.category-orbit-card h3{margin:0!important;color:#F0F5FA!important;font-size:clamp(18px,2.2vw,23px)!important;font-weight:850!important;line-height:1.25!important;text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.category-orbit-heading{display:flex;align-items:center;justify-content:center;gap:11px;direction:rtl}.category-orbit-card h3{margin:0!important;color:#F0F5FA!important;font-size:clamp(18px,2.2vw,23px)!important;font-weight:850!important;line-height:1.25!important;text-shadow:0 2px 12px rgba(0,0,0,.3)}
 .category-orbit-dots{display:flex;align-items:center;justify-content:center;gap:7px;height:8px}
 .category-orbit-dots span{display:block;width:6px;height:6px;border-radius:50%;background:#67B9E8;box-shadow:0 0 10px rgba(103,185,232,.62)}
 .category-orbit-dots span+span{width:5px;height:5px;background:#D7DCE4;box-shadow:0 0 9px rgba(215,220,228,.5)}
@@ -495,8 +495,9 @@ function categoryCard(c,i){
  const title=document.createElement('h3');title.textContent=c.name;
  const accents=document.createElement('div');accents.className='category-orbit-dots';accents.setAttribute('aria-hidden','true');
  const first=document.createElement('span'),second=document.createElement('span');accents.append(first,second);
+ const heading=document.createElement('div');heading.className='category-orbit-heading';heading.append(title,accents);
  const footer=document.createElement('small');footer.className='category-orbit-index';footer.textContent='SECTION  '+String(i+1).padStart(2,'0');
- a.append(eyebrow,title,accents,footer);return a;
+ a.append(eyebrow,heading,footer);return a;
 }
 function renderTabs(){categoryRing.setItems(M.map((c,i)=>categoryCard(c,i)));}
 function show(){
