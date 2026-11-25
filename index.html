@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#17191D">
 <meta property="og:title" content="Shrimp House Benha | بيت الجمبري"><meta property="og:description" content="مأكولات بحرية طازة في قلب بنها. شوف المنيو واطلب دلوقتي.">
 <meta property="og:image" content="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&w=1000&q=80">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A6%90%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="/app-icon.svg"><link rel="apple-touch-icon" href="/app-icon-180.png"><link rel="manifest" href="/app.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
@@ -271,7 +271,12 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
 
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Shrimp House Benha","servesCuisine":"Seafood","address":{"@type":"PostalAddress","addressLocality":"بنها","addressCountry":"EG"}}</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script><style>
+.sh-pwa-install{flex:0 0 auto;border:1px solid rgba(215,220,228,.38);border-radius:16px;padding:8px 13px;background:linear-gradient(145deg,rgba(215,220,228,.94),rgba(103,185,232,.84));color:#17191D;font:800 12px/1.2 Tajawal,system-ui,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.8);backdrop-filter:blur(14px);cursor:pointer;white-space:nowrap}
+.sh-pwa-install[hidden]{display:none!important}.sh-pwa-install:focus-visible{outline:2px solid #67B9E8;outline-offset:3px}
+@media(max-width:620px){.sh-pwa-install{padding:7px 9px;font-size:11px;border-radius:13px}}
+</style>
+</head>
 <body>
 <a class="skip" href="#main">تخطي إلى المحتوى</a>
 <header><div class="wrap"><nav>
@@ -629,4 +634,5 @@ document.addEventListener('click', function(event){
   location.replace(targetUrl.href);
 }, true);
 </script>
+<script src="./supabase/pwa-install.js"></script>
 </body></html>
