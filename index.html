@@ -228,6 +228,47 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
 .hero-menu-link,.menu-entry-link{font-family:inherit;cursor:pointer}
 .hero-menu-link{border:1px solid #B8C5D3}
 
+/* Hero plate refinement: keep the original Graphite page background untouched */
+.hero-plate{
+  justify-self:end!important;
+  width:112%!important;
+  max-width:680px!important;
+  height:clamp(350px,39vw,455px)!important;
+  transform:translateX(34px)!important;
+}
+.hero-plate img{
+  display:block!important;
+  width:100%!important;
+  max-width:680px!important;
+  height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  background:transparent!important;
+  border:0!important;
+  outline:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  mix-blend-mode:normal!important;
+  -webkit-mask-image:none!important;
+  mask-image:none!important;
+  filter:drop-shadow(0 14px 20px rgba(0,0,0,.28))!important;
+}
+.hero-image-credit{font-size:10px;opacity:.48;white-space:nowrap}
+.hero-image-credit a{text-decoration:underline;text-underline-offset:2px}
+@media(max-width:800px){
+  .hero-plate{
+    justify-self:center!important;
+    width:100%!important;
+    max-width:520px!important;
+    height:clamp(245px,68vw,340px)!important;
+    transform:none!important;
+  }
+  .hero-plate img{max-width:520px!important}
+}
+@media(max-width:520px){
+  .hero-image-credit{display:block;font-size:9px;margin-top:4px}
+}
+
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Restaurant","name":"Shrimp House Benha","servesCuisine":"Seafood","address":{"@type":"PostalAddress","addressLocality":"بنها","addressCountry":"EG"}}</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
@@ -247,10 +288,10 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
       <button class="btn hero-menu-link" type="button" onclick="window.location.href='/menu'">EXPLORE OUR MENU <span aria-hidden="true">→</span></button>
     </div>
     <figure class="hero-plate">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Seafood_Platter.png"
-           alt="طبق سي فود معزول يضم الجمبري والمحار والقواقع وسرطان البحر"
-           fetchpriority="high" width="2029" height="2029">
-      <!-- Image credit: Seafood Platter by Gaussian_venation, CC BY-SA 4.0. Source: https://commons.wikimedia.org/wiki/File:Seafood_Platter.png | License: https://creativecommons.org/licenses/by-sa/4.0/ -->
+      <img src="https://static.vecteezy.com/system/resources/previews/073/096/515/non_2x/grilled-fish-on-a-plate-isolated-on-transparent-background-free-png.png"
+           alt="سمكة مشوية كاملة بعلامات الشواية مع طماطم مشوية وليمون وأعشاب على طبق تقديم"
+           fetchpriority="high" width="4950" height="3300">
+      
     </figure>
   </div>
  
@@ -293,7 +334,7 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
     <div class="cgrid"></div>
   </section>
 </main>
-<footer><div class="wrap">Shrimp House Benha • تجربة بحرية بطابع مختلف</div></footer>
+<footer><div class="wrap">Shrimp House Benha • تجربة بحرية بطابع مختلف <span class="hero-image-credit">• Hero image by <a href="https://www.vecteezy.com/png/73096515-grilled-fish-on-a-plate-isolated-on-transparent-background" target="_blank" rel="noopener">Renuka Baidya / Vecteezy</a></span></div></footer>
 
 <script>
 /* ===== إعدادات المطعم: عدّل هنا فقط ===== */
