@@ -189,17 +189,16 @@
 </main></div>
 <script>
 const names={dashboard:["Dashboard","نظرة عامة على Shrimp House"],orders:["Orders","الطلبات ومتابعة حالاتها"],menu:["Menu Management","إدارة الأصناف والصور والأسعار"],bookings:["Bookings","تنظيم مواعيد الضيوف"],stock:["Inventory","متابعة الخامات والمكونات"],settings:["Settings","بيانات المطعم وإعداداته"]};
-function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));document.getElementById("title").textContent=names[k][0];document.getElementById("sub").textContent=names[k][1]}
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
 const mobileOverlay=document.getElementById('mobileMenuOverlay'),menuTrigger=document.getElementById('mobileMenuTrigger'),menuClose=document.getElementById('mobileMenuClose'),backButton=document.getElementById('mobileBack');
-function openMobileMenu(){mobileOverlay?.classList.add('open');mobileOverlay?.setAttribute('aria-hidden','false');}
+function openMobileMenu(){if(window.innerWidth<=620){mobileOverlay?.classList.add('open');mobileOverlay?.setAttribute('aria-hidden','false');}}
 function closeMobileMenu(){mobileOverlay?.classList.remove('open');mobileOverlay?.setAttribute('aria-hidden','true');}
 menuTrigger?.addEventListener('click',openMobileMenu);menuClose?.addEventListener('click',closeMobileMenu);
 mobileOverlay?.addEventListener('click',e=>{if(e.target===mobileOverlay)closeMobileMenu();});
-backButton?.addEventListener('click',openMobileMenu);
 const mobileNames=['dashboard','orders','menu','bookings','stock','settings'];
-function updateMobileBack(){if(window.innerWidth<=620){backButton.style.display=mobileNames.some(k=>document.getElementById(k)?.classList.contains('show'))?'inline-flex':'none';}else backButton.style.display='none';}
-const originalGo=go;go=function(k){originalGo(k);closeMobileMenu();updateMobileBack();};
+function updateMobileBack(){const active=mobileNames.find(k=>document.getElementById(k)?.classList.contains('show'));backButton.style.display=window.innerWidth<=620&&active&&active!=='dashboard'?'inline-flex':'none';}
+function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));document.getElementById("title").textContent=names[k][0];document.getElementById("sub").textContent=names[k][1];closeMobileMenu();updateMobileBack();}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+backButton?.addEventListener('click',openMobileMenu);
 window.addEventListener('resize',updateMobileBack);updateMobileBack();
 
 </script>
