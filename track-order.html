@@ -12,7 +12,7 @@ main{width:min(100%,620px);margin:40px auto}.brand{text-align:center;color:var(-
 h1{font-size:clamp(25px,6vw,36px);margin:5px 0 8px;text-align:center}.intro{text-align:center;color:var(--muted);font-size:14px;margin:0 0 25px}
 label{display:block;margin:13px 0 6px;font-size:13px;color:#c8d5e1}input{width:100%;padding:14px;border-radius:12px;border:1px solid #aab8c633;background:#171b21;color:var(--text);font:inherit}input:focus{outline:2px solid var(--blue);outline-offset:2px}
 button,.button{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;padding:12px 20px;border:1px solid var(--blue);border-radius:30px;background:linear-gradient(135deg,#d7dce4,#9aa7b7);color:#17191d;font-weight:800;font:inherit;cursor:pointer;text-decoration:none}
-button{width:100%}button:disabled{opacity:.6;cursor:wait}.status{margin-top:18px;color:var(--muted);font-size:14px}.result{margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#171b20}.result h2{font-size:20px;margin:0 0 8px;color:var(--blue)}.state{display:inline-block;padding:5px 12px;border:1px solid var(--blue);border-radius:20px;color:var(--blue);font-weight:700}.detail{font-size:13px;color:#c4ccd6;white-space:pre-line;margin-top:10px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 0}.step{height:6px;border-radius:8px;background:#ffffff20}.step.active{background:var(--blue)}.back{display:block;text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
+button{width:100%}button:disabled{opacity:.6;cursor:wait}.status{margin-top:18px;color:var(--muted);font-size:14px}.result{margin-top:18px;padding:18px;border:1px solid var(--line);border-radius:16px;background:#171b20}.result h2{font-size:20px;margin:0 0 8px;color:var(--blue)}.timeline{display:grid;gap:10px;margin:16px 0 4px;padding:0;list-style:none}.timeline li{position:relative;display:grid;grid-template-columns:12px 1fr;gap:10px;align-items:start}.timeline li:before{content:"";width:9px;height:9px;margin-top:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 0 4px rgba(103,185,232,.13)}.timeline li+li:after{content:"";position:absolute;right:4px;top:-13px;height:13px;border-right:1px solid rgba(103,185,232,.32)}.timeline b{font-size:13px;color:var(--text)}.timeline small{display:block;color:var(--muted);font-size:11px}.timeline-title{margin:16px 0 8px;color:var(--blue);font-size:13px;font-weight:800}.state{display:inline-block;padding:5px 12px;border:1px solid var(--blue);border-radius:20px;color:var(--blue);font-weight:700}.detail{font-size:13px;color:#c4ccd6;white-space:pre-line;margin-top:10px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:18px 0}.step{height:6px;border-radius:8px;background:#ffffff20}.step.active{background:var(--blue)}.back{display:block;text-align:center;margin-top:18px;color:var(--muted);font-size:13px}
 </style>
 </head>
 <body><main>
@@ -38,6 +38,13 @@ button{width:100%}button:disabled{opacity:.6;cursor:wait}.status{margin-top:18px
  const labels={new:'تم استلام الطلب',confirmed:'تم تأكيد الطلب',preparing:'قيد التجهيز',out_for_delivery:'خرج للتوصيل',completed:'تم التسليم',cancelled:'ملغي',pending:'بانتظار تأكيد الحجز'};
  const phoneAscii=v=>String(v).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\s|-/g,'');
  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+ function dateText(value){if(!value)return '—';const d=new Date(value);return Number.isNaN(d.getTime())?'—':d.toLocaleString('ar-EG',{dateStyle:'medium',timeStyle:'short'});}
+ function timelineHTML(history,currentStatus){
+  const rows=Array.isArray(history)?history.slice():[];
+  if(!rows.length)return '';
+  if(currentStatus&&rows[rows.length-1]?.status!==currentStatus)rows.push({status:currentStatus,changed_at:null});
+  return '<h3 class="timeline-title">سجل تحديثات الحالة</h3><ol class="timeline">'+rows.map(x=>'<li><div><b>'+esc(labels[x.status]||x.status||'تحديث')+'</b><small>'+esc(dateText(x.changed_at))+'</small></div></li>').join('')+'</ol>';
+ }
  $('trackForm').addEventListener('submit',async e=>{
   e.preventDefault();const code=$('trackingCode').value.trim().toUpperCase(),phone=phoneAscii($('phone').value);
   if(!client){$('status').textContent='تعذر الاتصال بخدمة المتابعة الآن.';return;}
@@ -48,9 +55,9 @@ button{width:100%}button:disabled{opacity:.6;cursor:wait}.status{margin-top:18px
    if(data.kind==='order'){
     const o=data.order,steps=['new','confirmed','preparing','out_for_delivery','completed'],index=steps.indexOf(o.status);
     const items=Array.isArray(o.items)?o.items.map(x=>(x.name||'صنف')+(x.option_label?' · '+x.option_label:'')+' × '+(x.quantity||1)+' — '+Number(x.line_total||0).toLocaleString('ar-EG')+' ج.م').join('\n'):'';
-    $('result').innerHTML='<section class="result"><h2>طلب رقم '+esc(o.tracking_code)+'</h2><span class="state">'+esc(labels[o.status]||o.status)+'</span><div class="steps">'+steps.map((s,i)=>'<span class="step '+(index>=i&&index>=0?'active':'')+'"></span>').join('')+'</div><div class="detail">'+esc(items)+'\nرسوم التوصيل: '+Number(o.delivery_fee||0).toLocaleString('ar-EG')+' ج.م\nالخصم: '+Number(o.discount_amount||0).toLocaleString('ar-EG')+' ج.م\nالإجمالي: '+Number(o.total||0).toLocaleString('ar-EG')+' ج.م</div></section>';
+    $('result').innerHTML='<section class="result"><h2>طلب رقم '+esc(o.tracking_code)+'</h2><span class="state">'+esc(labels[o.status]||o.status)+'</span><div class="steps">'+steps.map((s,i)=>'<span class="step '+(index>=i&&index>=0?'active':'')+'"></span>').join('')+'</div><div class="detail">'+esc(items)+'\nرسوم التوصيل: '+Number(o.delivery_fee||0).toLocaleString('ar-EG')+' ج.م\nالخصم: '+Number(o.discount_amount||0).toLocaleString('ar-EG')+' ج.م\nالإجمالي: '+Number(o.total||0).toLocaleString('ar-EG')+' ج.م</div>'+timelineHTML(o.history,o.status)+'</section>';
    }else{
-    const b=data.booking;$('result').innerHTML='<section class="result"><h2>حجز رقم '+esc(b.booking_code)+'</h2><span class="state">'+esc(labels[b.status]||b.status)+'</span><div class="detail">التاريخ: '+esc(b.booking_date)+'\nالوقت: '+esc(b.booking_time)+'\nعدد الأفراد: '+esc(b.guests)+'</div></section>';
+    const b=data.booking;$('result').innerHTML='<section class="result"><h2>حجز رقم '+esc(b.booking_code)+'</h2><span class="state">'+esc(labels[b.status]||b.status)+'</span><div class="detail">التاريخ: '+esc(b.booking_date)+'\nالوقت: '+esc(b.booking_time)+'\nعدد الأفراد: '+esc(b.guests)+'</div>'+timelineHTML(b.history,b.status)+'</section>';
    }
    $('status').textContent='تم العثور على بياناتك بنجاح.';
   }catch(err){$('status').textContent=err?.message||'حدث خطأ أثناء المتابعة.';}
