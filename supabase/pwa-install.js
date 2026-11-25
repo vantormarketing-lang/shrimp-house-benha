@@ -6,10 +6,23 @@
     if (isInstalled()) return;
     const nav = document.querySelector("header nav");
     if (!nav) return;
+    let actions = nav.querySelector(".nav-actions");
+    if (!actions) {
+      actions = document.createElement("div");
+      actions.className = "nav-actions";
+      const orderButton = nav.querySelector(".nav-cta");
+      if (orderButton) {
+        nav.insertBefore(actions, orderButton);
+        actions.appendChild(orderButton);
+      } else {
+        nav.appendChild(actions);
+      }
+    }
     if (!installButton) {
       installButton = document.createElement("button");
-      installButton.type = "button"; installButton.className = "sh-pwa-install";
-      installButton.textContent = "＋ تثبيت التطبيق";
+      installButton.type = "button";
+      installButton.className = "btn nav-cta sh-pwa-install";
+      installButton.textContent = "تثبيت التطبيق";
       installButton.setAttribute("aria-label", "تثبيت تطبيق Shrimp House");
       installButton.addEventListener("click", async () => {
         if (deferredPrompt) {
@@ -21,7 +34,9 @@
           alert("لتثبيت Shrimp House: افتح قائمة المتصفح ⋮ أو ⋯، ثم اختر Install app أو Add to Home screen.");
         }
       });
-      nav.appendChild(installButton);
+      actions.appendChild(installButton);
+    } else if (installButton.parentElement !== actions) {
+      actions.appendChild(installButton);
     }
     installButton.hidden = false;
   }
