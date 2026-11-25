@@ -1,4 +1,5 @@
 import { withSupabase } from "npm:@supabase/server@1";
+import webpush from "npm:web-push@3.6.7";
 
 const ALLOWED_ORIGINS = new Set([
   "https://shrimp-house.pages.dev",
@@ -37,6 +38,48 @@ async function consumeLimit(db: any, key: string, max: number) {
   if (error) throw new Error("تعذر التحقق من معدل الطلبات.");
   return data === true;
 }
+
+async function sendAdminPush(db: any, payload: Record<string, unknown>) {
+  try {
+    const { data: config, error: configError } = await db.from("admin_push_config")
+      .select("vapid_public_key,vapid_private_key").eq("id", 1).maybeSingle();
+    if (configError || !config?.vapid_public_key || !config?.vapid_private_key) {
+      if (configError) console.error("Admin push configuration unavailable:", configError.message);
+      return;
+    }
+    const { data: subscriptions, error: subscriptionsError } = await db.from("admin_push_subscriptions")
+      .select("endpoint,p256dh,auth");
+    if (subscriptionsError) {
+      console.error("Admin push subscriptions unavailable:", subscriptionsError.message);
+      return;
+    }
+    if (!subscriptions?.length) return;
+
+    webpush.setVapidDetails(
+      "mailto:admin@shrimp-house.pages.dev",
+      config.vapid_public_key,
+      config.vapid_private_key,
+    );
+    await Promise.all(subscriptions.map(async (subscription: any) => {
+      try {
+        await webpush.sendNotification({
+          endpoint: subscription.endpoint,
+          keys: { p256dh: subscription.p256dh, auth: subscription.auth },
+        }, JSON.stringify(payload), { TTL: 120, urgency: "high" });
+      } catch (error: any) {
+        const status = Number(error?.statusCode || error?.status || 0);
+        if (status === 404 || status === 410) {
+          await db.from("admin_push_subscriptions").delete().eq("endpoint", subscription.endpoint);
+        } else {
+          console.error("Admin push delivery failed:", status, String(error?.message || error));
+        }
+      }
+    }));
+  } catch (error) {
+    console.error("Admin push background task failed:", error);
+  }
+}
+
 function validDateTime(date: string, time: string) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || !/^\d{2}:\d{2}$/.test(time)) return false;
   const dt = new Date(date + "T" + time + ":00+02:00");
@@ -136,6 +179,12 @@ export default {
         discount_amount: discount, payment_method: paymentMethod, notes, status: "new", tracking_code: trackingCode,
       }).select("id,tracking_code,total,delivery_fee,discount_amount,status,created_at").single();
       if (insertError) return reply(req, { error: "تعذر تسجيل الطلب. راجع البيانات وحاول مرة أخرى." }, 400);
+      EdgeRuntime.waitUntil(sendAdminPush(db, {
+        title: "طلب جديد · Shrimp House",
+        body: "وصل طلب جديد. الإجمالي: " + Number(order.total || 0).toLocaleString("en-US") + " ج.م.",
+        url: "/admin",
+        tag: "order-" + order.id,
+      }));
       return reply(req, { ok: true, kind: "order", order });
     }
     if (action === "create_booking") {
@@ -153,6 +202,12 @@ export default {
         notes, status: "pending", booking_code: bookingCode,
       }).select("id,booking_code,status,booking_date,booking_time,guests,created_at").single();
       if (error) return reply(req, { error: "تعذر تسجيل الحجز. حاول مرة أخرى." }, 400);
+      EdgeRuntime.waitUntil(sendAdminPush(db, {
+        title: "حجز جديد · Shrimp House",
+        body: "وصل حجز جديد ليوم " + date + " الساعة " + time + ".",
+        url: "/admin",
+        tag: "booking-" + booking.id,
+      }));
       return reply(req, { ok: true, kind: "booking", booking });
     }
     if (action === "track_order") {
