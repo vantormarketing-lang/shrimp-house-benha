@@ -245,7 +245,7 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
         d.type = 'button'; d.className = 'dot'; d.setAttribute('aria-label', 'العنصر ' + (i + 1));
         d.onclick = () => { stop(); to(i); }; dw.appendChild(d); dots[i] = d;
       }
-      ui.hidden = n < 2;
+      ui.hidden = o.controls===false || n < 2;
       ro.disconnect(); ro.observe(stage); cards.forEach(c => ro.observe(c));
       size(); render(); mark();
     }
