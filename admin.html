@@ -149,7 +149,24 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
-<style>body{visibility:hidden}</style>
+<style>body{visibility:hidden}
+/* Mobile admin navigation palette and cleaner dashboard */
+@media(max-width:620px){
+ .mobile-back{position:fixed!important;top:14px!important;left:14px!important;right:auto!important;z-index:1100;width:46px;height:46px;display:none;align-items:center;justify-content:center;padding:0!important;margin:0!important;border:1px solid #d8b66b55!important;border-radius:14px!important;background:radial-gradient(ellipse at 82% 0,#78884a40,transparent 38%),radial-gradient(ellipse at 12% 70%,#b69b5420,transparent 45%),linear-gradient(135deg,#0d130c,#172116 55%,#10180f)!important;color:#f4eddb!important;font-size:24px!important;box-shadow:0 8px 24px #0005;}
+ .mobile-menu-panel{background:linear-gradient(145deg,#f4eddb,#e9dfc8 60%,#ded0b4)!important;border-color:#c8b68b!important;color:#2b1c17!important;}
+ .mobile-menu-heading{color:#40241f!important}.mobile-menu-heading small{color:#79564b!important}
+ .mobile-menu-heading .mobile-mark{background:linear-gradient(145deg,#501528,#260c17)!important;border-color:#6d2a3c!important;color:#f4eddb!important}
+ .mobile-menu-items button{background:linear-gradient(145deg,#501528,#260c17)!important;border:1px solid #6d2a3c!important;color:#f7f0e3!important;box-shadow:0 6px 16px #3c142017!important;}
+ .mobile-menu-items button:hover,.mobile-menu-items button.active{background:linear-gradient(145deg,#641c34,#330d1d)!important;border-color:#8c3d57!important;color:#f4d6a1!important;}
+ .mobile-menu-items .menu-icon{background:#f4eddb!important;border:1px solid #d7c39c!important;color:#451424!important;}
+ .mobile-menu-items small{color:#d9b9c5!important}.mobile-menu-close{background:#501528!important;border-color:#6d2a3c!important;color:#f4eddb!important;}
+ .mobile-menu-panel,.mobile-menu-overlay{scrollbar-width:none!important;-ms-overflow-style:none!important}.mobile-menu-panel::-webkit-scrollbar,.mobile-menu-overlay::-webkit-scrollbar{display:none!important;width:0!important;height:0!important}
+ /* Dashboard metrics: let cards blend into page instead of framed boxes */
+ #dashboard .stat{border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;backdrop-filter:none!important;padding:12px 8px!important;}
+ #dashboard .stat:before{display:none!important}#dashboard .stat:hover{transform:none!important;border-color:transparent!important}
+ #dashboard .stats{gap:8px!important}
+}
+</style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
 <nav class="nav"><button type="button" class="active" data-go="dashboard">⌂　Dashboard <small>الرئيسية</small></button><button type="button" data-go="orders">🧾　Orders <small>الطلبات</small></button><button type="button" data-go="menu">🍽️　Menu <small>المنيو</small></button><button type="button" data-go="bookings">📅　Bookings <small>الحجوزات</small></button><button type="button" data-go="stock">🧺　Inventory <small>المخزون</small></button><button type="button" data-go="settings">⚙️　Settings <small>الإعدادات</small></button></nav></aside>
@@ -168,7 +185,7 @@
   <button type="button" class="mobile-menu-close" id="mobileMenuClose">إغلاق القائمة ×</button>
  </div>
 </div>
-<main class="main"><button type="button" class="mobile-back" id="mobileBack" style="display:none">← الرجوع للقائمة</button><header class="top"><div><h2 id="title">Dashboard</h2><p id="sub">نظرة عامة · مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
+<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top"><div><h2 id="title">Dashboard</h2><p id="sub">نظرة عامة · مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
 <div id="dashboard" class="view show">
 <div class="dashboard-refresh-row"><div class="dashboard-status-stack"><span id="dashboardStatus" role="status">جارٍ تحديث بيانات لوحة التحكم…</span><span id="dashboardRealtimeStatus" class="dashboard-live-status">جارٍ الاتصال بالتحديثات المباشرة…</span></div><button type="button" class="refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
