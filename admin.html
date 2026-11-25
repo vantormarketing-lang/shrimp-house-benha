@@ -245,6 +245,27 @@
 .mobile-menu-items button:hover b,.mobile-menu-items button:focus-visible b,.mobile-menu-items button:active b,.mobile-menu-items button.active b{color:#35111d!important;}
 .mobile-menu-items button:hover small,.mobile-menu-items button:focus-visible small,.mobile-menu-items button:active small,.mobile-menu-items button.active small{color:#53323a!important;}
 .mobile-menu-items button:hover .menu-icon,.mobile-menu-items button:focus-visible .menu-icon,.mobile-menu-items button:active .menu-icon,.mobile-menu-items button.active .menu-icon{color:#3b1422!important;}
+
+/* Section headings use the same compact cream title card as Dashboard */
+.section-title-glass:not(.dashboard-title){
+ display:table!important;width:max-content!important;max-width:calc(100% - 24px)!important;
+ margin:12px auto 24px!important;padding:8px 13px!important;
+ background:#f4eddb!important;border:1px solid #d4bd8d!important;border-radius:12px!important;
+ box-shadow:0 8px 24px rgba(0,0,0,.2)!important;color:#451424!important;
+ backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;
+}
+.section-title-glass:not(.dashboard-title) h2{color:#451424!important;font-size:19px!important;font-weight:700!important;margin:0!important;}
+.section-title-glass:not(.dashboard-title) p{display:block!important;color:#5a2733!important;font-size:11px!important;opacity:1!important;margin:4px 0 0!important;}
+/* Hide the duplicate Admin badge from the dashboard header */
+.admin-top-label .admin-pill{display:none!important;}
+/* Keep refresh clear of the back arrow on mobile; reduce arrow button size */
+@media(max-width:620px){
+ .mobile-back{width:36px!important;height:36px!important;font-size:16px!important;top:12px!important;}
+ .admin-refresh{top:56px!important;}
+ .section-title-glass:not(.dashboard-title){margin-top:12px!important;margin-bottom:24px!important;padding:8px 12px!important;}
+ .section-title-glass:not(.dashboard-title) h2{font-size:16px!important;}
+ .section-title-glass:not(.dashboard-title) p{font-size:10px!important;margin:3px 0 0!important;}
+}
 </style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
