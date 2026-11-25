@@ -592,7 +592,7 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
   toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),6500);
   if('Notification' in window&&Notification.permission==='granted'){try{new Notification('Shrimp House',{body:message,icon:'./favicon.ico'});}catch(_){}}
  }
- const enable=document.createElement('button');enable.type='button';enable.className='refresh';enable.textContent='🔔 تفعيل إشعارات المتصفح';enable.style.marginInlineStart='8px';
+ const enable=document.createElement('button');enable.type='button';enable.id='enableBrowserNotifications';enable.className='refresh admin-notify';enable.textContent='🔔 إشعارات';enable.title='تفعيل إشعارات المتصفح';enable.setAttribute('aria-label','تفعيل إشعارات المتصفح');
  enable.onclick=async()=>{if(!('Notification' in window)){notify('هذا المتصفح لا يدعم إشعارات النظام.');return;}const p=await Notification.requestPermission();notify(p==='granted'?'تم تفعيل إشعارات الطلبات.':'لم يتم منح إذن الإشعارات.');};
  document.querySelector('.admin-top-label')?.appendChild(enable);
  if(!isAdmin){['staff','activity'].forEach(id=>document.querySelectorAll('[data-go="'+id+'"]').forEach(x=>x.remove()));}
@@ -839,4 +839,32 @@ window.__SHRIMP_ADMIN_START_EXT?.(window.__SHRIMP_ADMIN_EXT);
 #settingsForm .dish-fields label{gap:7px!important}
 #settingsForm input:not([type=checkbox]),#settingsForm textarea{border-radius:13px!important;background:linear-gradient(145deg,rgba(202,191,151,.12),rgba(255,255,255,.035))!important;border:1px solid rgba(211,183,111,.32)!important;box-shadow:0 10px 24px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.07)!important;backdrop-filter:blur(16px)!important}
 #settingsForm input:not([type=checkbox]):focus,#settingsForm textarea:focus{border-color:rgba(218,190,125,.65)!important;box-shadow:0 0 0 3px rgba(208,180,110,.09),0 10px 24px rgba(0,0,0,.16)!important}
+</style>
+
+
+<style>
+/* Compact dashboard-only notification toggle, paired with refresh beneath the mobile menu icon */
+.admin-notify{display:none!important}
+body:has(#dashboard.view.show) .admin-notify{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;white-space:nowrap!important;font-size:10px!important;font-weight:700!important;
+ line-height:1!important;padding:5px 7px!important;min-width:88px!important;height:32px!important;
+ border-radius:8px!important;background:rgba(244,237,219,.055)!important;
+ border:1px solid rgba(216,182,107,.25)!important;color:#f4eddb!important;
+ backdrop-filter:blur(16px)!important;box-shadow:0 5px 16px #0002!important;
+}
+@media(max-width:620px){
+ body:has(#dashboard.view.show) .admin-refresh{
+  position:fixed!important;left:12px!important;right:auto!important;top:56px!important;
+  width:88px!important;min-width:88px!important;height:32px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  padding:5px 7px!important;font-size:10px!important;z-index:1101!important;
+ }
+ body:has(#dashboard.view.show) .admin-notify{
+  position:fixed!important;right:12px!important;left:auto!important;top:56px!important;
+  width:88px!important;min-width:88px!important;height:32px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  padding:5px 6px!important;font-size:10px!important;z-index:1101!important;
+ }
+}
 </style>
