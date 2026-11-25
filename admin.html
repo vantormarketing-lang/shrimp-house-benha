@@ -1011,3 +1011,10 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:0!imp
 
 
 
+
+<style id="admin-dish-modal-scroll-fix">
+/* Keep the admin page fixed while the centered editor is open; scroll only inside its form */
+#dishModal{overflow:hidden!important;overscroll-behavior:contain!important}
+#dishModal .dish-form{max-height:90vh!important;max-height:90dvh!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scrollbar-width:thin!important}
+@media(max-width:620px){#dishModal{padding:8px!important}#dishModal .dish-form{max-height:92vh!important;max-height:92dvh!important;width:calc(100vw - 16px)!important}}
+</style>
