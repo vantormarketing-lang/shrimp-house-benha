@@ -146,7 +146,7 @@
  .num{font-size:20px;line-height:1.2}
  .num small{display:block;margin-top:4px;font-size:9px}
 }
-</style>
+.admin-top{justify-content:flex-start;margin-bottom:16px}.admin-top-label{display:flex;flex-direction:column;align-items:flex-start;gap:8px}.admin-pill{display:inline-flex;align-items:center;gap:8px;padding:5px 10px;font-size:12px}.admin-dot{width:8px;height:8px;border-radius:50%;background:#42df7b;box-shadow:0 0 7px #42df7b,0 0 15px #42df7b88;display:inline-block}.admin-refresh{font-size:11px!important;padding:5px 8px!important;border-radius:7px!important;width:max-content!important;min-width:0!important}</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
 <style>body{visibility:hidden}
@@ -186,9 +186,8 @@
   <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="رجوع" title="رجوع">←</button>
  </div>
 </div>
-<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top"><div><h2 id="title">Dashboard</h2><p id="sub">نظرة عامة · مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
-<div id="dashboard" class="view show">
-<div class="dashboard-refresh-row"><div class="dashboard-status-stack"><span id="dashboardStatus" role="status">جارٍ تحديث بيانات لوحة التحكم…</span><span id="dashboardRealtimeStatus" class="dashboard-live-status">جارٍ الاتصال بالتحديثات المباشرة…</span></div><button type="button" class="refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div><div class="stats">
+<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div></header>
+<div id="dashboard" class="view show"><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
 <div class="stat"><label>Today’s Sales <small>مبيعات اليوم</small></label><div class="num" id="metricTodaySales">—</div></div>
 <div class="stat"><label>Upcoming Bookings <small>الحجوزات القادمة</small></label><div class="num" id="metricUpcomingBookings">—</div></div>
