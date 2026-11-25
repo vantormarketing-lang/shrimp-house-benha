@@ -202,8 +202,8 @@
   <button type="button" class="mobile-menu-close" id="mobileMenuClose" aria-label="رجوع" title="رجوع">←</button>
  </div>
 </div>
-<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">↻ Refresh</button></div></header>
-<div class="section-title-glass" id="sectionTitleGlass"><h2 id="sectionTitle">Dashboard</h2><p id="sectionSubtitle">نظرة عامة على Shrimp House</p></div>
+<main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">Refresh</button></div></header>
+<div class="section-title-glass" id="sectionTitleGlass"><h2 id="sectionTitle">Dashboard</h2></div>
 <div id="dashboard" class="view show"><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
 <div class="stat"><label>Today’s Sales <small>مبيعات اليوم</small></label><div class="num" id="metricTodaySales">—</div></div>
@@ -425,3 +425,14 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  const badge=document.querySelector('.pill'); if(badge)badge.textContent='● '+(profile.role==='admin'?'Admin':'Staff')+' · '+(profile.display_name||session.user.email);
 })();
 </script></body></html>
+/* Admin controls left; compact cream Dashboard label */
+@media(max-width:620px){
+ .top.admin-top{width:100%!important;display:flex!important;justify-content:flex-start!important;align-items:flex-start!important;padding:0!important;margin:0 0 16px!important;}
+ .admin-top-label{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:flex-start!important;gap:6px!important;margin:0!important;}
+ .admin-pill,.admin-refresh{background:rgba(244,237,219,.14)!important;border:1px solid rgba(216,182,107,.35)!important;border-radius:8px!important;backdrop-filter:blur(15px)!important;padding:6px 9px!important;}
+ .mobile-menu-trigger{left:auto!important;right:14px!important;}
+ .mobile-menu-trigger-label{left:auto!important;right:66px!important;}
+ .section-title-glass{display:inline-block!important;width:max-content!important;max-width:calc(100% - 24px)!important;margin:12px auto 24px!important;padding:8px 14px!important;background:#f4eddb!important;border:1px solid #d4bd8d!important;border-radius:12px!important;box-shadow:0 8px 24px rgba(0,0,0,.2)!important;color:#451424!important;}
+ .section-title-glass h2{color:#451424!important;font-size:16px!important;margin:0!important;}
+ .section-title-glass p{display:none!important;}
+}
