@@ -272,15 +272,14 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
   });
  }
  document.getElementById('refreshBookings').onclick=loadBookings;bookingFilter.onchange=loadBookings;loadBookings();
- // Supabase Realtime auto-refresh for orders, bookings and menu changes
+ // Single Supabase Realtime channel: refresh affected list and dashboard on each table change
  document.getElementById("refreshDashboard")?.addEventListener("click",refreshDashboard);refreshDashboard();
  const liveStatus=document.getElementById('dashboardRealtimeStatus');
- const dashboardLiveChannel=client.channel('admin-dashboard-live-metrics')
-  .on('postgres_changes',{event:'*',schema:'public',table:'orders'},refreshDashboard)
-  .on('postgres_changes',{event:'*',schema:'public',table:'bookings'},refreshDashboard)
-  .on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},refreshDashboard)
+ const dashboardLiveChannel=client.channel('admin-live-data')
+  .on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders();refreshDashboard();})
+  .on('postgres_changes',{event:'*',schema:'public',table:'bookings'},()=>{loadBookings();refreshDashboard();})
+  .on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},()=>{loadMenu();refreshDashboard();})
   .subscribe(status=>{if(liveStatus){liveStatus.textContent=status==='SUBSCRIBED'?'● تحديث مباشر متصل':status==='CHANNEL_ERROR'||status==='TIMED_OUT'?'التحديث المباشر غير متاح · استخدم زر التحديث':'جارٍ الاتصال…';liveStatus.classList.toggle('connected',status==='SUBSCRIBED');}});
- client.channel('admin-live-data').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders();refreshDashboard();}).on('postgres_changes',{event:'*',schema:'public',table:'bookings'},()=>{loadBookings();refreshDashboard();}).on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},()=>{loadMenu();refreshDashboard();}).subscribe();
 
  // Live stock CRUD
  const stockList=document.getElementById('stockItems'),stockMsg=document.getElementById('stockMsg'),stockFilter=document.getElementById('stockFilter'),stockForm=document.getElementById('stockForm');
