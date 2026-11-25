@@ -200,6 +200,12 @@
 /* Remove framed title boxes: section labels sit directly on the page background */
 .section-title-glass{background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border-radius:0!important;padding:0!important;width:auto!important;max-width:100%!important;display:block!important;}
 .section-title-glass h2,.section-title-glass p{background:transparent!important;border:0!important;box-shadow:none!important;}
+
+/* Restore the cream compact title card for Dashboard only */
+.section-title-glass.dashboard-title{display:table!important;width:max-content!important;max-width:calc(100% - 24px)!important;margin:12px auto 24px!important;padding:8px 13px!important;background:#f4eddb!important;border:1px solid #d4bd8d!important;border-radius:12px!important;box-shadow:0 8px 24px rgba(0,0,0,.2)!important;color:#451424!important;text-align:center!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;}
+.section-title-glass.dashboard-title h2{font-family:inherit!important;color:#451424!important;font-size:19px!important;font-weight:700!important;letter-spacing:.02em!important;margin:0!important;}
+.section-title-glass.dashboard-title p{display:block!important;color:#5a2733!important;font-size:11px!important;opacity:1!important;margin:4px 0 0!important;}
+@media(max-width:620px){.section-title-glass.dashboard-title h2{font-size:16px!important}.section-title-glass.dashboard-title p{font-size:10px!important;margin:3px 0 0!important;}}
 </style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
@@ -220,7 +226,7 @@
  </div>
 </div>
 <main class="main"><button type="button" class="mobile-back" id="mobileBack" aria-label="فتح القائمة" title="فتح القائمة" style="display:none">←</button><header class="top admin-top"><div class="admin-top-label"><span class="pill admin-pill"><i class="admin-dot"></i>Admin</span><button type="button" class="refresh admin-refresh" id="refreshDashboard">Refresh</button></div></header>
-<div class="section-title-glass" id="sectionTitleGlass"><h2 id="sectionTitle">Dashboard</h2><p id="sectionSubtitle">نظرة عامة على Shrimp House</p></div>
+<div class="section-title-glass dashboard-title" id="sectionTitleGlass"><h2 id="sectionTitle">Dashboard</h2><p id="sectionSubtitle">نظرة عامة على Shrimp House</p></div>
 <div id="dashboard" class="view show"><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
 <div class="stat"><label>Today’s Sales <small>مبيعات اليوم</small></label><div class="num" id="metricTodaySales">—</div></div>
@@ -247,7 +253,7 @@ menuTrigger?.addEventListener('click',openMobileMenu);menuClose?.addEventListene
 mobileOverlay?.addEventListener('click',e=>{if(e.target===mobileOverlay)closeMobileMenu();});
 const mobileNames=['dashboard','orders','menu','bookings','stock','settings'];
 function updateMobileBack(){const active=mobileNames.find(k=>document.getElementById(k)?.classList.contains('show'));backButton.style.display=window.innerWidth<=620&&active&&active!=='dashboard'?'inline-flex':'none';}
-function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));const title=document.getElementById("sectionTitle"),subtitle=document.getElementById("sectionSubtitle");if(title)title.textContent=names[k][0];if(subtitle)subtitle.textContent=names[k][1];closeMobileMenu();updateMobileBack();}
+function go(k){const titleCard=document.getElementById("sectionTitleGlass");if(titleCard)titleCard.classList.toggle("dashboard-title",k==="dashboard");document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));const title=document.getElementById("sectionTitle"),subtitle=document.getElementById("sectionSubtitle");if(title)title.textContent=names[k][0];if(subtitle)subtitle.textContent=names[k][1];closeMobileMenu();updateMobileBack();}
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
 backButton?.addEventListener('click',openMobileMenu);
 window.addEventListener('resize',updateMobileBack);updateMobileBack();
