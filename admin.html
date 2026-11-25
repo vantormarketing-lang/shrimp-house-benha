@@ -1020,17 +1020,14 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:0!imp
 </style>
 
 <style id="admin-scroll-modal-recovery">
-/* Reliable edit-item modal: visible glass editor, not a black full-page layer */
+/* Consolidated modal styles override conflicting legacy rules */
 html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!important;min-height:100%!important}
 body.dish-modal-open{overflow:hidden!important;height:100dvh!important}
-.shell{min-height:100dvh!important;height:auto!important}
-.main{min-height:100dvh!important;overflow:visible!important}
-.view.show{overflow:visible!important;max-height:none!important}
-#dishModal{position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:12px!important;overflow:hidden!important;background:rgba(35,40,45,.35)!important;backdrop-filter:blur(7px)!important;-webkit-backdrop-filter:blur(7px)!important}
+#dishModal{position:fixed!important;inset:0!important;z-index:99999!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:12px!important;overflow:hidden!important;background:rgba(80,90,100,.12)!important;backdrop-filter:blur(3px)!important;-webkit-backdrop-filter:blur(3px)!important}
 #dishModal[hidden]{display:none!important}
-#dishModal #dishForm{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;max-height:92dvh!important;overflow-y:auto!important;overflow-x:hidden!important;width:min(680px,calc(100vw - 16px))!important;padding:14px!important;margin:0!important;border:1px solid rgba(190,208,220,.4)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(55,62,68,.92),rgba(38,44,50,.92))!important;box-shadow:0 18px 50px rgba(0,0,0,.30)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important}
+#dishModal #dishForm{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;max-height:92dvh!important;overflow-y:auto!important;overflow-x:hidden!important;width:min(680px,calc(100vw - 16px))!important;padding:14px!important;margin:0!important;border:1px solid rgba(190,208,220,.45)!important;border-radius:18px!important;background:linear-gradient(145deg,rgba(100,112,122,.80),rgba(74,84,94,.78))!important;box-shadow:0 16px 42px rgba(0,0,0,.22)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;color:#f0f3f6!important}
 #dishModal #dishForm .dish-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
-#dishModal #dishForm .dish-fields label{display:flex!important;flex-direction:column!important;min-width:0!important;color:#e2e9ef!important}
+#dishModal #dishForm .dish-fields label{display:flex!important;flex-direction:column!important;min-width:0!important;color:#f0f3f6!important;background:linear-gradient(145deg,rgba(190,200,210,.22),rgba(100,112,122,.25))!important;border-color:rgba(220,230,238,.35)!important}
 #dishModal #dishForm .dish-fields label.wide,#dishModal #dishForm .dish-fields label.avail{grid-column:1/-1!important}
 #dishModal #dishForm .form-actions{display:flex!important;gap:8px!important}
 @media(max-width:620px){#dishModal{padding:8px!important}#dishModal #dishForm{max-height:92dvh!important;width:calc(100vw - 16px)!important;padding:10px!important}#dishModal #dishForm .dish-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
