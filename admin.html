@@ -755,11 +755,19 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
  }
  loadKitchen();loadReports();loadCustomers();loadOffers();loadRecipeRefs().then(loadRecipes);loadStockMovementRefs().then(loadMovements);loadStaff();loadActivity();
  const opsChannel=client.channel('shrimp-operations-notifications')
- .on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},payload=>{notify('وصل طلب جديد من '+(payload.new?.customer_name||'عميل'));loadKitchen();loadReports();loadCustomers();})
- .on('postgres_changes',{event:'INSERT',schema:'public',table:'bookings'},payload=>notify('وصل حجز جديد من '+(payload.new?.customer_name||'عميل')))
- .on('postgres_changes',{event:'*',schema:'public',table:'offers'},loadOffers)
+ .on('postgres_changes',{event:'*',schema:'public',table:'orders'},payload=>{
+  if(payload.eventType==='INSERT')notify('وصل طلب جديد من '+(payload.new?.customer_name||'عميل'));
+  loadKitchen();loadReports();loadCustomers();loadActivity();
+ })
+ .on('postgres_changes',{event:'*',schema:'public',table:'bookings'},payload=>{
+  if(payload.eventType==='INSERT')notify('وصل حجز جديد من '+(payload.new?.customer_name||'عميل'));
+  base.loadBookings();loadActivity();
+ })
+ .on('postgres_changes',{event:'*',schema:'public',table:'offers'},()=>{loadOffers();loadActivity();})
  .on('postgres_changes',{event:'*',schema:'public',table:'menu_item_recipes'},loadRecipes)
- .on('postgres_changes',{event:'*',schema:'public',table:'inventory_movements'},()=>{loadMovements();loadStockMovementRefs();})
+ .on('postgres_changes',{event:'*',schema:'public',table:'inventory_movements'},()=>{loadMovements();loadStockMovementRefs();base.loadStock();})
+ .on('postgres_changes',{event:'*',schema:'public',table:'staff_profiles'},()=>{if(isAdmin){loadStaff();loadActivity();}})
+ .on('postgres_changes',{event:'*',schema:'public',table:'staff_activity_logs'},loadActivity)
  .subscribe();
  window.addEventListener('beforeunload',()=>{try{client.removeChannel(opsChannel);}catch(_){}});
 };
