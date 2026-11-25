@@ -157,7 +157,7 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
  if(error||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();window.location.replace('./admin-login.html');return;}
  const logout=document.createElement('button'); logout.type='button'; logout.textContent='↩　تسجيل الخروج'; logout.style.cssText='font:inherit;color:#c0c9b5;text-align:right;background:transparent;border:1px solid #d8b66b24;border-radius:12px;padding:12px;cursor:pointer'; logout.addEventListener('click',async()=>{await client.auth.signOut();window.location.replace('./admin-login.html');}); document.querySelector('.nav')?.appendChild(logout);
  // Dashboard metrics
- const metric=(id,val,caption='')=>{const el=document.getElementById(id);if(el)el.innerHTML=(val===null||val===undefined?'—':Number(val).toLocaleString('en-US'))+(caption?' <small>'+caption+'</small>':'');};
+ const metric=(id,val,caption='')=>{const el=document.getElementById(id);if(el){const display=val===null||val===undefined?'—':(typeof val==='string'?val:Number(val).toLocaleString('en-US'));el.innerHTML=display+(caption?' <small>'+caption+'</small>':'');}};
  const todayCairo=()=>new Date().toLocaleDateString('en-CA',{timeZone:'Africa/Cairo'});
  async function refreshDashboard(){
   const status=document.getElementById('dashboardStatus'),button=document.getElementById('refreshDashboard');
@@ -168,7 +168,7 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
    client.from('orders').select('id,total,status,created_at',{count:'exact'}).gte('created_at',from).lt('created_at',to),
    client.from('bookings').select('id',{count:'exact'}).gte('booking_date',day).in('status',['pending','confirmed']),
    client.from('menu_items').select('id',{count:'exact'}),
-   client.from('orders').select('id,total,status,created_at',{count:'exact'}),
+   client.from('orders').select('id,total,status,created_at',{count:'exact'}).limit(10000),
    client.from('site_visits').select('id',{count:'exact'}),
    client.from('site_visits').select('id',{count:'exact'}).gte('visited_at',from).lt('visited_at',to),
    client.from('inventory_items').select('quantity,reorder_threshold')
