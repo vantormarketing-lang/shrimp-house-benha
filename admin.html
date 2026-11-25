@@ -279,6 +279,7 @@ document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=
   .on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders();refreshDashboard();})
   .on('postgres_changes',{event:'*',schema:'public',table:'bookings'},()=>{loadBookings();refreshDashboard();})
   .on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},()=>{loadMenu();refreshDashboard();})
+  .on('postgres_changes',{event:'*',schema:'public',table:'inventory_items'},loadStock)
   .subscribe(status=>{if(liveStatus){liveStatus.textContent=status==='SUBSCRIBED'?'● تحديث مباشر متصل':status==='CHANNEL_ERROR'||status==='TIMED_OUT'?'التحديث المباشر غير متاح · استخدم زر التحديث':'جارٍ الاتصال…';liveStatus.classList.toggle('connected',status==='SUBSCRIBED');}});
 
  // Live stock CRUD
