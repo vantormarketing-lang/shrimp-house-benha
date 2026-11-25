@@ -62,9 +62,16 @@ self.addEventListener("fetch", event => {
   }
   if (["style", "script", "image", "font"].includes(request.destination)) {
     event.respondWith((async () => {
-      const cache = await caches.open(CACHE_NAME), cached = await cache.match(request);
-      const network = fetch(request).then(response => { if (response.ok) cache.put(request, response.clone()).catch(() => {}); return response; });
-      return cached || network;
+      const cache = await caches.open(CACHE_NAME);
+      try {
+        const response = await fetch(request);
+        if (response.ok) cache.put(request, response.clone()).catch(() => {});
+        return response;
+      } catch (error) {
+        const cached = await cache.match(request);
+        if (cached) return cached;
+        throw error;
+      }
     })());
   }
 });
