@@ -32,6 +32,22 @@
 .quick button:hover .thumb{opacity:.82;transform:scale(1.04)}
 .quick button b{ text-shadow:0 2px 14px rgba(0,0,0,.3)}
 @media(max-width:620px){.stat{min-height:100px}.stat .num{margin-top:8px}.manager{backdrop-filter:blur(10px)}}
+
+/* Orders workspace glass polish */
+.order-card{position:relative;overflow:hidden;border-color:rgba(211,183,111,.3);background:linear-gradient(145deg,rgba(202,191,151,.10),rgba(255,255,255,.025));box-shadow:0 16px 36px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.08);backdrop-filter:blur(22px);transition:transform .2s ease,border-color .2s ease}
+.order-card:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 100% 0,rgba(208,180,110,.12),transparent 58%)}
+.order-card:hover{transform:translateY(-2px);border-color:rgba(218,190,125,.5)}
+.order-head,.order-meta,.order-items,.order-actions{position:relative;z-index:1}
+.order-head{padding-bottom:9px;border-bottom:1px solid rgba(211,183,111,.16)}
+.order-total{display:inline-flex;align-items:center;border:1px solid rgba(211,183,111,.3);border-radius:999px;padding:6px 10px;background:rgba(208,180,110,.08);text-shadow:0 2px 12px rgba(0,0,0,.25)}
+.order-meta{padding:4px 0;color:#c5cdbd}
+.order-items{padding:11px 12px;border:1px solid rgba(211,183,111,.14);border-radius:12px;background:rgba(255,255,255,.025)}
+.order-actions{padding-top:3px}
+.order-actions select{background:rgba(21,29,18,.8);border-color:rgba(211,183,111,.3);backdrop-filter:blur(12px)}
+.order-actions button{border-color:rgba(211,183,111,.35);background:linear-gradient(145deg,rgba(208,180,110,.13),rgba(255,255,255,.03));transition:background .2s ease,border-color .2s ease}
+.order-actions button:hover{background:rgba(208,180,110,.19);border-color:rgba(218,190,125,.55)}
+.order-actions button:disabled{opacity:.6;cursor:wait}
+@media(max-width:600px){.order-card{padding:13px}.order-head{align-items:flex-start}.order-total{font-size:12px}.order-items{padding:10px}}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
