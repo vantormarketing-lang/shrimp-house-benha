@@ -309,6 +309,32 @@ body{background:radial-gradient(ellipse at 82% 0,#8e969e22,transparent 38%),radi
 .mobile-back:hover,.mobile-back:active{background:linear-gradient(145deg,#f4eddb,#e9dfc8 60%,#ded0b4)!important;border-color:#c8b68b!important;color:#451424!important;}
 
 </style>
+<style>
+/* Compact dashboard-only notification toggle, paired with refresh beneath the mobile menu icon */
+.admin-notify{display:none!important}
+body:has(#dashboard.view.show) .admin-notify{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:4px!important;white-space:nowrap!important;font-size:10px!important;font-weight:700!important;
+ line-height:1!important;padding:5px 7px!important;min-width:88px!important;height:32px!important;
+ border-radius:8px!important;background:rgba(244,237,219,.055)!important;
+ border:1px solid rgba(216,182,107,.25)!important;color:#f4eddb!important;
+ backdrop-filter:blur(16px)!important;box-shadow:0 5px 16px #0002!important;
+}
+@media(max-width:620px){
+ body:has(#dashboard.view.show) .admin-refresh{
+  position:fixed!important;left:12px!important;right:auto!important;top:56px!important;
+  width:88px!important;min-width:88px!important;height:32px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  padding:5px 7px!important;font-size:10px!important;z-index:1101!important;
+ }
+ body:has(#dashboard.view.show) .admin-notify{
+  position:fixed!important;right:12px!important;left:auto!important;top:56px!important;
+  width:88px!important;min-width:88px!important;height:32px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  padding:5px 6px!important;font-size:10px!important;z-index:1101!important;
+ }
+}
+</style>
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
 <nav class="nav"><button type="button" class="active" data-go="dashboard">⌂　Dashboard <small>الرئيسية</small></button><button type="button" data-go="orders">🧾　Orders <small>الطلبات</small></button><button type="button" data-go="menu">🍽️　Menu <small>المنيو</small></button><button type="button" data-go="bookings">📅　Bookings <small>الحجوزات</small></button><button type="button" data-go="stock">🧺　Inventory <small>المخزون</small></button><button type="button" data-go="settings">⚙️　Settings <small>الإعدادات</small></button><button type="button" data-go="kitchen">🔥　Kitchen <small>شاشة المطبخ</small></button><button type="button" data-go="reports">📊　Reports <small>التقارير</small></button><button type="button" data-go="customers">👥　Customers <small>العملاء</small></button><button type="button" data-go="offers">🏷️　Offers <small>العروض</small></button><button type="button" data-go="recipes">🧾　Recipes <small>الوصفات والخصم</small></button><button type="button" data-go="staff">🧑‍🍳　Staff <small>الموظفون</small></button><button type="button" data-go="activity">📋　Activity <small>سجل العمليات</small></button></nav></aside>
@@ -842,29 +868,4 @@ window.__SHRIMP_ADMIN_START_EXT?.(window.__SHRIMP_ADMIN_EXT);
 </style>
 
 
-<style>
-/* Compact dashboard-only notification toggle, paired with refresh beneath the mobile menu icon */
-.admin-notify{display:none!important}
-body:has(#dashboard.view.show) .admin-notify{
- display:inline-flex!important;align-items:center!important;justify-content:center!important;
- gap:4px!important;white-space:nowrap!important;font-size:10px!important;font-weight:700!important;
- line-height:1!important;padding:5px 7px!important;min-width:88px!important;height:32px!important;
- border-radius:8px!important;background:rgba(244,237,219,.055)!important;
- border:1px solid rgba(216,182,107,.25)!important;color:#f4eddb!important;
- backdrop-filter:blur(16px)!important;box-shadow:0 5px 16px #0002!important;
-}
-@media(max-width:620px){
- body:has(#dashboard.view.show) .admin-refresh{
-  position:fixed!important;left:12px!important;right:auto!important;top:56px!important;
-  width:88px!important;min-width:88px!important;height:32px!important;
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  padding:5px 7px!important;font-size:10px!important;z-index:1101!important;
- }
- body:has(#dashboard.view.show) .admin-notify{
-  position:fixed!important;right:12px!important;left:auto!important;top:56px!important;
-  width:88px!important;min-width:88px!important;height:32px!important;
-  display:inline-flex!important;align-items:center!important;justify-content:center!important;
-  padding:5px 6px!important;font-size:10px!important;z-index:1101!important;
- }
-}
-</style>
+
