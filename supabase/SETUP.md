@@ -1,33 +1,46 @@
-# Shrimp House — Supabase setup and connection status
+# Shrimp House — production setup and operations
 
-## Live project
-- Supabase project: Shrimp House
-- Project ref: `hcxoysslyfsktnrshoaw`
-- Project URL: `https://hcxoysslyfsktnrshoaw.supabase.co`
-- Frontend config is already written to `supabase/config.js` using the public publishable key only.
-- Schema has been applied directly to the dedicated Shrimp House project and verified.
+## Project
+- Supabase project ref: `hcxoysslyfsktnrshoaw`
+- Public project URL: `https://hcxoysslyfsktnrshoaw.supabase.co`
+- Public browser config: `supabase/config.js` contains only the publishable key. Never put a Supabase secret/service-role key in GitHub or browser files.
 
-## Tables and security
-Tables: `staff_profiles`, `menu_items`, `orders`, `bookings`, `inventory_items`.
-RLS is enabled on all five tables.
-The staff/admin helper functions cannot be executed by anonymous users.
-Public order and booking INSERT policies are intentionally disabled until a validated submission flow (prefer an Edge Function with server-side validation and abuse controls) is implemented.
+## Customer flow
+1. The menu is read from `public.menu_items`; current seed contains 46 active dishes across 8 categories. Prices and size/weight options are read from the same table the admin edits.
+2. The cart sends item IDs, selected options and quantities to the home checkout.
+3. `submit-request` validates identity fields, availability, size options and current prices on the server, applies the configured delivery fee, minimum order and optional discount code, then inserts a tracked order.
+4. `track-order.html` looks up an order or booking only when both tracking code and the customer phone match.
+5. Table bookings use the same server-side Edge Function and get a booking code.
 
-## Remaining staff-account setup (manual Auth UI step)
-1. Supabase Dashboard → Shrimp House → Authentication → Users.
-2. Add/create the first staff/admin account. Keep the password private; do not paste it into chat or source code.
-3. Once that user exists, run this SQL in the project's trusted SQL editor, replacing the email with the exact account email:
-```sql
-insert into public.staff_profiles (user_id, display_name, role)
-select id, 'Restaurant Admin', 'admin'
-from auth.users
-where email = 'YOUR_ADMIN_EMAIL'
-on conflict (user_id) do update set role = 'admin';
-```
-4. The admin login page uses Supabase Auth password sign-in and checks `staff_profiles.role` before redirecting to `admin.html`. The admin page itself also checks the current session and staff role before showing content.
-5. Frontend values in `supabase/config.js` must remain the project URL plus publishable/anon key only. Never place service-role/secret keys in public files.
+Public users may read available menu items and currently active offers, but no longer have direct INSERT access to `orders` or `bookings`. Public order/booking creation goes through the Edge Function, which rate-limits phone/IP requests and computes totals from database prices.
 
-## Production readiness notes
-- The admin dashboard sections are still visual placeholders; CRUD is not wired up yet.
-- Public order/booking submission is currently blocked until a server-validated flow is built.
-- Test with separate anonymous and staff accounts, review RLS policies, and run Supabase security advisors before accepting real orders.
+## Admin access and features
+- Admin login uses Supabase Auth and `staff_profiles.role`.
+- The current staff profile has role `admin`.
+- Existing views: Dashboard, Orders, Menu, Bookings, Inventory, Settings.
+- Added views: Kitchen queue, sales reports, customer summaries, active offers/coupons, recipe-to-inventory mappings, staff invitation/role management, audit/activity log.
+- Realtime alerts are shown while an authenticated admin page is open; the browser notification permission is opt-in.
+- Staff invitations run through `admin-staff-invite`, require an authenticated admin, send an Auth invitation email and create the staff profile. Supabase Auth email delivery/SMTP and the redirect URL must be configured.
+- Inventory movements are recorded with an authenticated RPC. Order recipes are deducted when an order is moved into `preparing`; deductions happen only for recipes actually configured.
+
+## New database objects and functions
+- `menu_items.options`, `category_key`, `category_icon`
+- `orders.tracking_code`, `fulfillment_type`, `delivery_fee`, `discount_amount`, `payment_method`, `stock_deducted_at`
+- `bookings.booking_code`
+- `restaurant_settings.maps_url`, social URLs, delivery fee, minimum, delivery areas and payment methods
+- `menu_item_recipes`, `inventory_movements`, `order_status_history`, `staff_activity_logs`, `offers`, `request_rate_limits`
+- Edge Functions: `submit-request` (public, server-validated) and `admin-staff-invite` (admin-only)
+- Migrations: `20261125150819_restaurant_operations_foundation`, `20261125151636_secure_public_requests_and_inventory_movements`.
+
+## Owner configuration still required
+1. Enter the real restaurant phone, WhatsApp, full address, Google Maps URL, opening hours and social links in Admin → Settings.
+2. Enter actual delivery fees, minimum order, delivery areas and accepted payment method labels (comma-separated). The checkout uses those settings; the server validates the selected payment-method label.
+3. Add the real ingredients/stock amounts in Inventory, then create recipe quantities for each menu item in Recipes. Do not invent ingredient quantities; automatic stock deduction will apply only after real recipes are entered.
+4. Confirm Auth email/SMTP delivery and the allowed redirect URL for staff invitations.
+5. Browser push notifications are optional; allow notifications in the browser while the admin page is open.
+
+## Security notes
+- RLS remains enabled. The public role can read available menu items and active offers; it cannot insert orders or bookings directly.
+- Request rate-limit records are not readable/writable by browser roles.
+- No service-role or secret key is stored in this repository.
+- Review Supabase Auth's leaked-password protection and remaining security advisor findings before advertising the system as fully production-hardened.
