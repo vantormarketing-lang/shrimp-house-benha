@@ -573,7 +573,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
 
  orderFilter.addEventListener('change',loadOrders);
  loadOrders();
- if(window.__SHRIMP_ADMIN_EXT)window.__SHRIMP_ADMIN_EXT(client,profile,{loadOrders,loadBookings,loadStock,refreshDashboard,loadMenu});
+ window.__SHRIMP_ADMIN_START_EXT=ext=>{if(typeof ext!=='function'||window.__SHRIMP_ADMIN_EXT_STARTED)return;window.__SHRIMP_ADMIN_EXT_STARTED=true;ext(client,profile,{loadOrders,loadBookings,loadStock,refreshDashboard,loadMenu});};if(window.__SHRIMP_ADMIN_EXT)window.__SHRIMP_ADMIN_START_EXT(window.__SHRIMP_ADMIN_EXT);
  document.body.style.visibility='visible';
  const badge=document.querySelector('.pill'); if(badge)badge.textContent='● '+(profile.role==='admin'?'Admin':'Staff')+' · '+(profile.display_name||session.user.email);
 })();
@@ -763,6 +763,7 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
  .subscribe();
  window.addEventListener('beforeunload',()=>{try{client.removeChannel(opsChannel);}catch(_){}});
 };
+window.__SHRIMP_ADMIN_START_EXT?.(window.__SHRIMP_ADMIN_EXT);
 </script></body></html>
 <style>
 /* Slightly darken the backdrop behind the opened mobile admin menu only */
