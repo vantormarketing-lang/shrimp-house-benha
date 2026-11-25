@@ -1,0 +1,68 @@
+/* Shrimp House — signature frosted-glass interaction layer */
+:root{
+  --sh-hover-glass:linear-gradient(135deg,rgba(236,246,255,.20),rgba(103,185,232,.14) 52%,rgba(215,220,228,.07));
+  --sh-hover-border:rgba(163,219,250,.82);
+  --sh-hover-shadow:0 12px 30px rgba(0,0,0,.28),0 0 0 1px rgba(103,185,232,.16),inset 0 1px 0 rgba(255,255,255,.20);
+}
+:where(a[href]:not(.skip),button,.menu-option-picker,.booking input,.booking select,.booking textarea){
+  -webkit-tap-highlight-color:transparent;
+  transition:background .22s ease,border-color .22s ease,box-shadow .22s ease,color .22s ease,transform .22s ease,filter .22s ease;
+}
+:where(a[href]:not(.skip),button,.menu-option-picker,.booking input,.booking select,.booking textarea):is(:hover,:focus-visible){
+  background:var(--sh-hover-glass)!important;color:#EDF7FF!important;border-color:var(--sh-hover-border)!important;
+  box-shadow:var(--sh-hover-shadow)!important;-webkit-backdrop-filter:blur(18px) saturate(155%)!important;
+  backdrop-filter:blur(18px) saturate(155%)!important;text-decoration:none;
+}
+:where(a[href]:not(.skip),button,.menu-option-picker,.booking input,.booking select,.booking textarea):active{
+  transform:translateY(0) scale(.975);
+  background:linear-gradient(135deg,rgba(236,246,255,.25),rgba(103,185,232,.19))!important;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.20),0 0 0 1px rgba(103,185,232,.24)!important;
+}
+:where(a[href]:not(.skip),button,.menu-option-picker,.booking input,.booking select,.booking textarea):focus-visible{
+  outline:2px solid rgba(132,205,244,.95)!important;outline-offset:3px!important;
+}
+.btn:is(:hover,:focus-visible),.btn.ghost:is(:hover,:focus-visible),.float:is(:hover,:focus-visible),
+.hero-menu-link:is(:hover,:focus-visible),.nav-menu-link:is(:hover,:focus-visible){
+  background:var(--sh-hover-glass)!important;color:#EDF7FF!important;border-color:var(--sh-hover-border)!important;
+}
+.links a:is(:hover,:focus-visible),.brand:is(:hover,:focus-visible),.cgrid a.glass:is(:hover,:focus-visible){
+  border-radius:14px;padding-inline:12px;background:var(--sh-hover-glass)!important;box-shadow:var(--sh-hover-shadow)!important;
+}
+.rbtn:is(:hover,:focus-visible),.cart-controls button:is(:hover,:focus-visible),.cart-actions button:is(:hover,:focus-visible){
+  background:var(--sh-hover-glass)!important;color:#EDF7FF!important;
+}
+.dot:is(:hover,:focus-visible){
+  width:22px;height:11px;border-radius:20px;background:linear-gradient(135deg,#D7EAF7,#67B9E8)!important;
+  box-shadow:0 0 0 5px rgba(103,185,232,.12),0 0 18px rgba(103,185,232,.38)!important;transform:scale(1.08);
+}
+.rcard:is(:hover,:focus-within),.menu-card:is(:hover,:focus-within),.photo:is(:hover,:focus-within),
+.ring-track>*:is(:hover,:focus-within),.row:is(:hover,:focus-within),.cart-row:is(:hover,:focus-within){
+  border-color:var(--sh-hover-border)!important;box-shadow:var(--sh-hover-shadow)!important;
+  -webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);
+}
+.rcard:is(:hover,:focus-within),.menu-card:is(:hover,:focus-within),.photo:is(:hover,:focus-within){
+  background-image:linear-gradient(135deg,rgba(236,246,255,.12),rgba(103,185,232,.10),rgba(215,220,228,.035));
+}
+.rcard.front:is(:hover,:focus-within),.menu-card:is(:hover,:focus-within){
+  border-color:#9BD8F5!important;
+  box-shadow:0 18px 42px rgba(0,0,0,.38),0 0 0 1px rgba(103,185,232,.42),inset 0 1px 0 rgba(255,255,255,.18)!important;
+}
+.menu-card:is(:hover,:focus-within) .menu-photo{filter:brightness(1.09) saturate(1.08)}
+.tab:is(:hover,:focus-visible),.menu-option-picker:is(:hover,:focus-visible){
+  background:var(--sh-hover-glass)!important;color:#EDF7FF!important;
+}
+.tab[aria-pressed=true]:is(:hover,:focus-visible){
+  background:linear-gradient(135deg,rgba(215,234,247,.92),rgba(103,185,232,.72))!important;color:#17191D!important;
+}
+.multi-cart:is(:hover,:focus-within){
+  border-color:rgba(163,219,250,.68)!important;
+  box-shadow:0 18px 48px rgba(0,0,0,.36),0 0 24px rgba(103,185,232,.10),inset 0 1px 0 rgba(255,255,255,.12)!important;
+}
+@media(hover:none){
+  :where(a[href]:not(.skip),button,.menu-option-picker,.booking input,.booking select,.booking textarea):active{
+    -webkit-backdrop-filter:blur(18px) saturate(155%)!important;backdrop-filter:blur(18px) saturate(155%)!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  :where(a[href]:not(.skip),button,.menu-option-picker,.booking input,.booking select,.booking textarea),.menu-card .menu-photo{transition:none!important}
+}
