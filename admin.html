@@ -488,8 +488,8 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  // Live menu CRUD
  const menuMsg=document.getElementById('menuMsg'),menuGrid=document.getElementById('menuItems'),menuFilter=document.getElementById('menuCategoryFilter'),dishForm=document.getElementById('dishForm');
  const df={id:document.getElementById('dishId'),name:document.getElementById('dishName'),category:document.getElementById('dishCategory'),price:document.getElementById('dishPrice'),sort:document.getElementById('dishOrder'),desc:document.getElementById('dishDescription'),options:document.getElementById('dishOptions'),image:document.getElementById('dishImage'),available:document.getElementById('dishAvailable')};
- function closeDishModal(){document.getElementById('dishModal').hidden=true;} function resetDish(){dishForm.reset();df.id.value='';df.sort.value='0';df.available.checked=true;closeDishModal();}
- document.getElementById('addDishBtn').onclick=()=>{resetDish();document.getElementById('dishModal').hidden=false;df.name.focus();};
+ function openDishModal(){document.getElementById('dishModal').hidden=false;document.body.classList.add('dish-modal-open');} function closeDishModal(){document.getElementById('dishModal').hidden=true;document.body.classList.remove('dish-modal-open');} function resetDish(){dishForm.reset();df.id.value='';df.sort.value='0';df.available.checked=true;closeDishModal();}
+ document.getElementById('addDishBtn').onclick=()=>{resetDish();openDishModal();df.name.focus();};
  document.getElementById('cancelDish').onclick=resetDish;document.getElementById('dishModalBackdrop').onclick=resetDish;
  async function loadMenu(){
   menuMsg.textContent='تحميل الأصناف…';menuGrid.innerHTML='';
@@ -505,7 +505,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
   menuGrid.innerHTML=data.map(d=>'<article class="dish-card" data-id="'+esc(d.id)+'">'+(d.image_url?'<img src="'+esc(d.image_url)+'" alt="'+esc(d.name)+'" loading="lazy">':'<div class="dish-photo"></div>')+'<div class="dish-body"><h4>'+esc(d.name)+'</h4><p>'+esc(d.category)+' · '+esc(d.description||'بدون وصف')+'</p><span class="dish-price">'+Number(d.price||0).toLocaleString('ar-EG')+' ج.م</span><span class="dish-status">'+(d.is_available?'🟢 متاح':'🔴 غير متاح')+'</span><div class="dish-buttons"><button class="edit" type="button">تعديل</button><button class="delete" type="button">حذف</button></div></div></article>').join('');
   menuGrid.querySelectorAll('.edit').forEach(btn=>btn.onclick=()=>{
    const d=data.find(x=>x.id===btn.closest('.dish-card').dataset.id);if(!d)return;
-   df.id.value=d.id;df.name.value=d.name;df.category.value=d.category;df.price.value=d.price;df.sort.value=d.sort_order;df.desc.value=d.description||'';df.options.value=JSON.stringify(d.options||[]);df.image.value=d.image_url||'';df.available.checked=d.is_available;document.getElementById('dishModal').hidden=false;
+   df.id.value=d.id;df.name.value=d.name;df.category.value=d.category;df.price.value=d.price;df.sort.value=d.sort_order;df.desc.value=d.description||'';df.options.value=JSON.stringify(d.options||[]);df.image.value=d.image_url||'';df.available.checked=d.is_available;openDishModal();
   });
   menuGrid.querySelectorAll('.delete').forEach(btn=>btn.onclick=async()=>{
    const id=btn.closest('.dish-card').dataset.id;if(!confirm('حذف الصنف من المنيو؟'))return;
@@ -855,7 +855,39 @@ window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
  window.addEventListener('beforeunload',()=>{try{client.removeChannel(opsChannel);}catch(_){}});
 };
 window.__SHRIMP_ADMIN_START_EXT?.(window.__SHRIMP_ADMIN_EXT);
-</script></body></html>
+</script>
+<style>
+/* Mobile Menu Management: compact two-card grid */
+@media(max-width:620px){
+ #menuItems.menu-items{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+ #menuItems .dish-card{border-radius:12px!important;min-width:0!important}
+ #menuItems .dish-card img,#menuItems .dish-card .dish-photo{height:105px!important}
+ #menuItems .dish-body{padding:9px!important;gap:5px!important}
+ #menuItems .dish-body h4{font-size:12px!important;line-height:1.45!important}
+ #menuItems .dish-body p{font-size:10px!important;line-height:1.5!important}
+ #menuItems .dish-price{font-size:11px!important;padding:4px 7px!important}
+ #menuItems .dish-status{font-size:9px!important;padding:3px 6px!important}
+ #menuItems .dish-buttons{gap:5px!important;margin-top:2px!important}
+ #menuItems .dish-buttons button{font-size:10px!important;padding:6px 4px!important;min-width:0!important}
+}
+/* Edit/Add form stays fixed in the viewport, centered, without page/form scrolling */
+body.dish-modal-open{overflow:hidden!important;height:100dvh!important;overscroll-behavior:none!important}
+.dish-modal{position:fixed!important;inset:0!important;align-items:center!important;justify-content:center!important;overflow:hidden!important}
+.dish-modal .dish-form{max-height:none!important;overflow:hidden!important;width:min(680px,calc(100vw - 24px))!important;margin:0!important}
+@media(max-width:620px){
+ .dish-modal{padding:8px!important}
+ .dish-modal .dish-form{width:calc(100vw - 16px)!important;padding:10px!important;border-radius:15px!important}
+ .dish-modal .dish-fields{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+ .dish-modal .dish-fields label{font-size:10px!important;gap:3px!important;min-width:0!important}
+ .dish-modal .dish-fields .wide{grid-column:1/-1!important}
+ .dish-modal .dish-fields input:not([type=checkbox]),.dish-modal .dish-fields textarea{font-size:12px!important;padding:7px!important;border-radius:8px!important;min-width:0!important}
+ .dish-modal .dish-fields textarea{resize:none!important;overflow:hidden!important}
+ .dish-modal .dish-fields label.avail{grid-column:1/-1!important;font-size:11px!important}
+ .dish-modal .form-actions{gap:6px!important;margin-top:7px!important}
+ .dish-modal .form-actions button{flex:1!important;padding:8px!important;font-size:12px!important}
+}
+</style>
+</body></html>
 <style>
 /* Slightly darken the backdrop behind the opened mobile admin menu only */
 .mobile-menu-overlay{background:rgba(2,1,3,.82)!important;}
