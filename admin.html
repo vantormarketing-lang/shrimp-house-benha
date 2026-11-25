@@ -1018,3 +1018,20 @@ html::-webkit-scrollbar,body::-webkit-scrollbar,*::-webkit-scrollbar{width:0!imp
 #dishModal .dish-form{max-height:90vh!important;max-height:90dvh!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;scrollbar-width:thin!important}
 @media(max-width:620px){#dishModal{padding:8px!important}#dishModal .dish-form{max-height:92vh!important;max-height:92dvh!important;width:calc(100vw - 16px)!important}}
 </style>
+
+<style id="admin-scroll-modal-recovery">
+/* Restore page scrolling outside modals and ensure dish editor renders visibly */
+html,body{overflow-x:hidden!important;overflow-y:auto!important;height:auto!important;min-height:100%!important}
+body.dish-modal-open{overflow:hidden!important;height:100dvh!important}
+.shell{min-height:100dvh!important;height:auto!important}
+.main{min-height:100dvh!important;overflow:visible!important}
+.view.show{overflow:visible!important;max-height:none!important}
+#dishModal{overflow:hidden!important;display:flex!important;align-items:center!important;justify-content:center!important}
+#dishModal[hidden]{display:none!important}
+#dishModal #dishForm{display:block!important;visibility:visible!important;opacity:1!important;position:relative!important;max-height:92dvh!important;overflow-y:auto!important;overflow-x:hidden!important;width:min(680px,calc(100vw - 16px))!important;padding:12px!important;margin:0!important;border:1px solid rgba(151,190,210,.30)!important;border-radius:16px!important;background:linear-gradient(145deg,rgba(30,37,43,.98),rgba(13,17,21,.98))!important;box-shadow:0 22px 65px rgba(0,0,0,.50)!important}
+#dishModal #dishForm .dish-fields{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+#dishModal #dishForm .dish-fields label{display:flex!important;flex-direction:column!important;min-width:0!important}
+#dishModal #dishForm .dish-fields label.wide,#dishModal #dishForm .dish-fields label.avail{grid-column:1/-1!important}
+#dishModal #dishForm .form-actions{display:flex!important;gap:8px!important}
+@media(max-width:620px){#dishModal #dishForm{max-height:92dvh!important;width:calc(100vw - 16px)!important}}
+</style>
