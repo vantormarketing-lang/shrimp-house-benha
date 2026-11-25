@@ -260,6 +260,83 @@ body.has-cart{padding-bottom:170px!important}
 .menu-card-overlay .chips .chip{background:linear-gradient(115deg,#10243B 0%,#1B5B87 52%,#67B9E8 100%)!important;color:#F2F8FC!important}
 @media(max-width:600px){.chips .chip,.chips .option-chip{min-height:32px;padding:5px 9px!important;gap:5px!important}.chips .chip b,.chips .option-chip b{font-size:15px!important}}
 
+
+/* Final high-specificity price-pill override: wins over legacy photo-card price styles */
+.menu-card-overlay .chips span.chip.price-chip,
+.menu-card-overlay .chips button.option-chip,
+#list .chips span.chip.price-chip,
+#list .chips button.option-chip,
+.row .chips span.chip.price-chip,
+.row .chips button.option-chip,
+#ring .chips span.chip.price-chip,
+#ring .chips button.option-chip{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ gap:6px!important;min-height:34px!important;padding:6px 12px!important;
+ border-radius:14px!important;border:1px solid rgba(189,231,252,.82)!important;
+ background:linear-gradient(115deg,#10243B 0%,#1B5B87 52%,#67B9E8 100%)!important;
+ color:#F2F8FC!important;
+ box-shadow:0 5px 15px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.18)!important;
+ font-family:inherit!important;font-size:12px!important;font-weight:800!important;
+ font-variant-numeric:tabular-nums!important;letter-spacing:.15px!important;
+ text-shadow:0 1px 2px rgba(0,0,0,.25)!important;
+}
+.menu-card-overlay .chips span.chip.price-chip b,
+.menu-card-overlay .chips span.chip.price-chip i,
+.menu-card-overlay .chips span.chip.price-chip em,
+.menu-card-overlay .chips button.option-chip b,
+.menu-card-overlay .chips button.option-chip i,
+.menu-card-overlay .chips button.option-chip em,
+#list .chips span.chip.price-chip b,#list .chips span.chip.price-chip i,#list .chips span.chip.price-chip em,
+#list .chips button.option-chip b,#list .chips button.option-chip i,#list .chips button.option-chip em{
+ display:inline!important;padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;
+ color:#F2F8FC!important;text-shadow:0 1px 2px rgba(0,0,0,.22)!important;
+}
+.menu-card-overlay .chips span.chip.price-chip b,
+.menu-card-overlay .chips button.option-chip b,
+#list .chips span.chip.price-chip b,#list .chips button.option-chip b{
+ font-size:17px!important;font-weight:900!important;line-height:1.1!important;
+}
+.menu-card-overlay .chips span.chip.price-chip i,
+.menu-card-overlay .chips button.option-chip i,
+#list .chips span.chip.price-chip i,#list .chips button.option-chip i{
+ font-size:10px!important;font-style:normal!important;font-weight:900!important;letter-spacing:.45px!important;
+}
+.menu-card-overlay .chips span.chip.price-chip em,
+.menu-card-overlay .chips button.option-chip em,
+#list .chips span.chip.price-chip em,#list .chips button.option-chip em{
+ font-size:11px!important;font-style:normal!important;font-weight:800!important;
+}
+.menu-card-overlay .chips button.option-chip[aria-pressed="true"],
+#list .chips button.option-chip[aria-pressed="true"]{
+ border-color:#D7F2FF!important;
+ box-shadow:0 0 0 2px rgba(103,185,232,.2),0 6px 18px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.2)!important;
+}
+.menu-card-overlay .chips button.option-chip:hover,
+#list .chips button.option-chip:hover{
+ background:linear-gradient(115deg,#10243B 0%,#1B5B87 52%,#67B9E8 100%)!important;
+ color:#FFFFFF!important;filter:brightness(1.08)!important;
+}
+/* Slightly smaller rotating category cards */
+.category-orbit-card{height:110px!important;min-height:110px!important;padding:12px 10px!important;gap:6px!important;border-radius:20px!important}
+.category-orbit-card:before{inset:6px!important;border-radius:15px!important}
+.category-orbit-card h3{font-size:clamp(16px,2vw,20px)!important}
+.category-orbit-eyebrow{font-size:8px!important;letter-spacing:1.6px!important}
+.category-orbit-index{font-size:7px!important;letter-spacing:1.6px!important}
+@media(max-width:600px){
+ .category-orbit-card{height:98px!important;min-height:98px!important;padding:10px 8px!important;gap:5px!important;border-radius:18px!important}
+ .category-orbit-card:before{inset:5px!important;border-radius:13px!important}
+ .category-orbit-card h3{font-size:16px!important}
+ .menu-card-overlay .chips span.chip.price-chip,
+ .menu-card-overlay .chips button.option-chip,
+ #list .chips span.chip.price-chip,#list .chips button.option-chip{
+  min-height:31px!important;padding:5px 9px!important;gap:5px!important;font-size:11px!important
+ }
+ .menu-card-overlay .chips span.chip.price-chip b,
+ .menu-card-overlay .chips button.option-chip b,
+ #list .chips span.chip.price-chip b,#list .chips button.option-chip b{font-size:15px!important}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
 <body>
@@ -482,7 +559,7 @@ const chips=s=>parse(s).map(v=>'<span class="chip price-chip"><b>'+formatPrice(v
 const ring=Ring($('ring'),{w:240});
 let cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));
 let categoryRingSync=true;
-const categoryRing=Ring($('tabs'),{w:190,onChange:i=>{if(!categoryRingSync&&i!==cat){cat=i;show();}}});
+const categoryRing=Ring($('tabs'),{w:170,onChange:i=>{if(!categoryRingSync&&i!==cat){cat=i;show();}}});
 const menuPhotoSets={"pasta":["photo-1655279561980-c72226ffe505","photo-1648427137895-cddb46fd3147","photo-1701856625684-04ba3eeed0d6"],"sandwich":["photo-1723476619535-18b87ac8a9aa","photo-1706468238744-6af411063336","photo-1737141499796-79082c7388b1"],"meals":["photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6","photo-1636044990623-074abdf6e994"],"weights":["photo-1559737558-2f5a35f4523b","photo-1794240280373-37ee5dd35822","photo-1654248568719-474fb9bd8a73","photo-1654426949677-45ecf830a543","photo-1704126035011-61edf6849d74","photo-1729268277387-fe88b9164792","photo-1772654271379-484eeabecc37"],"soup":["photo-1701856625684-04ba3eeed0d6","photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6"],"rice":["photo-1761314025611-957a20e3e8a3","photo-1741612552052-2c5806e8a9ea","photo-1636044990623-074abdf6e994"],"extras":["photo-1636044990623-074abdf6e994","photo-1768966741466-95aec5f70d0a","photo-1761314025611-957a20e3e8a3"],"trays":["photo-1768966741466-95aec5f70d0a","photo-1737141499796-79082c7388b1","photo-1636044989715-2d7409d1dfa9"]};
 const photoBase='https://images.unsplash.com/';
 const cart=new Map();
