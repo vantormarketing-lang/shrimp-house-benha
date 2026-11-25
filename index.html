@@ -168,6 +168,11 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
     }
     function tick(t) {
       const dt = Math.min(0.05, Math.max(0.001, (t - last) / 1000)); last = t;
+      if (o.continuous && !reduce && !drag) {
+        pos += dt * n / ((o.rotationDuration || 9000) / 1000);
+        target = pos;
+        render(); raf = requestAnimationFrame(tick); return;
+      }
       if (!drag) {
         pos += (target - pos) * (1 - Math.exp(-dt / (reduce ? 0.005 : 0.09)));
         if (Math.abs(target - pos) < 0.002) { pos = target; raf = 0; render(); return; }
@@ -178,7 +183,7 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
     function go(t) { target = t; mark(); if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
     function to(i) { const base = Math.round(target); go(base + mod(i - base + n / 2, n) - n / 2); }
     const stop = () => { clearInterval(timer); timer = 0; };
-    const start = () => { if (o.autoplay && !reduce && !timer && n > 1) timer = setInterval(() => { if (!document.hidden && !drag) go(Math.round(target) + 1); }, o.autoplay); };
+    const start = () => { if (o.continuous && !reduce && !raf && n > 1) { last = performance.now(); raf = requestAnimationFrame(tick); } else if (o.autoplay && !reduce && !timer && n > 1) timer = setInterval(() => { if (!document.hidden && !drag) go(Math.round(target) + 1); }, o.autoplay); };
  
     bl.onclick = () => { stop(); go(Math.round(target) - ds); };
     br.onclick = () => { stop(); go(Math.round(target) + ds); };
@@ -322,7 +327,7 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
 })();
 </script>
 <script>
-Ring(document.getElementById('storyRing'),{w:250,autoplay:3000,controls:false,pauseOnHover:false});
+Ring(document.getElementById('storyRing'),{w:250,autoplay:0,continuous:true,rotationDuration:9000,controls:false,pauseOnHover:false});
 if(document.getElementById('contact')&&!document.getElementById('contact').hidden)document.getElementById('navContact').hidden=false;
 document.querySelectorAll('img').forEach(i=>i.addEventListener('error',()=>{i.style.visibility='hidden'}));
 </script>
