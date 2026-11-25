@@ -420,7 +420,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
  async function loadOrders(){
   orderMsg.textContent='جارٍ تحميل الطلبات من قاعدة البيانات…';orderList.innerHTML='';
-  let query=client.from('orders').select('id,customer_name,phone,address,items,total,status,notes,created_at').order('created_at',{ascending:false}).limit(100);
+  let query=client.from('orders').select('id,tracking_code,payment_method,fulfillment_type,customer_name,phone,address,items,total,status,notes,created_at').order('created_at',{ascending:false}).limit(100);
   if(orderFilter.value)query=query.eq('status',orderFilter.value);
   const {data,error}=await query;
   if(error){orderMsg.textContent='تعذر تحميل الطلبات: '+error.message;return;}
@@ -428,9 +428,9 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
   if(!data?.length){orderMsg.textContent='لا توجد طلبات في هذا العرض حاليًا.';return;}
   orderMsg.textContent='';
   orderList.innerHTML=data.map(o=>{
-   const items=Array.isArray(o.items)?o.items.map(it=>typeof it==='string'?it:(it.name||it.title||JSON.stringify(it))).join('، '):String(o.items||'—');
+   const items=Array.isArray(o.items)?o.items.map(it=>typeof it==='string'?it:((it.name||it.title||JSON.stringify(it))+(it.option_label?' · '+it.option_label:'')+' × '+(it.quantity||1)+' ['+Number(it.line_total??it.unit_price??0).toLocaleString('ar-EG')+' ج.م]')).join('، '):String(o.items||'—');
    const dt=o.created_at?new Date(o.created_at).toLocaleString('ar-EG'):'—';
-   return '<article class="order-card" data-order="'+esc(o.id)+'"><div class="order-head"><strong>'+esc(o.customer_name)+' · '+esc(o.phone)+'</strong><span class="order-total">'+Number(o.total||0).toLocaleString('ar-EG')+' ج.م</span></div><div class="order-meta">وقت الطلب: '+esc(dt)+'<br>العنوان: '+esc(o.address||'—')+'</div><div class="order-items">الطلب: '+esc(items||'—')+(o.notes?'<br>ملاحظات: '+esc(o.notes):'')+'</div><div class="order-actions"><label>الحالة:</label><select class="order-status" aria-label="حالة الطلب">'+Object.entries(orderLabels).map(([k,v])=>'<option value="'+k+'" '+(o.status===k?'selected':'')+'>'+v+'</option>').join('')+'</select><button class="save-order" type="button">حفظ الحالة</button></div></article>';
+   return '<article class="order-card" data-order="'+esc(o.id)+'"><div class="order-head"><strong>'+esc(o.customer_name)+' · '+esc(o.phone)+'</strong><span class="order-total">'+Number(o.total||0).toLocaleString('ar-EG')+' ج.م</span></div><div class="order-meta">رقم المتابعة: '+esc(o.tracking_code||'—')+'<br>وقت الطلب: '+esc(dt)+'<br>النوع: '+esc(o.fulfillment_type==='pickup'?'استلام من المطعم':'توصيل')+' · الدفع: '+esc(o.payment_method||'—')+'<br>العنوان: '+esc(o.address||'—')+'</div><div class="order-items">الطلب: '+esc(items||'—')+(o.notes?'<br>ملاحظات: '+esc(o.notes):'')+'</div><div class="order-actions"><label>الحالة:</label><select class="order-status" aria-label="حالة الطلب">'+Object.entries(orderLabels).map(([k,v])=>'<option value="'+k+'" '+(o.status===k?'selected':'')+'>'+v+'</option>').join('')+'</select><button class="save-order" type="button">حفظ الحالة</button></div></article>';
   }).join('');
   orderList.querySelectorAll('.save-order').forEach(btn=>btn.addEventListener('click',async()=>{
    const card=btn.closest('.order-card'),id=card.dataset.order,status=card.querySelector('.order-status').value;
@@ -485,7 +485,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  const bookingLabels={pending:'بانتظار التأكيد',confirmed:'مؤكد',cancelled:'ملغي',completed:'مكتمل'};
  async function loadBookings(){
   bookingMsg.textContent='جارٍ تحميل الحجوزات…';bookingList.innerHTML='';
-  let q=client.from('bookings').select('id,customer_name,phone,guests,booking_date,booking_time,notes,status,created_at').order('booking_date',{ascending:true}).order('booking_time',{ascending:true}).limit(150);
+  let q=client.from('bookings').select('id,booking_code,customer_name,phone,guests,booking_date,booking_time,notes,status,created_at').order('booking_date',{ascending:true}).order('booking_time',{ascending:true}).limit(150);
   if(bookingFilter.value)q=q.eq('status',bookingFilter.value);
   const {data,error}=await q;if(error){bookingMsg.textContent='تعذر تحميل الحجوزات: '+error.message;return;}
   document.getElementById('bookingCount').textContent=(data?.length||0)+' حجز';
@@ -493,7 +493,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
   bookingMsg.textContent='';
   bookingList.innerHTML=data.map(b=>{
    const date=b.booking_date?new Date(b.booking_date+'T00:00:00').toLocaleDateString('ar-EG',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'—';
-   return '<article class="booking-card" data-booking="'+esc(b.id)+'"><div class="booking-head"><strong>'+esc(b.customer_name)+' · '+esc(b.phone)+'</strong><span class="booking-state">'+esc(bookingLabels[b.status]||b.status)+'</span></div><div class="booking-meta">📅 '+esc(date)+' · 🕒 '+esc(b.booking_time||'—')+'<br>👥 عدد الأفراد: '+esc(b.guests||'—')+'</div>'+(b.notes?'<div class="booking-notes">ملاحظات: '+esc(b.notes)+'</div>':'')+'<div class="booking-actions"><select class="booking-status" aria-label="حالة الحجز">'+Object.entries(bookingLabels).map(([k,v])=>'<option value="'+k+'" '+(b.status===k?'selected':'')+'>'+v+'</option>').join('')+'</select><button class="save-booking" type="button">حفظ الحالة</button></div></article>';
+   return '<article class="booking-card" data-booking="'+esc(b.id)+'"><div class="booking-head"><strong>'+esc(b.customer_name)+' · '+esc(b.phone)+'</strong><span class="booking-state">'+esc(bookingLabels[b.status]||b.status)+'</span></div><div class="booking-meta">رقم الحجز: '+esc(b.booking_code||'—')+'<br>📅 '+esc(date)+' · 🕒 '+esc(b.booking_time||'—')+'<br>👥 عدد الأفراد: '+esc(b.guests||'—')+'</div>'+(b.notes?'<div class="booking-notes">ملاحظات: '+esc(b.notes)+'</div>':'')+'<div class="booking-actions"><select class="booking-status" aria-label="حالة الحجز">'+Object.entries(bookingLabels).map(([k,v])=>'<option value="'+k+'" '+(b.status===k?'selected':'')+'>'+v+'</option>').join('')+'</select><button class="save-booking" type="button">حفظ الحالة</button></div></article>';
   }).join('');
   bookingList.querySelectorAll('.save-booking').forEach(btn=>btn.onclick=async()=>{
    const card=btn.closest('.booking-card'),id=card.dataset.booking,status=card.querySelector('.booking-status').value;
