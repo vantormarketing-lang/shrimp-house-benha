@@ -387,10 +387,27 @@ button:hover,.btn:hover{border-color:rgba(103,185,232,.46)!important}
 }
 </style>
 <style id="admin-menu-gray-burgundy-cyan">
-/* Sidebar: graphite gray surface, burgundy edge, soft ice-cyan hover */
-.side,.mobile-menu-panel{background:linear-gradient(145deg,rgba(62,68,75,.96),rgba(38,43,49,.97))!important;border-color:rgba(126,31,44,.72)!important;box-shadow:0 16px 42px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.055)!important}
-.nav button,.mobile-menu-items button{background:transparent!important;border:1px solid transparent!important;color:#d7dfe6!important;transition:background .2s,border-color .2s,box-shadow .2s,color .2s!important}
-.nav button:hover,.nav button.active,.mobile-menu-items button:hover,.mobile-menu-items button.active{background:linear-gradient(145deg,rgba(190,235,255,.24),rgba(120,195,230,.12))!important;border-color:rgba(170,225,250,.38)!important;color:#d9f5ff!important;box-shadow:inset 0 1px rgba(255,255,255,.12),0 0 14px rgba(140,220,250,.10)!important}
+/* Admin navigation: elegant blue glass tiles, matching the main site's ice-blue palette */
+.side,.mobile-menu-panel{
+ background:linear-gradient(145deg,rgba(37,58,72,.96),rgba(19,31,41,.97))!important;
+ border-color:rgba(103,185,232,.40)!important;
+ box-shadow:0 16px 42px rgba(0,0,0,.30),inset 0 1px rgba(255,255,255,.07)!important
+}
+.nav button,.mobile-menu-items button{
+ background:linear-gradient(145deg,rgba(103,185,232,.11),rgba(215,220,228,.035))!important;
+ border:1px solid rgba(103,185,232,.22)!important;
+ border-radius:12px!important;
+ color:#d7e6f1!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.055)!important;
+ transition:background .2s,border-color .2s,box-shadow .2s,color .2s,transform .2s!important
+}
+.nav button:hover,.nav button.active,.mobile-menu-items button:hover,.mobile-menu-items button.active{
+ background:linear-gradient(145deg,rgba(103,185,232,.28),rgba(140,210,242,.13))!important;
+ border-color:rgba(120,205,245,.48)!important;
+ color:#e3f6ff!important;
+ box-shadow:inset 0 1px rgba(255,255,255,.13),0 0 15px rgba(103,185,232,.13)!important;
+ transform:translateY(-1px)!important
+}
 </style><style id="admin-install-pwa-ui">
 .admin-install-app{display:inline-flex!important;align-items:center;justify-content:center;gap:7px;white-space:nowrap;margin-inline-start:8px;padding:8px 13px;border:1px solid rgba(153,185,206,.30);border-radius:12px;background:linear-gradient(145deg,rgba(108,133,151,.25),rgba(255,255,255,.045));color:#dbe8f2;font:inherit;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.07);backdrop-filter:blur(16px)}
 .admin-install-app:hover{border-color:rgba(103,185,232,.6);background:linear-gradient(145deg,rgba(103,185,232,.30),rgba(255,255,255,.06))}
