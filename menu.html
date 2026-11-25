@@ -419,7 +419,8 @@ const parse=s=>s.split('|').map(x=>{const m=x.trim().match(/^(\d+)\s*(.*)$/);ret
 const chips=s=>parse(s).map(v=>'<span class="chip"><b>'+v.p+'</b> ج.م'+(v.l?' <i>'+v.l+'</i>':'')+'</span>').join('');
 const ring=Ring($('ring'),{w:240});
 let cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));
-const categoryRing=Ring($('tabs'),{w:190,onChange:i=>{if(i!==cat){cat=i;show();}}});
+let categoryRingSync=true;
+const categoryRing=Ring($('tabs'),{w:190,onChange:i=>{if(!categoryRingSync&&i!==cat){cat=i;show();}}});
 const menuPhotoSets={"pasta":["photo-1655279561980-c72226ffe505","photo-1648427137895-cddb46fd3147","photo-1701856625684-04ba3eeed0d6"],"sandwich":["photo-1723476619535-18b87ac8a9aa","photo-1706468238744-6af411063336","photo-1737141499796-79082c7388b1"],"meals":["photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6","photo-1636044990623-074abdf6e994"],"weights":["photo-1559737558-2f5a35f4523b","photo-1794240280373-37ee5dd35822","photo-1654248568719-474fb9bd8a73","photo-1654426949677-45ecf830a543","photo-1704126035011-61edf6849d74","photo-1729268277387-fe88b9164792","photo-1772654271379-484eeabecc37"],"soup":["photo-1701856625684-04ba3eeed0d6","photo-1737141499796-79082c7388b1","photo-1762631882592-25bc08678af6"],"rice":["photo-1761314025611-957a20e3e8a3","photo-1741612552052-2c5806e8a9ea","photo-1636044990623-074abdf6e994"],"extras":["photo-1636044990623-074abdf6e994","photo-1768966741466-95aec5f70d0a","photo-1761314025611-957a20e3e8a3"],"trays":["photo-1768966741466-95aec5f70d0a","photo-1737141499796-79082c7388b1","photo-1636044989715-2d7409d1dfa9"]};
 const photoBase='https://images.unsplash.com/';
 const cart=new Map();
@@ -499,7 +500,7 @@ function categoryCard(c,i){
  const footer=document.createElement('small');footer.className='category-orbit-index';footer.textContent='SECTION  '+String(i+1).padStart(2,'0');
  a.append(eyebrow,heading,footer);return a;
 }
-function renderTabs(){categoryRing.setItems(M.map((c,i)=>categoryCard(c,i)));}
+function renderTabs(){categoryRingSync=true;categoryRing.setItems(M.map((c,i)=>categoryCard(c,i)));categoryRing.to(cat);categoryRingSync=false;}
 function show(){
  const c=M[cat];if(!c)return;
  [...$('tabs').children].forEach((t,i)=>t.setAttribute('aria-pressed',i===cat?'true':'false'));
