@@ -377,7 +377,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  const client=window.supabase.createClient(cfg.url,cfg.anonKey);
  const {data:{session}}=await client.auth.getSession();
  if(!session){window.location.replace('./admin-login.html');return;}
- const {data:profile,error}=await client.from('staff_profiles').select('role,display_name').eq('user_id',session.user.id).maybeSingle();
+ const {data:profile,error}=await client.from('staff_profiles').select('user_id,role,display_name').eq('user_id',session.user.id).maybeSingle();
  if(error||!profile||!['admin','staff'].includes(profile.role)){await client.auth.signOut();window.location.replace('./admin-login.html');return;}
  const logout=document.createElement('button'); logout.type='button'; logout.textContent='↩　تسجيل الخروج'; logout.style.cssText='font:inherit;color:#c0c9b5;text-align:right;background:transparent;border:1px solid #d8b66b24;border-radius:12px;padding:12px;cursor:pointer'; logout.addEventListener('click',async()=>{await client.auth.signOut();window.location.replace('./admin-login.html');}); document.querySelector('.nav')?.appendChild(logout);
  // Dashboard metrics
