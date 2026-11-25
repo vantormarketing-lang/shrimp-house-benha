@@ -10,8 +10,27 @@
   const {data,error}=await client.functions.invoke("admin-push",{body:{action:"setup"}});
   if(error)throw new Error(error.message||"تعذر تجهيز مفاتيح الإشعارات.");
   if(!data?.public_key)throw new Error(data?.error||"مفتاح الإشعارات غير متاح.");
-  const registration=await navigator.serviceWorker.register("/admin-push-sw.js",{scope:"/",updateViaCache:"none"});
-  await navigator.serviceWorker.ready;
+  // Remove only the previous root-scoped admin worker; keep the customer PWA worker untouched.
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  for (const oldRegistration of registrations) {
+    const oldWorker = oldRegistration.active || oldRegistration.waiting || oldRegistration.installing;
+    const isOldRootAdminWorker = oldRegistration.scope === new URL("/", location.origin).href &&
+      oldWorker?.scriptURL === new URL("/admin-push-sw.js", location.origin).href;
+    if (!isOldRootAdminWorker) continue;
+    const oldSubscription = await oldRegistration.pushManager.getSubscription();
+    if (oldSubscription) {
+      await client.functions.invoke("admin-push", {body:{action:"unsubscribe",endpoint:oldSubscription.endpoint}});
+      await oldSubscription.unsubscribe();
+    }
+    await oldRegistration.unregister();
+  }
+  const registration=await navigator.serviceWorker.register("/admin-push-sw.js",{scope:"/admin",updateViaCache:"none"});
+  if(registration.installing){
+    await new Promise(resolve=>{
+      const worker=registration.installing;
+      worker.addEventListener("statechange",()=>{if(worker.state==="activated"||worker.state==="redundant")resolve();});
+    });
+  }
   state.registration=registration;state.publicKey=data.public_key;
   const existing=await registration.pushManager.getSubscription();
   if(existing){const saved=await client.functions.invoke("admin-push",{body:{action:"subscribe",subscription:existing.toJSON(),user_agent:navigator.userAgent.slice(0,500)}});if(saved.error)throw new Error(saved.error.message||"تعذر مزامنة اشتراك هذا الجهاز.");}
@@ -42,7 +61,7 @@
   return initial;
  }
  async function unsubscribe(client){
-  try{const reg=await navigator.serviceWorker.getRegistration("/"),sub=await reg?.pushManager.getSubscription();if(!sub)return;await client.functions.invoke("admin-push",{body:{action:"unsubscribe",endpoint:sub.endpoint}});await sub.unsubscribe();}catch(e){console.warn("Admin Push unsubscribe:",e);}
+  try{const reg=await navigator.serviceWorker.getRegistration("/admin"),sub=await reg?.pushManager.getSubscription();if(!sub)return;await client.functions.invoke("admin-push",{body:{action:"unsubscribe",endpoint:sub.endpoint}});await sub.unsubscribe();}catch(e){console.warn("Admin Push unsubscribe:",e);}
  }
  window.SHRIMP_ADMIN_PUSH={bindButton,unsubscribe};
 })();
