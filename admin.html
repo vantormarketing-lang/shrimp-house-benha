@@ -555,6 +555,7 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  }
  document.getElementById('refreshOrders').addEventListener('click',loadOrders);
  // Live menu CRUD
+ const dishModalRoot=document.getElementById('dishModal'); if(dishModalRoot&&dishModalRoot.parentElement!==document.body)document.body.appendChild(dishModalRoot);
  const menuMsg=document.getElementById('menuMsg'),menuGrid=document.getElementById('menuItems'),menuFilter=document.getElementById('menuCategoryFilter'),dishForm=document.getElementById('dishForm');
  const df={id:document.getElementById('dishId'),name:document.getElementById('dishName'),category:document.getElementById('dishCategory'),price:document.getElementById('dishPrice'),sort:document.getElementById('dishOrder'),desc:document.getElementById('dishDescription'),options:document.getElementById('dishOptions'),image:document.getElementById('dishImage'),available:document.getElementById('dishAvailable')};
  function openDishModal(){document.getElementById('dishModal').hidden=false;document.body.classList.add('dish-modal-open');} function closeDishModal(){document.getElementById('dishModal').hidden=true;document.body.classList.remove('dish-modal-open');} function resetDish(){dishForm.reset();df.id.value='';df.sort.value='0';df.available.checked=true;closeDishModal();}
@@ -1076,4 +1077,12 @@ body.dish-modal-open{overflow:hidden!important;height:100dvh!important}
 .section-title-glass.dashboard-title h2,.section-title-glass.dashboard-title p{
  color:#302821!important
 }
+</style>
+<style id="dish-modal-body-portal-fix">
+/* Portal modal directly under body to escape nested menu scroll containers */
+#dishModal{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100dvh!important;z-index:2147483000!important;display:flex!important;align-items:center!important;justify-content:center!important;overflow:hidden!important;padding:12px!important}
+#dishModal[hidden]{display:none!important}
+#dishModal #dishForm{max-height:calc(100dvh - 24px)!important;overflow:auto!important;margin:0!important}
+#dishModal #dishModalBackdrop{position:fixed!important;inset:0!important}
+@media(max-width:620px){#dishModal{padding:8px!important}#dishModal #dishForm{max-height:calc(100dvh - 16px)!important;width:calc(100vw - 16px)!important}}
 </style>
