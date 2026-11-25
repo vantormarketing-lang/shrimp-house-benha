@@ -153,6 +153,15 @@
 .section-title-glass h2{margin:0;font-size:19px;font-weight:700;color:#f4eddb;letter-spacing:.02em}
 .section-title-glass p{margin:4px 0 0;font-size:11px;color:#e6dbc5;opacity:.9}
 @media(max-width:620px){.section-title-glass{width:min(100%,400px);margin:0 auto 14px;padding:11px 16px;border-radius:15px}.section-title-glass h2{font-size:16px}.section-title-glass p{font-size:10px}}
+/* Header sides: menu right, Admin/Refresh left; extra room above dashboard cards */
+@media(max-width:620px){
+ .mobile-menu-trigger{left:auto!important;right:14px!important;}
+ .mobile-menu-trigger-label{left:auto!important;right:66px!important;}
+ .top.admin-top{padding-left:56px!important;padding-right:0!important;justify-content:flex-start!important;}
+ .admin-top-label{justify-content:flex-start!important;}
+ .section-title-glass{margin-top:12px!important;margin-bottom:24px!important;}
+ .stats{margin-top:6px!important;}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
