@@ -300,5 +300,5 @@ M.forEach((c,i)=>{const b=document.createElement('button');b.type='button';b.cla
 $('viewBtn').onclick=()=>{asList=!asList;$('ring').hidden=asList;ring.ui.hidden=asList||M[cat].items.length<2;$('list').hidden=!asList;$('viewBtn').textContent=asList?'عرض دائري':'عرض القائمة'};
 show();
 </script>
-<script>window.SITE_READY?.then(()=>{document.querySelectorAll('a.menu-order, #list a.btn').forEach(a=>{const name=a.closest('.menu-card')?.querySelector('h3')?.textContent||a.closest('.row')?.querySelector('.n')?.textContent;if(name&&window.setOrder)window.setOrder(a,name);});});</script></body></html>
+<script>window.SITE_READY?.then(()=>{document.querySelectorAll('a.menu-order, #list a.btn').forEach(a=>{const name=a.closest('.menu-card')?.querySelector('h3')?.textContent||a.closest('.row')?.querySelector('.n')?.textContent;if(name&&window.setOrder)window.setOrder(a,name);});});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const p=location.pathname==='/menu.html'?'/menu.html':((location.pathname==='/'||location.pathname.endsWith('/index.html'))?'/':'');if(p&&window.supabase&&window.SUPABASE_URL&&window.SUPABASE_ANON_KEY){const db=window.supabase.createClient(window.SUPABASE_URL,window.SUPABASE_ANON_KEY);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script></body></html>
  
