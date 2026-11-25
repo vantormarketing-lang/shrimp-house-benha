@@ -201,6 +201,33 @@ body.has-cart{padding-bottom:170px!important}
 .category-ring+.ring-ui .dot[aria-current=true]{background:#67B9E8!important;box-shadow:0 0 12px rgba(103,185,232,.45)}
 @media(max-width:600px){#tabs.category-ring{margin:12px auto 5px!important}.category-orbit-card{height:128px!important;min-height:128px!important;border-radius:21px!important}.category-orbit-card:before{inset:6px;border-radius:16px}}
 
+
+/* Size/weight prices are the selectors; remove the redundant dropdown. */
+.menu-option-choices{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;width:100%}
+.option-chip{
+ appearance:none;-webkit-appearance:none;cursor:pointer;display:inline-flex!important;
+ align-items:center;justify-content:center;gap:5px;min-height:34px;
+ padding:6px 11px!important;border-radius:13px!important;
+ color:#D7DCE4!important;background:rgba(23,25,29,.78)!important;
+ border:1px solid rgba(103,185,232,.38)!important;
+ font:inherit;font-size:12px;font-weight:800;
+ transition:background .2s,border-color .2s,box-shadow .2s,transform .2s;
+}
+.option-chip[aria-pressed="true"]{
+ color:#17191D!important;
+ background:linear-gradient(135deg,#D7DCE4,#67B9E8)!important;
+ border-color:#BDE7FC!important;
+ box-shadow:0 0 0 2px rgba(103,185,232,.15),0 5px 15px rgba(0,0,0,.22)!important;
+}
+.option-chip:hover{border-color:#BDE7FC!important;background:rgba(103,185,232,.2)!important;color:#F2F8FC!important}
+.option-chip[aria-pressed="true"]:hover{background:linear-gradient(135deg,#E8F4FB,#83C8EC)!important;color:#17191D!important}
+.menu-card-overlay .chips.has-option-choices{padding:0!important;gap:7px!important}
+.row .chips.has-option-choices{justify-content:flex-end}
+@media(max-width:600px){
+ .option-chip{min-height:32px;padding:5px 9px!important;font-size:11px}
+ .menu-option-choices{gap:5px}
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./supabase/config.js"></script></head>
 <body>
@@ -455,11 +482,24 @@ $('sendCart').onclick=()=>{
  location.href='./index.html?cart='+encodeURIComponent(JSON.stringify(payload))+'#reserve';
 };
 function priceText(it){return it.options?.length?it.options.map(o=>o.price+' '+o.label).join('|'):String(it.basePrice);}
-function makeOptionPicker(it){
- if(!it.options?.length)return null;
- const select=document.createElement('select');select.className='menu-option-picker';select.setAttribute('aria-label','اختيار الحجم أو الوزن');
- it.options.forEach(o=>{const opt=document.createElement('option');opt.value=o.label;opt.textContent=o.label+' · '+o.price+' ج.م';select.appendChild(opt);});
- return select;
+function renderPriceOptions(it,container){
+ if(!it.options?.length){container.innerHTML=chips(priceText(it));return ()=>'';}
+ let selected=it.options[0].label;
+ container.classList.add('has-option-choices');
+ container.setAttribute('role','group');
+ container.setAttribute('aria-label','اختيار الحجم أو الوزن');
+ it.options.forEach((option,index)=>{
+  const button=document.createElement('button');
+  button.type='button';button.className='chip option-chip';
+  button.textContent=Number(option.price).toLocaleString('ar-EG')+' ج.م '+option.label;
+  button.setAttribute('aria-pressed',index===0?'true':'false');
+  button.addEventListener('click',()=>{
+   selected=option.label;
+   container.querySelectorAll('.option-chip').forEach(el=>el.setAttribute('aria-pressed',el===button?'true':'false'));
+  });
+  container.appendChild(button);
+ });
+ return ()=>selected;
 }
 function card(c,it,index){
  const a=document.createElement('article');a.className='rcard menu-card';
@@ -467,17 +507,19 @@ function card(c,it,index){
  const im=document.createElement('img');im.className='menu-photo';im.loading='lazy';im.alt='صورة طعام '+it.name;im.src=photo;
  im.onerror=()=>{im.onerror=null;a.classList.add('photo-failed');};
  const overlay=document.createElement('div');overlay.className='menu-card-overlay';
- const title=document.createElement('h3');title.textContent=it.name;const chipbox=document.createElement('div');chipbox.className='chips';chipbox.innerHTML=chips(priceText(it));
+ const title=document.createElement('h3');title.textContent=it.name;
+ const chipbox=document.createElement('div');chipbox.className='chips';
+ const getSelectedOption=renderPriceOptions(it,chipbox);
  overlay.append(title,chipbox);a.append(im,overlay);
- const picker=makeOptionPicker(it);if(picker){picker.style.cssText='position:absolute;bottom:52px;left:14px;right:14px;width:calc(100% - 28px);z-index:3;padding:7px 10px;border-radius:12px;background:#20242b;color:#e4e9f0;border:1px solid #67b9e866;font:inherit';a.append(picker);}
- const b=document.createElement('button');b.type='button';b.className='btn sm menu-order';b.textContent='أضف للسلة';b.onclick=()=>cartAdd(it,picker?.value);a.append(b);return a;
+ const b=document.createElement('button');b.type='button';b.className='btn sm menu-order';b.textContent='أضف للسلة';b.onclick=()=>cartAdd(it,getSelectedOption());a.append(b);return a;
 }
 function row(it){
  const r=document.createElement('div');r.className='row';
  const n=document.createElement('b');n.className='n';n.textContent=it.name;
- const c=document.createElement('div');c.className='chips';c.innerHTML=chips(priceText(it));
- const picker=makeOptionPicker(it);const b=document.createElement('button');b.type='button';b.className='btn sm';b.textContent='أضف للسلة';b.onclick=()=>cartAdd(it,picker?.value);
- r.append(n,c);if(picker)r.append(picker);r.append(b);return r;
+ const c=document.createElement('div');c.className='chips';
+ const getSelectedOption=renderPriceOptions(it,c);
+ const b=document.createElement('button');b.type='button';b.className='btn sm';b.textContent='أضف للسلة';b.onclick=()=>cartAdd(it,getSelectedOption());
+ r.append(n,c,b);return r;
 }
 async function loadActiveOffers(){
  const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg?.url||!cfg?.anonKey||!window.supabase)return;
