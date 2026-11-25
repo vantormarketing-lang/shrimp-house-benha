@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<defs>
+ <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#59616b" stop-opacity=".96"/><stop offset=".48" stop-color="#303740" stop-opacity=".94"/><stop offset="1" stop-color="#171b21" stop-opacity=".99"/></linearGradient>
+ <linearGradient id="silver" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4f7fb"/><stop offset=".55" stop-color="#c9d2dc"/><stop offset="1" stop-color="#8998a8"/></linearGradient>
+ <linearGradient id="ice" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a8e4ff"/><stop offset="1" stop-color="#4b9fcf"/></linearGradient>
+ <linearGradient id="coral" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff9b86"/><stop offset="1" stop-color="#bf4d4a"/></linearGradient>
+ <clipPath id="round"><rect x="18" y="18" width="476" height="476" rx="112"/></clipPath>
+</defs>
+<g clip-path="url(#round)">
+ <rect x="18" y="18" width="476" height="476" rx="112" fill="url(#glass)"/>
+ <ellipse cx="122" cy="58" rx="240" ry="125" fill="#fff" opacity=".10"/>
+ <path d="M25 185 Q155 34 336 67 T500 120" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="5"/>
+ <rect x="19" y="19" width="474" height="474" rx="111" fill="none" stroke="url(#silver)" stroke-opacity=".58" stroke-width="3"/>
+ <rect x="34" y="34" width="444" height="444" rx="96" fill="none" stroke="url(#ice)" stroke-opacity=".22" stroke-width="2"/>
+ <circle cx="256" cy="202" r="105" fill="#10151b" fill-opacity=".40" stroke="url(#ice)" stroke-opacity=".55" stroke-width="3"/>
+ <circle cx="256" cy="202" r="91" fill="none" stroke="#d7e2ec" stroke-opacity=".16" stroke-width="2"/>
+ <path d="M183 210 C178 169 210 137 253 137 C294 137 324 167 320 202 C317 232 290 255 258 257 C229 259 204 244 193 222 C183 202 187 178 203 162 C220 146 247 143 269 153 C289 162 300 180 298 198 C296 215 282 228 265 230 C249 232 234 223 230 209 C226 196 233 184 244 180 C255 176 268 182 270 193" fill="none" stroke="url(#coral)" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>
+ <path d="M182 208 C164 201 151 189 145 172 M188 225 C164 229 148 239 139 255 M207 243 C194 263 190 282 194 299 M225 251 C224 271 230 286 242 299 M291 243 C310 251 327 264 336 282 M312 223 C332 224 349 233 362 248" fill="none" stroke="url(#silver)" stroke-width="9" stroke-linecap="round"/>
+ <path d="M208 150 C194 132 190 116 197 101 M230 140 C225 119 230 102 245 89" fill="none" stroke="url(#ice)" stroke-width="7" stroke-linecap="round"/>
+ <circle cx="284" cy="172" r="7" fill="#f4f7fb"/>
+ <path d="M164 316 H348" stroke="url(#ice)" stroke-opacity=".62" stroke-width="2"/>
+ <text x="256" y="372" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="46" font-weight="800" letter-spacing="5" fill="url(#silver)">SHRIMP</text>
+ <text x="256" y="423" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="53" font-weight="800" letter-spacing="8" fill="url(#ice)">HOUSE</text>
+ <text x="256" y="454" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="7" fill="#aebbc8" opacity=".88">BENHA</text>
+</g>
+</svg>
