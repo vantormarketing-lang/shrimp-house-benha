@@ -44,3 +44,28 @@ Public users may read available menu items and currently active offers, but no l
 - Request rate-limit records are not readable/writable by browser roles.
 - No service-role or secret key is stored in this repository.
 - Review Supabase Auth's leaked-password protection and remaining security advisor findings before advertising the system as fully production-hardened.
+
+## Final operations pass — 2026-11-25
+
+- The public menu category selector now uses the same infinite 3D rotating carousel engine as the dish cards. Category tiles show the section name without adjacent emoji icons and include two small illuminated accent dots beside the title. Drag, touch, keyboard arrows and carousel dots use the same ring engine.
+- The customer tracking page renders chronological status events for both orders and table bookings, using `order_status_history` and `booking_status_history`.
+- The `submit-request` Edge Function returns the status timeline only after matching both the tracking code and the customer's registered phone number.
+- The public menu is database-driven and subscribes to realtime changes in menu items and offers.
+- Admin quick-search controls are injected by `supabase/config.js` only on `/admin` and `/admin.html`. They filter the currently loaded Orders, Bookings, Menu and Inventory cards. The view queries currently load a bounded recent set (orders 100, bookings 150); search does not yet fetch older pages from the server.
+- CSV export is available for orders and bookings.
+- Staff authorization helpers are stored in the non-exposed `private` schema. Public helper functions were removed from the Data API. The inventory movement RPC runs as SECURITY INVOKER and is guarded by the private staff check plus table RLS.
+- Explicit Data API grants were added for operational tables, while RLS still controls row access. Browser roles cannot access `request_rate_limits` or insert orders/bookings directly.
+- Query indexes were added for order/booking timelines, inventory movements, recipes, activity logs and visits. Performance advisors may report them as unused until real operational records accumulate.
+- Canonical migration filenames now match the applied database versions: `20261125153225_enable_realtime_for_operations`, `20261125154116_complete_recipe_coverage_before_stock_deduction`, `20261125154543_booking_status_history_timeline`, and `20261125160720_operations_access_performance_hardening`.
+
+## Verification status
+
+- A database transaction test passed for recipe-based stock deduction, inventory movement logging, order status history, and blocking an order with a missing recipe after recipe tracking begins. Test rows were rolled back.
+- Database permission checks confirm no browser INSERT access to orders/bookings and no browser access to request-rate-limit records.
+- Security advisors no longer report exposed SECURITY DEFINER authorization helpers. One Auth warning remains: **Leaked Password Protection is disabled**. Enable it under Supabase Dashboard → Authentication → Password Security before public launch.
+- The menu page's live HTML now contains the circular category-carousel stage. A full interactive browser run could not be completed because the connected browser-testing wallet has insufficient balance, so visual pointer testing remains unverified.
+- The full customer order journey and staff invitation email still require acceptance testing with the owner's real contact settings and working Supabase Auth email delivery.
+
+## Deferred until the final customer-details phase
+
+Restaurant phone, WhatsApp, full address, Google Maps URL, working hours, delivery fee, minimum order, service areas and accepted payment methods remain intentionally blank/default until the owner provides the final customer-facing details.
