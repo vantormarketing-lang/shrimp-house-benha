@@ -552,3 +552,14 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  .dashboard-three-dots span:nth-child(3){background:#83d5c0!important;box-shadow:0 0 6px #83d5c0,0 0 12px #83d5c066!important}
 }
 </style>
+
+<style>
+/* Settings view: remove nested old-style panels; let controls carry the glass finish */
+#settings.view .live-section{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;box-shadow:none!important;backdrop-filter:none!important}
+#settingsForm{background:transparent!important;border:0!important;border-radius:0!important;padding:0!important;margin:0!important;box-shadow:none!important;backdrop-filter:none!important;overflow:visible!important}
+#settingsForm:before{display:none!important}
+#settingsForm .dish-fields{gap:14px!important}
+#settingsForm .dish-fields label{gap:7px!important}
+#settingsForm input:not([type=checkbox]),#settingsForm textarea{border-radius:13px!important;background:linear-gradient(145deg,rgba(202,191,151,.12),rgba(255,255,255,.035))!important;border:1px solid rgba(211,183,111,.32)!important;box-shadow:0 10px 24px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.07)!important;backdrop-filter:blur(16px)!important}
+#settingsForm input:not([type=checkbox]):focus,#settingsForm textarea:focus{border-color:rgba(218,190,125,.65)!important;box-shadow:0 0 0 3px rgba(208,180,110,.09),0 10px 24px rgba(0,0,0,.16)!important}
+</style>
