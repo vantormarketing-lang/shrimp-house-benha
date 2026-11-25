@@ -1086,3 +1086,18 @@ body.dish-modal-open{overflow:hidden!important;height:100dvh!important}
 #dishModal #dishModalBackdrop{position:fixed!important;inset:0!important}
 @media(max-width:620px){#dishModal{padding:8px!important}#dishModal #dishForm{max-height:calc(100dvh - 16px)!important;width:calc(100vw - 16px)!important}}
 </style>
+<style id="menu-cards-actions-refresh">
+/* Menu images: cover the entire image frame */
+#menuItems .dish-card img,#menuItems .dish-card .dish-photo{width:100%!important;height:220px!important;display:block!important;object-fit:cover!important;object-position:center!important;background:#202b25!important}
+#menuItems .dish-card{overflow:hidden!important}
+#menuItems .dish-buttons{display:flex!important;gap:9px!important;flex-wrap:wrap!important}
+#menuItems .dish-buttons button{flex:1!important;min-height:38px!important;border-radius:10px!important;font-weight:800!important;transition:filter .15s,transform .15s!important}
+#menuItems .dish-buttons .edit{color:#fff!important;background:linear-gradient(135deg,#2879bd,#16548c)!important;border:1px solid #69b7ef!important;box-shadow:0 5px 16px #1878bb38!important}
+#menuItems .dish-buttons .delete{color:#fff!important;background:linear-gradient(135deg,#c74b4b,#8e2424)!important;border:1px solid #f18b8b!important;box-shadow:0 5px 16px #bb363638!important}
+#menuItems .dish-buttons button:hover{filter:brightness(1.12)!important;transform:translateY(-1px)!important}
+#dishModal .form-actions #saveDish{color:#fff!important;background:linear-gradient(135deg,#238a65,#146347)!important;border:1px solid #66d7aa!important}
+#dishModal .form-actions #cancelDish{color:#fff!important;background:linear-gradient(135deg,#6b7783,#404b56)!important;border:1px solid #aab6c2!important}
+#dishModal .form-actions button{flex:1!important;min-height:42px!important;border-radius:11px!important;font-weight:800!important}
+#addDishBtn{background:linear-gradient(135deg,#d5a842,#a47720)!important;color:#17170f!important;border:1px solid #f4d581!important;font-weight:900!important}
+@media(max-width:620px){#menuItems .dish-card img,#menuItems .dish-card .dish-photo{height:200px!important}}
+</style>
