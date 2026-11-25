@@ -480,9 +480,9 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
   const en = s => String(s).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
   window.waLink = t => S.whatsapp ? 'https://wa.me/' + String(S.whatsapp).replace(/\D/g, '') + '?text=' + encodeURIComponent(t) : '';
   window.setOrder = (a, name) => {
-    const w = waLink('أهلاً، عايز أطلب: ' + name);
-    a.href = w || 'index.html?item=' + encodeURIComponent(name) + '#reserve';
-    if (w) { a.target = '_blank'; a.rel = 'noopener'; }
+    a.href = './index.html?item=' + encodeURIComponent(name) + '#reserve';
+    a.removeAttribute('target');
+    a.removeAttribute('rel');
   };
   const fl = document.querySelector('.float');
   if (fl && S.whatsapp) { fl.href = waLink('أهلاً، عايز أطلب أو أحجز'); fl.target = '_blank'; fl.rel = 'noopener'; }
