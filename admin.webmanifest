@@ -1,14 +1,30 @@
 {
- "id":"/admin",
- "name":"Shrimp House Admin",
- "short_name":"SH Admin",
- "description":"لوحة إدارة Shrimp House واستقبال إشعارات الطلبات والحجوزات",
- "start_url":"/admin",
- "scope":"/admin",
- "display":"standalone",
- "display_override":["standalone","minimal-ui"],
- "background_color":"#11170f",
- "theme_color":"#11170f",
- "orientation":"any",
- "icons":[{"src":"/admin-push-icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+  "id": "/admin",
+  "name": "Shrimp House Admin",
+  "short_name": "SH Admin",
+  "description": "لوحة إدارة Shrimp House واستقبال إشعارات الطلبات والحجوزات",
+  "start_url": "/admin?source=pwa",
+  "scope": "/admin",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#17191D",
+  "theme_color": "#17191D",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app-icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
 }
