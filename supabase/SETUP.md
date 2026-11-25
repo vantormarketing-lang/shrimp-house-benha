@@ -47,7 +47,8 @@ Public users may read available menu items and currently active offers, but no l
 
 ## Final operations pass — 2026-11-25
 
-- The public menu category selector now uses the same infinite 3D rotating carousel engine as the dish cards. Category tiles show the section name without adjacent emoji icons and include two small illuminated accent dots beside the title. Drag, touch, keyboard arrows and carousel dots use the same ring engine.
+- The public menu category selector now uses the same infinite 3D rotating carousel engine as the dish cards.
+- Menu size/weight options are selected directly through their visible price pills (for example, kilo or half-kilo). The redundant white native dropdown has been removed from all dish cards and fallback rows. The cart receives the selected option label and its database price; items without options keep a normal single-price display. Category tiles show the section name without adjacent emoji icons and include two small illuminated accent dots beside the title. Drag, touch, keyboard arrows and carousel dots use the same ring engine.
 - The customer tracking page renders chronological status events for both orders and table bookings, using `order_status_history` and `booking_status_history`.
 - The `submit-request` Edge Function returns the status timeline only after matching both the tracking code and the customer's registered phone number.
 - The public menu is database-driven and subscribes to realtime changes in menu items and offers.
