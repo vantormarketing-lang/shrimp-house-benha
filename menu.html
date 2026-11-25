@@ -569,7 +569,7 @@ async function loadActiveOffers(){
  let strip=document.getElementById('activeOffers');
  if(!data?.length){strip?.remove();return;}
  if(!strip){strip=document.createElement('section');strip.id='activeOffers';strip.className='offer-strip';strip.setAttribute('aria-label','العروض الحالية');$('tabs').before(strip);}
- strip.innerHTML=data.map(o=>'<div class="offer-entry"><div><b>'+String(o.title||'عرض خاص').replace(/[&<>]/g,'')+'</b><br><small>'+String(o.description||'').replace(/[&<>]/g,'')+'</small></div><span class="offer-code">'+(o.promo_code?String(o.promo_code).replace(/[&<>]/g,'')+' · ':'')+(Number(o.discount_value).toLocaleString('ar-EG'))+(o.discount_type==='percent'?'% خصم':' ج.م خصم')+'</span></div>').join('');
+ strip.innerHTML=data.map(o=>'<div class="offer-entry"><div><b>'+String(o.title||'عرض خاص').replace(/[&<>]/g,'')+'</b><br><small>'+String(o.description||'').replace(/[&<>]/g,'')+'</small></div><span class="offer-code">'+(o.promo_code?String(o.promo_code).replace(/[&<>]/g,'')+' · ':'')+formatPrice(o.discount_value)+(o.discount_type==='percent'?'% OFF':' EGP OFF')+'</span></div>').join('');
 }
 function categoryCard(c,i){
  const a=document.createElement('article');a.className='category-orbit-card';
