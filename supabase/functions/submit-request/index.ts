@@ -159,20 +159,32 @@ export default {
       const code = clean(body.tracking_code, 20).toUpperCase();
       if (!/^[A-F0-9]{12}$/.test(code)) return reply(req, { error: "رقم المتابعة غير صحيح." }, 400);
       const { data: order } = await db.from("orders")
-        .select("tracking_code,phone,status,created_at,fulfillment_type,items,total,delivery_fee,discount_amount")
+        .select("id,tracking_code,phone,status,created_at,fulfillment_type,items,total,delivery_fee,discount_amount")
         .eq("tracking_code", code).eq("phone", phone).maybeSingle();
-      if (order) return reply(req, { ok: true, kind: "order", order: {
-        tracking_code: order.tracking_code, status: order.status, created_at: order.created_at,
-        fulfillment_type: order.fulfillment_type, items: order.items, total: order.total,
-        delivery_fee: order.delivery_fee, discount_amount: order.discount_amount,
-      } });
+      if (order) {
+        const { data: events } = await db.from("order_status_history")
+          .select("new_status,changed_at").eq("order_id", order.id).order("changed_at", { ascending: true });
+        const history = [{ status: "new", changed_at: order.created_at },
+          ...(events || []).map(x => ({ status: x.new_status, changed_at: x.changed_at }))];
+        return reply(req, { ok: true, kind: "order", order: {
+          tracking_code: order.tracking_code, status: order.status, created_at: order.created_at,
+          fulfillment_type: order.fulfillment_type, items: order.items, total: order.total,
+          delivery_fee: order.delivery_fee, discount_amount: order.discount_amount, history,
+        } });
+      }
       const { data: booking } = await db.from("bookings")
-        .select("booking_code,phone,status,booking_date,booking_time,guests")
+        .select("id,booking_code,phone,status,booking_date,booking_time,guests,created_at")
         .eq("booking_code", code).eq("phone", phone).maybeSingle();
-      if (booking) return reply(req, { ok: true, kind: "booking", booking: {
-        booking_code: booking.booking_code, status: booking.status,
-        booking_date: booking.booking_date, booking_time: booking.booking_time, guests: booking.guests,
-      } });
+      if (booking) {
+        const { data: events } = await db.from("booking_status_history")
+          .select("new_status,changed_at").eq("booking_id", booking.id).order("changed_at", { ascending: true });
+        const history = [{ status: "pending", changed_at: booking.created_at },
+          ...(events || []).map(x => ({ status: x.new_status, changed_at: x.changed_at }))];
+        return reply(req, { ok: true, kind: "booking", booking: {
+          booking_code: booking.booking_code, status: booking.status,
+          booking_date: booking.booking_date, booking_time: booking.booking_time, guests: booking.guests, history,
+        } });
+      }
       return reply(req, { error: "لم نعثر على طلب أو حجز مطابق. راجع رقم المتابعة والموبايل." }, 404);
     }
     return reply(req, { error: "طلب غير معروف." }, 400);
