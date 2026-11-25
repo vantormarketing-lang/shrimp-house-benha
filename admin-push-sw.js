@@ -1,6 +1,6 @@
 /* Shrimp House Admin installable PWA worker: separate /admin scope, no interference with customer PWA. */
-const ADMIN_CACHE="shrimp-house-admin-shell-v2";
-const ADMIN_URLS=["/admin","/admin.html","/admin.webmanifest","/admin-push-icon.svg"];
+const ADMIN_CACHE="shrimp-house-admin-shell-v3";
+const ADMIN_URLS=["/admin","/admin.html","/admin.webmanifest","/app-icon.svg","/app-icon-180.png"];
 self.addEventListener("install",event=>{
  event.waitUntil((async()=>{
   const cache=await caches.open(ADMIN_CACHE);
@@ -29,7 +29,7 @@ self.addEventListener("fetch",event=>{
 self.addEventListener("push",event=>{
  event.waitUntil((async()=>{
   let data={};try{if(event.data)data=event.data.json();}catch(_){try{data={body:event.data?.text()||""};}catch(_){}}
-  await self.registration.showNotification(data.title||"Shrimp House",{body:data.body||"وصل تحديث جديد من المطعم.",icon:data.icon||"/admin-push-icon.svg",badge:data.badge||"/admin-push-icon.svg",tag:data.tag||"shrimp-house-admin",renotify:true,requireInteraction:true,dir:"rtl",lang:"ar",data:{url:data.url||"/admin"}});
+  await self.registration.showNotification(data.title||"Shrimp House",{body:data.body||"وصل تحديث جديد من المطعم.",icon:data.icon||"/app-icon.svg",badge:data.badge||"/app-icon.svg",tag:data.tag||"shrimp-house-admin",renotify:true,requireInteraction:true,dir:"rtl",lang:"ar",data:{url:data.url||"/admin"}});
  })());
 });
 self.addEventListener("notificationclick",event=>{
