@@ -464,8 +464,9 @@ async function loadActiveOffers(){
  const db=window.supabase.createClient(cfg.url,cfg.anonKey);
  const now=new Date().toISOString();
  const {data,error}=await db.from('offers').select('title,description,promo_code,discount_type,discount_value,ends_at').eq('is_active',true).lte('starts_at',now).gt('ends_at',now).order('ends_at').limit(5);
- if(error||!data?.length)return;
+ if(error)return;
  let strip=document.getElementById('activeOffers');
+ if(!data?.length){strip?.remove();return;}
  if(!strip){strip=document.createElement('section');strip.id='activeOffers';strip.className='offer-strip';strip.setAttribute('aria-label','العروض الحالية');$('tabs').before(strip);}
  strip.innerHTML=data.map(o=>'<div class="offer-entry"><div><b>'+String(o.title||'عرض خاص').replace(/[&<>]/g,'')+'</b><br><small>'+String(o.description||'').replace(/[&<>]/g,'')+'</small></div><span class="offer-code">'+(o.promo_code?String(o.promo_code).replace(/[&<>]/g,'')+' · ':'')+(Number(o.discount_value).toLocaleString('ar-EG'))+(o.discount_type==='percent'?'% خصم':' ج.م خصم')+'</span></div>').join('');
 }
@@ -477,12 +478,13 @@ function renderTabs(){
 function show(){
  const c=M[cat];if(!c)return;
  [...$('tabs').children].forEach((t,i)=>t.setAttribute('aria-pressed',i===cat?'true':'false'));
- ring.setItems(c.items.map((it,index)=>card(c,it,index)));$('list').replaceChildren(...c.items.map(row));
+ ring.setItems(c.items.map((it,index)=>card(c,it,index)));const fallbackList=$('list');if(fallbackList)fallbackList.replaceChildren(...c.items.map(row));
  history.replaceState(null,'','#'+c.id);
 }
+let menuDb=null,menuRealtime=null;
 async function loadDatabaseMenu(){
  const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg?.url||!cfg?.anonKey||!window.supabase)return;
- const db=window.supabase.createClient(cfg.url,cfg.anonKey);
+ const db=menuDb||(menuDb=window.supabase.createClient(cfg.url,cfg.anonKey));
  const {data,error}=await db.from('menu_items').select('id,name,description,category,category_key,category_icon,price,options,image_url,sort_order,is_available').eq('is_available',true).order('sort_order').order('name');
  if(error)throw error;
  if(!data?.length)throw new Error('لا توجد أصناف متاحة في قاعدة البيانات حتى الآن.');
@@ -497,7 +499,17 @@ async function loadDatabaseMenu(){
  M=next;cat=Math.max(0,M.findIndex(c=>'#'+c.id===location.hash));renderTabs();show();loadActiveOffers();
 }
 renderTabs();show();loadActiveOffers();
-loadDatabaseMenu().catch(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
+loadDatabaseMenu().then(()=>{
+ if(menuDb&&!menuRealtime){
+  menuRealtime=menuDb.channel('public-menu-live')
+   .on('postgres_changes',{event:'*',schema:'public',table:'menu_items'},()=>loadDatabaseMenu().catch(err=>console.warn('Live menu refresh failed:',err)))
+   .on('postgres_changes',{event:'*',schema:'public',table:'offers'},()=>loadActiveOffers())
+   .subscribe();
+ }
+}).catch(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
+/* Menu data is fetched once, then kept current through Supabase Realtime. */
+/* The fallback remains usable when the database is temporarily unavailable. */
+// no second load call here(err=>{console.warn('Database menu unavailable:',err);const status=$('menuDataStatus');if(status)status.textContent='عرض المنيو المحفوظ مؤقتًا؛ التحقق من التحديثات غير متاح حاليًا.';});
 </script>
 <script>window.SITE_READY?.then(()=>{});</script><script>(function(){try{if(window.__shVisit)return;window.__shVisit=true;const path=location.pathname;const p=(path==='/menu'||path==='/menu.html')?'/menu':((path==='/'||path.endsWith('/index.html'))?'/':'');const cfg=window.SHRIMP_SUPABASE_CONFIG;if(p&&window.supabase&&cfg?.url&&cfg?.anonKey){const db=window.supabase.createClient(cfg.url,cfg.anonKey);db.from('site_visits').insert({page_path:p}).then(()=>{});}}catch(e){}})();</script></body></html>
  
