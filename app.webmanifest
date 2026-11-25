@@ -1,0 +1,19 @@
+{
+  "id": "/",
+  "name": "Shrimp House Benha",
+  "short_name": "Shrimp House",
+  "description": "منيو Shrimp House وطلبات التوصيل والحجوزات ومتابعة الطلبات.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#17191D",
+  "theme_color": "#17191D",
+  "orientation": "any",
+  "icons": [
+    {"src": "/app-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"},
+    {"src": "/app-icon-180.png", "sizes": "180x180", "type": "image/png", "purpose": "any"}
+  ]
+}
