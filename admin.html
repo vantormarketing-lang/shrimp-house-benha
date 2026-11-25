@@ -559,6 +559,180 @@ window.addEventListener('resize',updateMobileBack);updateMobileBack();
  document.body.style.visibility='visible';
  const badge=document.querySelector('.pill'); if(badge)badge.textContent='● '+(profile.role==='admin'?'Admin':'Staff')+' · '+(profile.display_name||session.user.email);
 })();
+</script>
+<script>
+window.__SHRIMP_ADMIN_EXT=function(client,profile,base){
+ const $=id=>document.getElementById(id);
+ const isAdmin=profile&&profile.role==='admin';
+ const esc=v=>String(v??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+ const money=v=>Number(v||0).toLocaleString('ar-EG',{maximumFractionDigits:2})+' ج.م';
+ const dateText=v=>v?new Date(v).toLocaleString('ar-EG',{dateStyle:'medium',timeStyle:'short'}):'—';
+ const statuses={new:'جديد',confirmed:'تم التأكيد',preparing:'قيد التجهيز',out_for_delivery:'خرج للتوصيل',completed:'مكتمل',cancelled:'ملغي'};
+ const toast=document.createElement('div');toast.className='op-toast';toast.id='adminOpsToast';toast.setAttribute('role','status');document.body.appendChild(toast);
+ let toastTimer=0;
+ function notify(message){
+  toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),6500);
+  if('Notification' in window&&Notification.permission==='granted'){try{new Notification('Shrimp House',{body:message,icon:'./favicon.ico'});}catch(_){}}
+ }
+ const enable=document.createElement('button');enable.type='button';enable.className='refresh';enable.textContent='🔔 تفعيل إشعارات المتصفح';enable.style.marginInlineStart='8px';
+ enable.onclick=async()=>{if(!('Notification' in window)){notify('هذا المتصفح لا يدعم إشعارات النظام.');return;}const p=await Notification.requestPermission();notify(p==='granted'?'تم تفعيل إشعارات الطلبات.':'لم يتم منح إذن الإشعارات.');};
+ document.querySelector('.admin-top-label')?.appendChild(enable);
+ if(!isAdmin){['staff','activity'].forEach(id=>document.querySelectorAll('[data-go="'+id+'"]').forEach(x=>x.remove()));}
+ async function loadKitchen(){
+  const box=$('kitchenList'),msg=$('kitchenMsg');if(!box||!msg)return;
+  msg.textContent='جارٍ تحديث قائمة المطبخ…';box.replaceChildren();
+  const {data,error}=await client.from('orders').select('id,customer_name,phone,address,items,total,status,notes,fulfillment_type,created_at').in('status',['new','confirmed','preparing','out_for_delivery']).order('created_at',{ascending:true}).limit(150);
+  if(error){msg.textContent='تعذر تحميل الطلبات: '+error.message;return;}
+  if(!data?.length){msg.textContent='لا توجد طلبات نشطة حاليًا.';return;}
+  msg.textContent=data.length+' طلب نشط';
+  box.innerHTML=data.map(o=>{
+   const lines=Array.isArray(o.items)?o.items.map(x=>(x.name||'صنف')+(x.option_label?' · '+x.option_label:'')+' × '+(x.quantity||1)).join('، '):'';
+   const next=o.status==='new'?'confirmed':o.status==='confirmed'?'preparing':o.fulfillment_type==='delivery'?'out_for_delivery':'completed';
+   return '<article class="op-card" data-kitchen="'+esc(o.id)+'"><div class="op-card-head"><b>'+esc(o.customer_name)+' · '+esc(o.phone)+'</b><span class="op-pill">'+esc(statuses[o.status]||o.status)+'</span></div><div>'+esc(lines)+'</div><small>'+esc(o.address||'استلام من المطعم')+' · '+dateText(o.created_at)+'</small><div class="op-card-head"><b>'+money(o.total)+'</b><div class="op-actions"><button type="button" class="kitchen-next" data-next="'+esc(next)+'">نقل إلى: '+esc(statuses[next])+'</button><button type="button" class="kitchen-refresh">تحديث الحالة</button></div></div><div class="op-muted">'+esc(o.notes||'')+'</div></article>';
+  }).join('');
+  box.querySelectorAll('.kitchen-next').forEach(btn=>btn.onclick=async()=>{
+   const id=btn.closest('[data-kitchen]').dataset.kitchen;btn.disabled=true;const next=btn.dataset.next;
+   const {error}=await client.from('orders').update({status:next}).eq('id',id);
+   btn.disabled=false;
+   if(error){notify('لم يتم تحديث الطلب: '+error.message);return;}
+   notify('تم تحديث حالة الطلب إلى '+statuses[next]+'.');await loadKitchen();await base.refreshDashboard();
+  });
+  box.querySelectorAll('.kitchen-refresh').forEach(btn=>btn.onclick=loadKitchen);
+ }
+ async function getOrderRows(){
+  const {data,error}=await client.from('orders').select('id,customer_name,phone,items,total,status,created_at,fulfillment_type').order('created_at',{ascending:false}).limit(5000);
+  if(error)throw error;return data||[];
+ }
+ async function loadReports(){
+  const msg=$('reportMsg');if(!msg)return;msg.textContent='جارٍ تجميع البيانات…';
+  try{
+   const rows=await getOrderRows(),now=new Date(),startDay=new Date(now);startDay.setHours(0,0,0,0);
+   const startWeek=new Date(startDay);startWeek.setDate(startWeek.getDate()-((startWeek.getDay()+6)%7));
+   const startMonth=new Date(now.getFullYear(),now.getMonth(),1);
+   const active=rows.filter(o=>o.status!=='cancelled'),revenue=arr=>arr.reduce((s,o)=>s+Number(o.total||0),0);
+   const today=active.filter(o=>new Date(o.created_at)>=startDay),week=active.filter(o=>new Date(o.created_at)>=startWeek),month=active.filter(o=>new Date(o.created_at)>=startMonth);
+   const completed=active.filter(o=>o.status==='completed');
+   $('reportTodaySales').textContent=money(revenue(today));$('reportWeekSales').textContent=money(revenue(week));$('reportMonthSales').textContent=money(revenue(month));
+   $('reportAverage').textContent=money(active.length?revenue(active)/active.length:0);
+   $('reportOrderCount').textContent=active.length.toLocaleString('ar-EG');$('reportCompleted').textContent=completed.length.toLocaleString('ar-EG');
+   const top=new Map();rows.forEach(o=>{if(o.status==='cancelled'||!Array.isArray(o.items))return;o.items.forEach(i=>{const k=(i.name||'صنف')+(i.option_label?' · '+i.option_label:'');top.set(k,(top.get(k)||0)+Number(i.quantity||1));});});
+   const ranked=[...top].sort((a,b)=>b[1]-a[1]).slice(0,10);
+   $('reportTopItems').innerHTML=ranked.length?ranked.map(([name,n],i)=>'<div class="op-card"><div class="op-card-head"><b>'+esc(name)+'</b><span class="op-pill">'+n+' مرة</span></div></div>').join(''):'<div class="op-muted">لا توجد بيانات مبيعات كافية.</div>';
+   const counts={};rows.forEach(o=>counts[o.status]=(counts[o.status]||0)+1);
+   $('reportStatuses').innerHTML=Object.keys(statuses).map(k=>'<div><div class="op-card-head"><span>'+statuses[k]+'</span><b>'+((counts[k]||0).toLocaleString('ar-EG'))+'</b></div><div class="op-bar"><i style="width:'+Math.min(100,rows.length?(counts[k]||0)*100/rows.length:0)+'%"></i></div></div>').join('');
+   msg.textContent='آخر تحديث: '+new Date().toLocaleTimeString('ar-EG');
+  }catch(e){msg.textContent='تعذر تحميل التقارير: '+e.message;}
+ }
+ $('refreshReports')?.addEventListener('click',loadReports);
+ async function loadCustomers(){
+  const box=$('customersList'),msg=$('customersMsg');if(!box||!msg)return;msg.textContent='جارٍ قراءة الطلبات السابقة…';
+  try{
+   const rows=await getOrderRows(),groups=new Map();
+   rows.forEach(o=>{const key=o.phone||'بدون رقم';if(!groups.has(key))groups.set(key,{phone:key,name:o.customer_name,orders:0,total:0,last:o.created_at});const g=groups.get(key);g.orders++;if(o.status!=='cancelled')g.total+=Number(o.total||0);if(new Date(o.created_at)>new Date(g.last)){g.last=o.created_at;g.name=o.customer_name;}});
+   const data=[...groups.values()].sort((a,b)=>b.orders-a.orders);
+   const draw=()=>{const term=($('customerSearch').value||'').trim().toLowerCase();const visible=data.filter(x=>(x.name+' '+x.phone).toLowerCase().includes(term));box.innerHTML=visible.length?visible.map(x=>'<article class="op-card"><div class="op-card-head"><b>'+esc(x.name)+'</b><span class="op-pill">'+x.orders+' طلب</span></div><div>'+esc(x.phone)+'</div><small>إجمالي المشتريات: '+money(x.total)+' · آخر طلب: '+dateText(x.last)+'</small><div class="op-actions"><a class="op-pill" href="https://wa.me/'+esc(x.phone.replace(/\D/g,''))+'" target="_blank" rel="noopener">واتساب</a></div></article>').join(''):'<div class="op-muted">لا توجد نتائج مطابقة.</div>';};
+   draw();$('customerSearch').oninput=draw;msg.textContent=data.length+' عميل مسجل من الطلبات.';
+  }catch(e){msg.textContent='تعذر تحميل العملاء: '+e.message;}
+ }
+ async function loadOffers(){
+  const box=$('offersList'),msg=$('offersMsg');if(!box||!msg)return;
+  const {data,error}=await client.from('offers').select('*').order('created_at',{ascending:false}).limit(200);
+  if(error){msg.textContent='تعذر تحميل العروض: '+error.message;return;}
+  msg.textContent=(data?.length||0)+' عرض مسجل';
+  box.innerHTML=(data||[]).map(o=>{
+   const active=o.is_active&&new Date(o.starts_at)<=new Date()&&new Date(o.ends_at)>new Date();
+   return '<article class="op-card" data-offer="'+esc(o.id)+'"><div class="op-card-head"><b>'+esc(o.title)+'</b><span class="op-pill">'+(active?'فعال الآن':o.is_active?'مجدول / منتهي':'متوقف')+'</span></div><div>'+esc(o.description||'')+'</div><small>الكود: '+esc(o.promo_code||'بدون كود')+' · الخصم: '+Number(o.discount_value).toLocaleString('ar-EG')+(o.discount_type==='percent'?'%':' ج.م')+'</small><small>من '+dateText(o.starts_at)+' إلى '+dateText(o.ends_at)+'</small><div class="op-actions"><button type="button" class="offer-toggle">'+(o.is_active?'إيقاف العرض':'تفعيل العرض')+'</button><button type="button" class="offer-delete">حذف</button></div></article>';
+  }).join('')||'<div class="op-muted">لا توجد عروض بعد.</div>';
+  box.querySelectorAll('.offer-toggle').forEach(btn=>btn.onclick=async()=>{const el=btn.closest('[data-offer]'),rec=data.find(x=>x.id===el.dataset.offer);const {error}=await client.from('offers').update({is_active:!rec.is_active,updated_at:new Date().toISOString()}).eq('id',rec.id);if(error){msg.textContent='فشل تحديث العرض: '+error.message;return;}await loadOffers();});
+  box.querySelectorAll('.offer-delete').forEach(btn=>btn.onclick=async()=>{const el=btn.closest('[data-offer]');if(!confirm('حذف العرض نهائيًا؟'))return;const {error}=await client.from('offers').delete().eq('id',el.dataset.offer);if(error){msg.textContent='فشل الحذف: '+error.message;return;}await loadOffers();});
+ }
+ const offerForm=$('offerForm');
+ offerForm?.addEventListener('submit',async ev=>{
+  ev.preventDefault();const btn=$('saveOffer');const start=$('offerStart').value,end=$('offerEnd').value;
+  if(!start||!end||new Date(end)<=new Date(start)){ $('offersMsg').textContent='تاريخ نهاية العرض يجب أن يكون بعد البداية.';return; }
+  const typ=$('offerType').value,val=Number($('offerValue').value);
+  if(!Number.isFinite(val)||val<=0||(typ==='percent'&&val>100)){ $('offersMsg').textContent='قيمة الخصم غير صحيحة؛ النسبة يجب ألا تتجاوز 100%.';return; }
+  btn.disabled=true;const payload={title:$('offerTitle').value.trim(),description:$('offerDescription').value.trim(),promo_code:$('offerCode').value.trim().toUpperCase()||null,discount_type:typ,discount_value:val,starts_at:new Date(start).toISOString(),ends_at:new Date(end).toISOString(),is_active:true,updated_at:new Date().toISOString()};
+  const {error}=await client.from('offers').insert(payload);btn.disabled=false;
+  if(error){$('offersMsg').textContent='لم يتم حفظ العرض: '+error.message;return;}
+  offerForm.reset();$('offersMsg').textContent='تم حفظ العرض. سيظهر في المنيو خلال فترة صلاحيته.';await loadOffers();
+ });
+ async function loadRecipeRefs(){
+  const [menus,stocks]=await Promise.all([
+   client.from('menu_items').select('id,name').eq('is_available',true).order('name'),
+   client.from('inventory_items').select('id,name,unit').order('name')
+  ]);
+  if(menus.error||stocks.error){$('recipesMsg').textContent='تعذر تحميل الأصناف أو الخامات.';return;}
+  const menuRows=menus.data||[],stockRows=stocks.data||[];
+  $('recipeMenu').innerHTML=menuRows.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join('');
+  const drawStocks=()=>{const q=($('recipeStockSearch').value||'').toLowerCase();$('recipeStock').innerHTML=stockRows.filter(x=>(x.name+' '+x.unit).toLowerCase().includes(q)).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · '+esc(x.unit||'')+'</option>').join('');};
+  drawStocks();$('recipeStockSearch').oninput=drawStocks;
+ }
+ async function loadRecipes(){
+  const box=$('recipesList'),msg=$('recipesMsg');if(!box||!msg)return;
+  const {data,error}=await client.from('menu_item_recipes').select('id,quantity_per_item,menu_items(name),inventory_items(name,unit)').order('created_at',{ascending:false}).limit(500);
+  if(error){msg.textContent='تعذر تحميل الوصفات: '+error.message;return;}
+  msg.textContent=(data?.length||0)+' مكون وصفة مرتبط';
+  box.innerHTML=(data||[]).map(r=>{const m=Array.isArray(r.menu_items)?r.menu_items[0]:r.menu_items,s=Array.isArray(r.inventory_items)?r.inventory_items[0]:r.inventory_items;return '<article class="op-card" data-recipe="'+esc(r.id)+'"><div class="op-card-head"><b>'+esc(m?.name||'صنف')+'</b><span>'+esc(s?.name||'خامة')+'</span></div><small>'+Number(r.quantity_per_item).toLocaleString('ar-EG')+' '+esc(s?.unit||'')+' لكل صنف</small><div class="op-actions"><button type="button" class="recipe-delete">حذف الربط</button></div></article>';}).join('')||'<div class="op-muted">لم تسجل وصفات بعد. أضف مكونات كل صنف وكمياتها الحقيقية.</div>';
+  box.querySelectorAll('.recipe-delete').forEach(btn=>btn.onclick=async()=>{const el=btn.closest('[data-recipe]');if(!confirm('حذف مكون الوصفة؟'))return;const {error}=await client.from('menu_item_recipes').delete().eq('id',el.dataset.recipe);if(error){msg.textContent='فشل حذف المكون: '+error.message;return;}await loadRecipes();});
+ }
+ $('recipeForm')?.addEventListener('submit',async ev=>{
+  ev.preventDefault();const btn=$('saveRecipe');btn.disabled=true;
+  const payload={menu_item_id:$('recipeMenu').value,inventory_item_id:$('recipeStock').value,quantity_per_item:Number($('recipeQuantity').value)};
+  const {error}=await client.from('menu_item_recipes').upsert(payload,{onConflict:'menu_item_id,inventory_item_id'});btn.disabled=false;
+  if(error){$('recipesMsg').textContent='تعذر حفظ الوصفة: '+error.message;return;}
+  $('recipesMsg').textContent='تم حفظ مكون الوصفة.';$('recipeQuantity').value='';await loadRecipes();
+ });
+ async function loadStockMovementRefs(){
+  const {data,error}=await client.from('inventory_items').select('id,name,unit,quantity').order('name');
+  if(error){$('movementMsg').textContent='تعذر تحميل الخامات.';return;}
+  $('movementItem').innerHTML=(data||[]).map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+' · متاح '+Number(x.quantity).toLocaleString('ar-EG')+' '+esc(x.unit||'')+'</option>').join('');
+ }
+ async function loadMovements(){
+  const box=$('movementList'),msg=$('movementMsg');if(!box||!msg)return;
+  const {data,error}=await client.from('inventory_movements').select('id,delta_quantity,reason,note,created_at,inventory_items(name,unit)').order('created_at',{ascending:false}).limit(100);
+  if(error){msg.textContent='تعذر قراءة سجل المخزون: '+error.message;return;}
+  msg.textContent=(data?.length||0)+' حركة حديثة';
+  const names={order_use:'خصم طلب',restock:'توريد / إضافة',adjustment:'تسوية / صرف'};
+  box.innerHTML=(data||[]).map(x=>{const item=Array.isArray(x.inventory_items)?x.inventory_items[0]:x.inventory_items;return '<article class="op-card"><div class="op-card-head"><b>'+esc(item?.name||'خامة')+'</b><span class="op-pill">'+esc(names[x.reason]||x.reason)+'</span></div><small>التغيير: '+(Number(x.delta_quantity)>0?'+':'')+Number(x.delta_quantity).toLocaleString('ar-EG')+' '+esc(item?.unit||'')+' · '+dateText(x.created_at)+'</small><div class="op-muted">'+esc(x.note||'')+'</div></article>';}).join('')||'<div class="op-muted">لا توجد حركات مسجلة حتى الآن.</div>';
+ }
+ $('stockMovementForm')?.addEventListener('submit',async ev=>{
+  ev.preventDefault();const btn=$('saveMovement');btn.disabled=true;
+  const {data,error}=await client.rpc('record_sh_inventory_movement',{p_inventory_item_id:$('movementItem').value,p_delta:Number($('movementDelta').value),p_note:$('movementNote').value.trim()});
+  btn.disabled=false;
+  if(error){$('movementMsg').textContent='لم يتم تسجيل الحركة: '+error.message;return;}
+  $('movementMsg').textContent='تم تسجيل الحركة. الرصيد الجديد: '+Number(data).toLocaleString('ar-EG');$('movementDelta').value='';$('movementNote').value='';
+  await base.loadStock();await loadMovements();await loadStockMovementRefs();
+ });
+ async function loadStaff(){
+  const box=$('staffList'),msg=$('staffMsg');if(!box||!msg)return;
+  if(!isAdmin){msg.textContent='هذه الشاشة متاحة لمسؤول المطعم فقط.';return;}
+  const {data,error}=await client.from('staff_profiles').select('user_id,display_name,role,created_at').order('created_at');
+  if(error){msg.textContent='تعذر تحميل الفريق: '+error.message;return;}
+  msg.textContent=(data?.length||0)+' حساب فريق';
+  box.innerHTML=(data||[]).map(s=>'<article class="op-card" data-staff="'+esc(s.user_id)+'"><div class="op-card-head"><b>'+esc(s.display_name||'موظف بدون اسم')+'</b><span class="op-pill">'+esc(s.role)+'</span></div><small>معرّف الحساب: '+esc(s.user_id)+'</small><label>الاسم الظاهر<input class="staff-name" value="'+esc(s.display_name||'')+'" maxlength="100"></label><label>الصلاحية<select class="staff-role"><option value="staff" '+(s.role==='staff'?'selected':'')+'>Staff · موظف</option><option value="admin" '+(s.role==='admin'?'selected':'')+'>Admin · مدير</option></select></label><div class="op-actions"><button type="button" class="staff-save">حفظ</button><button type="button" class="staff-delete" '+(s.user_id===profile.user_id?'disabled':'')+'>إزالة الصلاحية</button></div></article>').join('')||'<div class="op-muted">لا توجد حسابات موظفين مسجلة.</div>';
+  box.querySelectorAll('.staff-save').forEach(btn=>btn.onclick=async()=>{const el=btn.closest('[data-staff]'),id=el.dataset.staff;const role=el.querySelector('.staff-role').value;if(id===profile.user_id&&role!=='admin'){msg.textContent='لا يمكن خفض صلاحية الحساب المستخدم حاليًا من نفس الجلسة.';return;}btn.disabled=true;const {error}=await client.from('staff_profiles').update({display_name:el.querySelector('.staff-name').value.trim(),role}).eq('user_id',id);btn.disabled=false;if(error){msg.textContent='فشل الحفظ: '+error.message;return;}msg.textContent='تم حفظ صلاحيات الموظف.';await loadStaff();});
+  box.querySelectorAll('.staff-delete').forEach(btn=>btn.onclick=async()=>{const el=btn.closest('[data-staff]');if(!confirm('إزالة صلاحية هذا الحساب من لوحة المطعم؟'))return;const {error}=await client.from('staff_profiles').delete().eq('user_id',el.dataset.staff);if(error){msg.textContent='فشل الإزالة: '+error.message;return;}await loadStaff();});
+ }
+ async function loadActivity(){
+  const box=$('activityList'),msg=$('activityMsg');if(!box||!msg)return;
+  if(!isAdmin){msg.textContent='هذه الشاشة متاحة لمسؤول المطعم فقط.';return;}
+  const {data,error}=await client.from('staff_activity_logs').select('id,table_name,record_id,operation,changed_fields,actor_id,created_at').order('created_at',{ascending:false}).limit(250);
+  if(error){msg.textContent='تعذر تحميل سجل العمليات: '+error.message;return;}
+  msg.textContent=(data?.length||0)+' عملية حديثة';
+  const operations={INSERT:'إضافة',UPDATE:'تعديل',DELETE:'حذف'};
+  box.innerHTML=(data||[]).map(x=>'<article class="op-card"><div class="op-card-head"><b>'+esc(x.table_name)+' · '+esc(operations[x.operation]||x.operation)+'</b><span class="op-pill">'+dateText(x.created_at)+'</span></div><small>السجل: '+esc(x.record_id)+' · المستخدم: '+esc(x.actor_id||'نظام الطلبات')+'</small><div class="op-muted">الحقول المتغيرة: '+esc((x.changed_fields||[]).join('، ')||'—')+'</div></article>').join('')||'<div class="op-muted">لا توجد عمليات مسجلة.</div>';
+ }
+ loadKitchen();loadReports();loadCustomers();loadOffers();loadRecipeRefs().then(loadRecipes);loadStockMovementRefs().then(loadMovements);loadStaff();loadActivity();
+ const opsChannel=client.channel('shrimp-operations-notifications')
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},payload=>{notify('وصل طلب جديد من '+(payload.new?.customer_name||'عميل'));loadKitchen();loadReports();loadCustomers();})
+ .on('postgres_changes',{event:'INSERT',schema:'public',table:'bookings'},payload=>notify('وصل حجز جديد من '+(payload.new?.customer_name||'عميل')))
+ .on('postgres_changes',{event:'*',schema:'public',table:'offers'},loadOffers)
+ .on('postgres_changes',{event:'*',schema:'public',table:'menu_item_recipes'},loadRecipes)
+ .on('postgres_changes',{event:'*',schema:'public',table:'inventory_movements'},()=>{loadMovements();loadStockMovementRefs();})
+ .subscribe();
+ window.addEventListener('beforeunload',()=>{try{client.removeChannel(opsChannel);}catch(_){}});
+};
 </script></body></html>
 <style>
 /* Slightly darken the backdrop behind the opened mobile admin menu only */
