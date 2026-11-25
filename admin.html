@@ -115,6 +115,37 @@
 
 .dashboard-status-stack{display:grid;gap:4px}.dashboard-live-status{font-size:11px;color:var(--muted)}.dashboard-live-status.connected{color:#c7d6a9}
 .top h2{font-size:clamp(25px,3vw,31px);letter-spacing:.015em}.top p{color:#c3c9b8;font-size:12px}.nav button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;direction:ltr;text-align:left}.nav button small{font-size:10px;color:#899780;letter-spacing:.015em;direction:rtl;text-align:right;width:100%}.stat label{display:flex;flex-direction:column;gap:3px;font-size:13px;color:#e6d8b2;letter-spacing:.02em}.stat label small,.secthead b small{display:block;font-size:10px;font-weight:400;color:#9da992;letter-spacing:0}.secthead b{display:flex;flex-direction:column;gap:3px;font-size:14px}.quick b{font-size:14px!important;letter-spacing:.02em}.quick small{display:block;font-size:10px!important;direction:rtl;text-align:right}.manager strong{font-size:13px;letter-spacing:.02em}.manager small{font-size:10px;direction:rtl}
+/* Mobile full-screen burgundy glass navigation */
+.mobile-menu-trigger{display:none}
+.mobile-menu-overlay{display:none}
+.mobile-back{display:none}
+@media(max-width:620px){
+ .shell{display:block}
+ .side{display:none}
+ .main{padding:14px}
+ .mobile-menu-trigger{display:grid;place-items:center;position:fixed;z-index:1100;top:14px;right:14px;width:46px;height:46px;border-radius:14px;background:linear-gradient(145deg,#5b1422,#240b13);border:1px solid #a83e554d;color:#f3e8df;box-shadow:0 8px 28px #0006;backdrop-filter:blur(16px);font-size:21px;cursor:pointer}
+ .top{padding-right:56px;align-items:flex-start}
+ .mobile-menu-overlay{position:fixed;inset:0;z-index:1200;display:flex;align-items:center;justify-content:center;padding:24px;background:rgba(4,5,8,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);opacity:0;visibility:hidden;transition:opacity .22s,visibility .22s}
+ .mobile-menu-overlay.open{opacity:1;visibility:visible}
+ .mobile-menu-panel{width:min(100%,420px);max-height:90vh;overflow:auto;border:1px solid #8b263d88;border-radius:26px;padding:22px 18px;background:linear-gradient(145deg,#14070d,#210a13 58%,#12070c);box-shadow:0 24px 70px #0008}
+ .mobile-menu-heading{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 18px;color:#f2d8a7;font-size:16px}
+ .mobile-menu-heading .mobile-mark{display:grid;place-items:center;width:43px;height:43px;border-radius:14px;background:linear-gradient(145deg,#8d263b,#350d19);border:1px solid #b24a5f66;font-size:21px}
+ .mobile-menu-items{display:grid;gap:10px}
+ .mobile-menu-items button{width:100%;display:flex;align-items:center;gap:13px;text-align:right;direction:rtl;padding:14px;border-radius:15px;background:linear-gradient(135deg,#230c16,#17070d);border:1px solid #8c2c435c;color:#f1e6dc;font:inherit;cursor:pointer;transition:.2s}
+ .mobile-menu-items button:hover,.mobile-menu-items button.active{background:linear-gradient(135deg,#501528,#260c17);border-color:#bb546b;color:#f4d6a1}
+ .mobile-menu-items .menu-icon{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:#6b1b2d3d;border:1px solid #a5415955;font-size:18px}
+ .mobile-menu-items .menu-copy{display:grid;gap:4px}
+ .mobile-menu-items b{font-size:14px;font-weight:650}
+ .mobile-menu-items small{font-size:11px;color:#b98f9c}
+ .mobile-menu-close{width:100%;margin-top:16px;padding:12px;border:1px solid #8c2c435c;border-radius:12px;background:#18070d;color:#d9b2be;font:inherit;cursor:pointer}
+ .mobile-back{display:inline-flex;align-items:center;gap:7px;border:1px solid #8c2c435c;border-radius:12px;padding:9px 12px;background:linear-gradient(145deg,#3c1120,#190810);color:#f0d7c5;font:inherit;cursor:pointer;margin-bottom:12px}
+ .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ .stat{padding:11px 9px;border-radius:14px}
+ .stat label{font-size:11px;line-height:1.3}
+ .stat label small{font-size:9px}
+ .num{font-size:20px;line-height:1.2}
+ .num small{display:block;margin-top:4px;font-size:9px}
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase/config.js"></script>
@@ -122,7 +153,22 @@
 </head><body>
 <div class="shell"><aside class="side"><div class="brand"><div class="mark">🦐</div><div><b>SHRIMP HOUSE</b><small>لوحة الإدارة · Admin Studio</small></div></div>
 <nav class="nav"><button type="button" class="active" data-go="dashboard">⌂　Dashboard <small>الرئيسية</small></button><button type="button" data-go="orders">🧾　Orders <small>الطلبات</small></button><button type="button" data-go="menu">🍽️　Menu <small>المنيو</small></button><button type="button" data-go="bookings">📅　Bookings <small>الحجوزات</small></button><button type="button" data-go="stock">🧺　Inventory <small>المخزون</small></button><button type="button" data-go="settings">⚙️　Settings <small>الإعدادات</small></button></nav></aside>
-<main class="main"><header class="top"><div><h2 id="title">Dashboard</h2><p id="sub">نظرة عامة · مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
+<button class="mobile-menu-trigger" type="button" id="mobileMenuTrigger" aria-label="Open menu">☰</button>
+<div class="mobile-menu-overlay" id="mobileMenuOverlay" aria-hidden="true">
+ <div class="mobile-menu-panel" role="dialog" aria-modal="true" aria-label="Admin navigation">
+  <div class="mobile-menu-heading"><span class="mobile-mark">🦐</span><span>SHRIMP HOUSE<br><small style="font-size:10px;color:#b98f9c">Admin Navigation · قائمة الإدارة</small></span></div>
+  <nav class="mobile-menu-items">
+   <button type="button" data-go="dashboard"><span class="menu-icon">▦</span><span class="menu-copy"><b>Dashboard</b><small>لوحة الأرقام والإحصائيات</small></span></button>
+   <button type="button" data-go="orders"><span class="menu-icon">🧾</span><span class="menu-copy"><b>Orders</b><small>الطلبات</small></span></button>
+   <button type="button" data-go="menu"><span class="menu-icon">🍽</span><span class="menu-copy"><b>Menu Management</b><small>إدارة المنيو</small></span></button>
+   <button type="button" data-go="bookings"><span class="menu-icon">📅</span><span class="menu-copy"><b>Bookings</b><small>الحجوزات</small></span></button>
+   <button type="button" data-go="stock"><span class="menu-icon">🧺</span><span class="menu-copy"><b>Inventory</b><small>المخزون</small></span></button>
+   <button type="button" data-go="settings"><span class="menu-icon">⚙</span><span class="menu-copy"><b>Settings</b><small>الإعدادات</small></span></button>
+  </nav>
+  <button type="button" class="mobile-menu-close" id="mobileMenuClose">إغلاق القائمة ×</button>
+ </div>
+</div>
+<main class="main"><button type="button" class="mobile-back" id="mobileBack" style="display:none">← الرجوع للقائمة</button><header class="top"><div><h2 id="title">Dashboard</h2><p id="sub">نظرة عامة · مركز إدارة Shrimp House</p></div><span class="pill">● Admin Preview</span></header>
 <div id="dashboard" class="view show">
 <div class="dashboard-refresh-row"><div class="dashboard-status-stack"><span id="dashboardStatus" role="status">جارٍ تحديث بيانات لوحة التحكم…</span><span id="dashboardRealtimeStatus" class="dashboard-live-status">جارٍ الاتصال بالتحديثات المباشرة…</span></div><button type="button" class="refresh" id="refreshDashboard">↻ تحديث الأرقام</button></div><div class="stats">
 <div class="stat"><label>Today’s Orders <small>طلبات اليوم</small></label><div class="num" id="metricTodayOrders">—</div></div>
@@ -135,7 +181,7 @@
 <div class="stat"><label>Total Sales <small>إجمالي المبيعات</small></label><div class="num" id="metricTotalSales">—</div></div>
 <div class="stat"><label>Completed Orders <small>الطلبات المكتملة</small></label><div class="num" id="metricCompleted">—</div></div>
 <div class="stat"><label>Low Stock Items <small>مخزون منخفض</small></label><div class="num" id="metricLowStock">—</div></div>
-</div><div class="view" id="orders"><section class="section live-section"><div class="secthead"><b>طلبات المطعم المباشرة</b><small id="ordersCount">جارٍ التحميل…</small></div><div class="toolbar"><button type="button" class="refresh" id="refreshOrders">↻ تحديث الطلبات</button><select id="orderFilter"><option value="">كل الحالات</option><option value="new">جديد</option><option value="confirmed">تم التأكيد</option><option value="preparing">قيد التجهيز</option><option value="out_for_delivery">خرج للتوصيل</option><option value="completed">مكتمل</option><option value="cancelled">ملغي</option></select></div><div id="ordersMsg" class="live-msg"></div><div id="ordersList" class="orders-list"></div></section></div>
+</div><div class="view" id="orders">ers"><section class="section live-section"><div class="secthead"><b>طلبات المطعم المباشرة</b><small id="ordersCount">جارٍ التحميل…</small></div><div class="toolbar"><button type="button" class="refresh" id="refreshOrders">↻ تحديث الطلبات</button><select id="orderFilter"><option value="">كل الحالات</option><option value="new">جديد</option><option value="confirmed">تم التأكيد</option><option value="preparing">قيد التجهيز</option><option value="out_for_delivery">خرج للتوصيل</option><option value="completed">مكتمل</option><option value="cancelled">ملغي</option></select></div><div id="ordersMsg" class="live-msg"></div><div id="ordersList" class="orders-list"></div></section></div>
 <div class="view" id="menu"><section class="section live-section"><div class="secthead"><b>إدارة أصناف المنيو</b><small id="menuCount">جارٍ التحميل</small></div><div class="toolbar"><button type="button" class="refresh" id="addDishBtn">＋ إضافة صنف</button><button type="button" class="refresh" id="refreshMenu">↻ تحديث</button><select id="menuCategoryFilter"><option value="">كل الأقسام</option></select></div><div id="menuMsg" class="live-msg"></div><form id="dishForm" class="dish-form" hidden><input type="hidden" id="dishId"><div class="dish-fields"><label>اسم الصنف<input id="dishName" required maxlength="120"></label><label>القسم<input id="dishCategory" required maxlength="80" placeholder="مثال: جمبري"></label><label>السعر (جنيه)<input id="dishPrice" type="number" min="0" step="0.01" required></label><label>ترتيب العرض<input id="dishOrder" type="number" value="0"></label><label class="wide">الوصف<textarea id="dishDescription" rows="2" maxlength="500"></textarea></label><label class="wide">رابط الصورة<input id="dishImage" type="url" placeholder="رابط الصورة https://..."></label><label class="avail"><input id="dishAvailable" type="checkbox" checked> متاح للطلب</label></div><div class="form-actions"><button type="submit" class="refresh" id="saveDish">حفظ الصنف</button><button type="button" class="refresh" id="cancelDish">إلغاء</button></div></form><div id="menuItems" class="menu-items"></div></section></div>
 <div class="view" id="bookings"><section class="section live-section"><div class="secthead"><b>إدارة الحجوزات</b><small id="bookingCount">جارٍ التحميل</small></div><div class="toolbar"><select id="bookingFilter"><option value="">كل الحجوزات</option><option value="pending">بانتظار التأكيد</option><option value="confirmed">مؤكد</option><option value="cancelled">ملغي</option><option value="completed">مكتمل</option></select><button type="button" class="refresh" id="refreshBookings">↻ تحديث الحجوزات</button></div><div id="bookingMsg" class="live-msg"></div><div id="bookingList" class="booking-list"></div></section></div>
 <div class="view" id="stock"><section class="section live-section"><div class="secthead"><b>إدارة المخزون</b><small id="stockCount">جارٍ التحميل</small></div><div class="toolbar"><button type="button" class="refresh" id="addStockBtn">＋ إضافة خامة</button><button type="button" class="refresh" id="refreshStock">↻ تحديث</button><select id="stockFilter"><option value="">كل المواد</option><option value="low">المخزون المنخفض</option></option></select></div><div id="stockMsg" class="live-msg"></div><form id="stockForm" class="dish-form" hidden><input type="hidden" id="stockId"><div class="dish-fields"><label>اسم المادة<input id="stockName" required maxlength="120"></label><label>وحدة القياس<input id="stockUnit" placeholder="كيلو / قطعة / لتر" maxlength="30"></label><label>الكمية الحالية<input id="stockQty" type="number" step="0.01" required></label><label>حد التنبيه عند النقص<input id="stockThreshold" type="number" step="0.01" min="0" required></label></div><div class="form-actions"><button class="refresh" id="saveStock" type="submit">حفظ المادة</button><button class="refresh" id="cancelStock" type="button">إلغاء</button></div></form><div id="stockItems" class="stock-list"></div></section></div>
@@ -145,6 +191,17 @@
 const names={dashboard:["Dashboard","نظرة عامة على Shrimp House"],orders:["Orders","الطلبات ومتابعة حالاتها"],menu:["Menu Management","إدارة الأصناف والصور والأسعار"],bookings:["Bookings","تنظيم مواعيد الضيوف"],stock:["Inventory","متابعة الخامات والمكونات"],settings:["Settings","بيانات المطعم وإعداداته"]};
 function go(k){document.querySelectorAll(".view").forEach(v=>v.classList.remove("show"));document.getElementById(k)?.classList.add("show");document.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("active",b.dataset.go===k));document.getElementById("title").textContent=names[k][0];document.getElementById("sub").textContent=names[k][1]}
 document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+const mobileOverlay=document.getElementById('mobileMenuOverlay'),menuTrigger=document.getElementById('mobileMenuTrigger'),menuClose=document.getElementById('mobileMenuClose'),backButton=document.getElementById('mobileBack');
+function openMobileMenu(){mobileOverlay?.classList.add('open');mobileOverlay?.setAttribute('aria-hidden','false');}
+function closeMobileMenu(){mobileOverlay?.classList.remove('open');mobileOverlay?.setAttribute('aria-hidden','true');}
+menuTrigger?.addEventListener('click',openMobileMenu);menuClose?.addEventListener('click',closeMobileMenu);
+mobileOverlay?.addEventListener('click',e=>{if(e.target===mobileOverlay)closeMobileMenu();});
+backButton?.addEventListener('click',openMobileMenu);
+const mobileNames=['dashboard','orders','menu','bookings','stock','settings'];
+function updateMobileBack(){if(window.innerWidth<=620){backButton.style.display=mobileNames.some(k=>document.getElementById(k)?.classList.contains('show'))?'inline-flex':'none';}else backButton.style.display='none';}
+const originalGo=go;go=function(k){originalGo(k);closeMobileMenu();updateMobileBack();};
+window.addEventListener('resize',updateMobileBack);updateMobileBack();
+
 </script>
 <script>
 (async()=>{
