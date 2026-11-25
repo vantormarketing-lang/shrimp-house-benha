@@ -322,7 +322,7 @@ footer{border-top-color:rgba(180,195,210,.16)!important}
         <label class="sr" for="orderType">نوع الطلب</label><select id="orderType"><option>طلب دليفري</option><option>حجز طاولة</option><option>استلام من المطعم</option></select><label for="paymentMethod">طريقة الدفع</label><select id="paymentMethod"><option value="كاش عند الاستلام">كاش عند الاستلام</option></select><p class="msg" id="checkoutInfo">رسوم التوصيل والحد الأدنى للطلب حسب إعدادات المطعم.</p>
         <div id="addrRow"><label class="sr" for="customerAddr">العنوان</label><input id="customerAddr" placeholder="عنوان التوصيل بالتفصيل" autocomplete="street-address"></div>
         <div id="whenRow" hidden><label for="bookingDateTime">موعد الحجز</label><input id="bookingDateTime" type="datetime-local" required><label for="bookingGuests">عدد الأفراد</label><select id="bookingGuests"><option value="2">2 أفراد</option><option value="1">1 فرد</option><option value="3">3 أفراد</option><option value="4">4 أفراد</option><option value="5">5 أفراد</option><option value="6">6 أفراد</option><option value="7">7 أفراد</option><option value="8">8 أفراد</option><option value="9">9 أفراد</option><option value="10">10 أفراد</option></select><label class="sr" for="whenAt">ملاحظات الموعد</label><input id="whenAt" placeholder="أي ملاحظات عن الحجز (اختياري)"></div>
-        <label class="sr" for="orderDetails">التفاصيل</label><textarea id="orderDetails" placeholder="ملاحظاتك على الطلب (اختياري)"></textarea><label for="promoCode">كود الخصم (اختياري)</label><input id="promoCode" maxlength="40" placeholder="أدخل كود الخصم">
+        <label class="sr" for="orderDetails">التفاصيل</label><textarea id="orderDetails" placeholder="ملاحظاتك على الطلب (اختياري)"></textarea><div id="checkoutSummary" class="glass" hidden aria-live="polite" style="padding:14px;margin:8px 0"></div><label for="promoCode">كود الخصم (اختياري)</label><input id="promoCode" maxlength="40" placeholder="أدخل كود الخصم">
         <button class="btn" type="submit">تأكيد الطلب والحجز</button>
         <div class="msg" id="formMsg" role="status" aria-live="polite"></div>
       </form>
@@ -516,6 +516,34 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
   const dbCfg=window.SHRIMP_SUPABASE_CONFIG;
   const dbClient=dbCfg?.url&&dbCfg?.anonKey&&window.supabase?window.supabase.createClient(dbCfg.url,dbCfg.anonKey):null;
   const submitBtn=f.querySelector('button[type="submit"]');
+  const summaryBox=$('checkoutSummary');
+  async function renderCheckoutSummary(){
+    if(!summaryBox||!selectedCart.length||!dbClient){if(summaryBox)summaryBox.hidden=true;return;}
+    summaryBox.replaceChildren();summaryBox.hidden=false;
+    const title=document.createElement('b');title.textContent='مراجعة الأصناف المختارة';summaryBox.appendChild(title);
+    const ids=[...new Set(selectedCart.map(x=>x.menu_item_id).filter(Boolean))];
+    if(!ids.length){const note=document.createElement('p');note.textContent='تعذر التحقق من أصناف السلة. ارجع للمنيو وحدّث الصفحة.';summaryBox.appendChild(note);return;}
+    const {data,error}=await dbClient.from('menu_items').select('id,name,price,options').in('id',ids);
+    if(error){const note=document.createElement('p');note.textContent='تعذر تحميل ملخص السلة الآن؛ سيُعاد التحقق من الأسعار عند تأكيد الطلب.';summaryBox.appendChild(note);return;}
+    const byId=new Map((data||[]).map(x=>[x.id,x]));let subtotal=0;
+    const list=document.createElement('div');list.style.cssText='display:grid;gap:7px;margin-top:10px';
+    selectedCart.forEach(line=>{
+      const item=byId.get(line.menu_item_id);if(!item)return;
+      const qty=Math.max(1,Number(line.quantity)||1);
+      const options=Array.isArray(item.options)?item.options:[];
+      const option=options.find(x=>x.label===line.option_label);
+      const price=options.length?Number(option?.price??0):Number(item.price||0);
+      const total=price*qty;subtotal+=total;
+      const row=document.createElement('div');row.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(103,185,232,.16)';
+      const name=document.createElement('span');name.textContent=item.name+(line.option_label?' · '+line.option_label:'')+' × '+qty;
+      const amount=document.createElement('b');amount.textContent=total.toLocaleString('ar-EG')+' ج.م';
+      row.append(name,amount);list.appendChild(row);
+    });
+    summaryBox.appendChild(list);
+    const sum=document.createElement('p');sum.style.cssText='margin:10px 0 0;text-align:left;font-weight:800;color:#67B9E8';
+    sum.textContent='إجمالي الأصناف قبل التوصيل والخصم: '+subtotal.toLocaleString('ar-EG')+' ج.م';summaryBox.appendChild(sum);
+  }
+  if(selectedCart.length)renderCheckoutSummary();
   const showMessage=(text,code,kind)=>{
     msg.replaceChildren();msg.textContent=text;
     if(code){
@@ -577,7 +605,7 @@ window.SITE_READY=(async()=>{try{const cfg=window.SHRIMP_SUPABASE_CONFIG;if(!cfg
       if(address&&type.value==='طلب دليفري')lines.push('العنوان: '+address);
       if(details)lines.push('ملاحظات: '+details);
       showWhatsapp(lines);
-      if(selectedCart.length){selectedCart=[];history.replaceState(null,'',location.pathname+'#reserve');}
+      if(selectedCart.length){selectedCart=[];if(summaryBox){summaryBox.replaceChildren();summaryBox.hidden=true;}history.replaceState(null,'',location.pathname+'#reserve');}
     }catch(err){console.warn('Request submission failed:',err);msg.textContent=err?.message||'تعذر تسجيل الطلب. حاول مرة أخرى.';}
     finally{submitBtn.disabled=false;submitBtn.textContent='تأكيد الطلب والحجز';}
   });
